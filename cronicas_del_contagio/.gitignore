@@ -1,0 +1,61 @@
+# ===========================
+# Qt Creator / QMake
+# ===========================
+
+# Archivos de configuración local
+*.pro.user
+*.pro.user.*
+*.qmake.stash
+
+# Carpetas de compilación típicas
+build*/
+build-*/
+debug/
+release/
+
+# Makefiles generados por qmake
+Makefile
+Makefile.*
+
+# ===========================
+# Archivos generados por Qt
+# ===========================
+
+# MOC (Meta-Object Compiler)
+moc_*.cpp
+*.moc
+
+# UIC (User Interface Compiler)
+ui_*.h
+
+# RCC (Resource Compiler)
+qrc_*.cpp
+
+# ===========================
+# Compilación / binarios
+# ===========================
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.so.*
+*.dll
+*.dylib
+*.exe
+
+# ===========================
+# Archivos temporales
+# ===========================
+*.log
+*.tmp
+*.cache
+*.pdb
+*.ilk
+
+# ===========================
+# Sistema operativo / editor
+# ===========================
+*.swp
+*.DS_Store
+Thumbs.db
