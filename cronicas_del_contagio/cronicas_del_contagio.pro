@@ -15,15 +15,21 @@ SOURCES += \
     ObjetoEstatico.cpp \
     Obstaculo.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    nivel.cpp \
 
 HEADERS += \
+<<<<<<< HEAD
     Balde.h \
     Doctor.h \
     Nivel2.h \
     ObjetoEstatico.h \
     Obstaculo.h \
     mainwindow.h
+=======
+    mainwindow.h \
+    nivel.h \
+>>>>>>> origin/main
 
 FORMS += \
     mainwindow.ui
