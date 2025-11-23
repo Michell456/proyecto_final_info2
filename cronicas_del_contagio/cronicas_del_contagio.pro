@@ -10,6 +10,8 @@ CONFIG += c++17
 
 SOURCES += \
     Balde.cpp \
+    Doctor.cpp \
+    Nivel2.cpp \
     ObjetoEstatico.cpp \
     Obstaculo.cpp \
     main.cpp \
@@ -17,6 +19,8 @@ SOURCES += \
 
 HEADERS += \
     Balde.h \
+    Doctor.h \
+    Nivel2.h \
     ObjetoEstatico.h \
     Obstaculo.h \
     mainwindow.h
