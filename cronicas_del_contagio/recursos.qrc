@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>sprites/Nivel2/baldeSucio.png</file>
+        <file>sprites/Nivel2/balde_lleno.png</file>
+        <file>sprites/Nivel2/baldeDestruido.png</file>
+    </qresource>
+</RCC>
