@@ -1,10 +1,20 @@
 #ifndef OBJETOESTATICO_H
 #define OBJETOESTATICO_H
 
-class ObjetoEstatico
+#include <QGraphicsPixmapItem>
+#include <QRectF>
+
+class ObjetoEstatico : public QGraphicsPixmapItem
 {
 public:
-    ObjetoEstatico();
+    ObjetoEstatico(QGraphicsItem *parent = nullptr);
+    virtual ~ObjetoEstatico() = default;
+
+    QRectF getAreaColision() const;
+    void setAreaColision(const QRectF &newAreaColision);
+
+protected:
+    QRectF areaColision;
 };
 
 #endif // OBJETOESTATICO_H
