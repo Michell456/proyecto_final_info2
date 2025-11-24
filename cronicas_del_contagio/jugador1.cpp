@@ -7,7 +7,11 @@ jugador1::jugador1(QObject *parent)
     , frameActual(0)
     , direccion(1) // Mirando a la derecha
     , estado(quieto)
-    , velocidad(2)
+    , velocidad(3)
+    , teclaAbajo(false)
+    , teclaArriba(false)
+    , teclaDerecha(false)
+    , teclaIzquierda(false)
     , teclaPresionada(false)
 {
     timerAnimacion = new QTimer(this);
@@ -52,8 +56,8 @@ void jugador1::draw(QPainter &painter){
 
     QPixmap spriteActual;
 
-    if((estado == caminandoX || estado == caminandoY) && !spritesCaminandoDerecha.isEmpty() && !spritesCaminandoIzquierda.isEmpty()) {
-        if(direccion == -1) {
+    if(estado == caminando && !spritesCaminandoDerecha.isEmpty() && !spritesCaminandoIzquierda.isEmpty()) {
+        if(direccionActual.x() == -1) {
             spriteActual = spritesCaminandoIzquierda[frameActual];
         }
         else{
@@ -67,39 +71,60 @@ void jugador1::draw(QPainter &painter){
 
 }
 
-void jugador1::update(const QSize &tamanioVentana)
+void jugador1::update(const QSize &tamanioVentana, int velocidadFondo)
 {
-    if(estado == caminandoX) {
-        int nuevaX = posicion.x() + (velocidad * direccion);
+    int nuevaX = 0;
+    int nuevaY = 0;
 
-        int anchoSprite = 20;
-        int margen = 10;
+    int anchoSprite = 20;
+    int altoSprite = 50;
+    int margen = 10;
 
-        if(direccion == 1) {
-            if(nuevaX + anchoSprite <= tamanioVentana.width() - margen) {
-                posicion.setX(nuevaX);
-            }
-        } else {
-            if(nuevaX + anchoSprite >= margen) {
-                posicion.setX(nuevaX);
-            }
+    if(estado == caminando) {
+        nuevaX = posicion.x() + (velocidad * direccionActual.x());
+        nuevaY = posicion.y() + (velocidad * direccionActual.y());
+
+        if(nuevaX >= margen && nuevaX + anchoSprite <= tamanioVentana.width() - margen) {
+            posicion.setX(nuevaX);
         }
-    }
-    if(estado == caminandoY) {
-        int nuevaY = posicion.y() + (velocidad * (direccion==-2?1:-1));
 
-        int altoSprite = 50;
-        int margen = 10;
-
-        if(nuevaY >= margen && nuevaY + altoSprite <= tamanioVentana.height() - margen) {
+        if((nuevaY + altoSprite <= tamanioVentana.height() - margen -125) && (nuevaY + altoSprite >= margen +220)) {
             posicion.setY(nuevaY);
         }
+    }
+    else{
+        nuevaX = posicion.x() + (velocidadFondo * -1);
+        if(nuevaX >= margen){
+            posicion.setX(nuevaX);
+        }
+    }
+}
+
+void jugador1::actualizarDireccion() {
+    int dx = 0, dy = 0;
+
+    if(teclaDerecha) dx += 1;
+    if(teclaIzquierda) dx -= 1;
+    if(teclaAbajo) dy += 1;
+    if(teclaArriba) dy -= 1;
+
+    direccionActual = QPoint(dx, dy);
+
+    if(dx != 0 || dy != 0) {
+        estado = caminando;
+        if(!timerAnimacion->isActive()) {
+            timerAnimacion->start(100);
+        }
+    } else {
+        estado = quieto;
+        timerAnimacion->stop();
+        frameActual = 0;
     }
 }
 
 void jugador1::cambiarFrame()
 {
-    if((estado == caminandoX || estado == caminandoY) && !spritesCaminandoDerecha.isEmpty() && !spritesCaminandoIzquierda.isEmpty()) {
+    if(estado == caminando && !spritesCaminandoDerecha.isEmpty() && !spritesCaminandoIzquierda.isEmpty()) {
         if (frameActual >= spritesCaminandoDerecha.size()){
             frameActual = 0;
         }
@@ -113,30 +138,19 @@ void jugador1::keyPressEvent(QKeyEvent *event)
 
     switch(event->key()) {
     case Qt::Key_D:
-        estado = caminandoX;
-        direccion = 1;
-        teclaPresionada = true;
-        timerAnimacion->start(100); // Cambiar frame cada 100ms
+        teclaDerecha = true;
         break;
     case Qt::Key_A:
-        estado = caminandoX;
-        direccion = -1;
-        teclaPresionada = true;
-        timerAnimacion->start(100);
+        teclaIzquierda = true;
         break;
     case Qt::Key_W:
-        estado = caminandoY;
-        direccion = 2;
-        teclaPresionada = true;
-        timerAnimacion->start(100);
+        teclaArriba = true;
         break;
     case Qt::Key_S:
-        estado = caminandoY;
-        direccion = -2;
-        teclaPresionada = true;
-        timerAnimacion->start(100);
+        teclaAbajo = true;
         break;
     }
+    actualizarDireccion();
 }
 
 void jugador1::keyReleaseEvent(QKeyEvent *event)
@@ -145,38 +159,19 @@ void jugador1::keyReleaseEvent(QKeyEvent *event)
     if(event->isAutoRepeat()) return;
     switch(event->key()) {
     case Qt::Key_D:
-        if(direccion == 1) {
-            estado = quieto;
-            teclaPresionada = false;
-            timerAnimacion->stop();
-            frameActual = 0;
-        }
+        teclaDerecha = false;
         break;
     case Qt::Key_A:
-        if(direccion == -1) {
-            estado = quieto;
-            teclaPresionada = false;
-            timerAnimacion->stop();
-            frameActual = 0;
-        }
+        teclaIzquierda = false;
         break;
     case Qt::Key_W:
-        if(direccion == 2) {
-            estado = quieto;
-            teclaPresionada = false;
-            timerAnimacion->stop();
-            frameActual = 0;
-        }
+        teclaArriba = false;
         break;
     case Qt::Key_S:
-        if(direccion == -2) {
-            estado = quieto;
-            teclaPresionada = false;
-            timerAnimacion->stop();
-            frameActual = 0;
-        }
+        teclaAbajo = false;
         break;
     }
+    actualizarDireccion();
 }
 
 void jugador1::setPosicion(int x, int y)

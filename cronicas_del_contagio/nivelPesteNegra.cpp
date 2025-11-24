@@ -10,9 +10,9 @@ nivelPesteNegra::nivelPesteNegra() {
     fondoX1 = 0;
     fondoX2 = fondo.width();
 
-    velocidadFondo = 1;
+    velocidadFondo = 2;
 
-    jugador.setPosicion(5,300);
+    jugador.setPosicion(12,300);
 
     //spawnEnemigos();
     //spawnItems();
@@ -31,7 +31,7 @@ void nivelPesteNegra::update(){
         fondoX2 = fondoX1 + fondo.width();
     }
 
-    jugador.update(tamanioVentana);
+    jugador.update(tamanioVentana,velocidadFondo);
 
 }
 

@@ -14,18 +14,18 @@ public:
 
     enum Estado {
         quieto,
-        caminandoX,
-        caminandoY,
+        caminando,
     };
 
     jugador1(QObject *parent = nullptr);
     ~jugador1();
 
-    void update(const QSize &tamanioVentana);
+    void update(const QSize &tamanioVentana, int velocidadFondo);
     void draw(QPainter &painter);
     void moverDerecha();
     void moverIzquierda();
     void parar();
+    void actualizarDireccion();
 
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
@@ -56,6 +56,12 @@ private:
 
     QTimer *timerAnimacion;
     bool teclaPresionada;
+
+    bool teclaDerecha;
+    bool teclaIzquierda;
+    bool teclaArriba;
+    bool teclaAbajo;
+    QPoint direccionActual;
 
     int ancho = 40;
     int alto = 60;
