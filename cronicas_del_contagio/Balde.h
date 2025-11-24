@@ -18,6 +18,7 @@ public:
     Estado getEstado() const;
     QPointF getPosicion() const;
     QPixmap getSprite() const;
+    QRectF getAreaColision() const;
 
 private:
     Estado estado;

@@ -6,9 +6,15 @@ Obstaculo::Obstaculo(const QPointF &posicion, const QPixmap &sprite, QGraphicsIt
     , tipo(0)
 {
     setPos(posicion);
+    setPixmap(sprite);
     setZValue(5);
-}
 
+    areaColision = QRectF(0, 0, sprite.width(), sprite.height());
+
+    qDebug() << "Obstáculo creado - Pos:" << posicion
+             << "Tamaño sprite:" << sprite.size()
+             << "Área colisión:" << areaColision;
+}
 bool Obstaculo::estaDestruido() const
 {
     return destruido;

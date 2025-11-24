@@ -404,10 +404,19 @@ void NivelColera::crearBaldes()
         QPointF(500, 300)
     };
 
+    qDebug() << "\n🎯 CREANDO BALDES:";
     for (int i = 0; i < posicionesBaldes.size(); ++i) {
         Balde *nuevoBalde = new Balde(posicionesBaldes[i]);
-        baldes.append(nuevoBalde);
+        baldes.append(nuevoBalde);  // ← CAMBIAR: baldes en lugar de obstaculos
+        qDebug() << "   Balde" << i << "en posición:" << posicionesBaldes[i];
+
+        // Verificar área de colisión inmediatamente
+        QRectF area = nuevoBalde->getAreaColision();
+        area.moveTo(posicionesBaldes[i]);
+        qDebug() << "   Área absoluta calculada:" << area;
     }
+
+    qDebug() << "Total baldes creados:" << baldes.size();
 }
 
 void NivelColera::dibujarLineaFuerza(const QPointF &inicio, const QPointF &fin)  // CAMBIA: Nivel2:: → NivelColera::
