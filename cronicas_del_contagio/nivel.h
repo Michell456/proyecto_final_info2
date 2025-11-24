@@ -20,8 +20,8 @@ public:
 
     virtual void update() = 0;
     virtual void draw(QPainter &p) = 0;
-    //virtual void handleInput(QKeyEvent *e) = 0;
-    //virtual void handleKeyRelease(QKeyEvent *event) = 0;
+    virtual void handleInput(QKeyEvent *e) = 0;
+    virtual void handleKeyRelease(QKeyEvent *event) = 0;
 
     virtual bool chequearVictoria() = 0;
     virtual bool chequearDerrota() = 0;

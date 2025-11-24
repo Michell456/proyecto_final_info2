@@ -2,7 +2,7 @@
 #define NIVELPESTENEGRA_H
 
 #include "nivel.h"
-//#include "jugadorn1.h"
+#include "jugador1.h"
 //#include "enemigo.h"
 //#include "item.h"
 
@@ -16,14 +16,14 @@ public:
 
     void update() override;
     void draw(QPainter &p) override;
-    //void handleInput(QKeyEvent *event) override;
-    //void handleKeyRelease(QKeyEvent *event) override;
+    void handleInput(QKeyEvent *event) override;
+    void handleKeyRelease(QKeyEvent *event) override;
 
     bool chequearVictoria() override;
     bool chequearDerrota() override;
 
 private:
-    //JugadorN1 jugador;
+    jugador1 jugador;
     //QVector<Enemigo*> enemigos;
     //QVector<Item*> items;
 
@@ -32,6 +32,8 @@ private:
     int fondoX1;
     int fondoX2;
     int velocidadFondo;
+
+    const QSize tamanioVentana = QSize(1000, 600);
 
 };
 

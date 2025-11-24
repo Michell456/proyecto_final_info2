@@ -46,11 +46,15 @@ void MainWindow::paintEvent(QPaintEvent *) {
     QPainter p(this);
     nivelActual->draw(p);
 }
-/*
+
 void MainWindow::keyPressEvent(QKeyEvent *event) {
     nivelActual->handleInput(event);
 }
-*/
+
+void MainWindow::keyReleaseEvent(QKeyEvent *event) {
+    nivelActual->handleKeyRelease(event);
+}
+
 MainWindow::~MainWindow()
 {
     delete ui;

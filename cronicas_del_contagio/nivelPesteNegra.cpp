@@ -12,6 +12,8 @@ nivelPesteNegra::nivelPesteNegra() {
 
     velocidadFondo = 1;
 
+    jugador.setPosicion(5,300);
+
     //spawnEnemigos();
     //spawnItems();
 
@@ -29,6 +31,8 @@ void nivelPesteNegra::update(){
         fondoX2 = fondoX1 + fondo.width();
     }
 
+    jugador.update(tamanioVentana);
+
 }
 
 void nivelPesteNegra::draw(QPainter &p){
@@ -36,7 +40,7 @@ void nivelPesteNegra::draw(QPainter &p){
     p.drawPixmap(fondoX1, 0, fondo);
     p.drawPixmap(fondoX2, 0, fondo);
 
-/*    jugador.draw(p);
+    jugador.draw(p);/*
     for (auto e : enemigos) e->draw(p);
     for (auto it : items) it->draw(p);
 
@@ -46,8 +50,13 @@ void nivelPesteNegra::draw(QPainter &p){
 
 }
 
-//void nivelPesteNegra::handleInput(QKeyEvent *event){}
-//void nivelPesteNegra::handleKeyRelease(QKeyEvent *event){}
+void nivelPesteNegra::handleInput(QKeyEvent *event){
+    jugador.keyPressEvent(event);
+}
+
+void nivelPesteNegra::handleKeyRelease(QKeyEvent *event){
+    jugador.keyReleaseEvent(event);
+}
 
 bool nivelPesteNegra::chequearVictoria(){}
 bool nivelPesteNegra::chequearDerrota(){}
