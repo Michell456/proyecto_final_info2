@@ -5,6 +5,7 @@
 #include <QPainter>
 #include <QElapsedTimer>
 #include <cmath>
+#include "nivelcolera.h"
 
 Proyectil::Proyectil(const QPixmap &sprite, float gravedad, float factorRebote,
                      bool puedeDestruirObstaculos, bool puedeLlenarBaldes,
@@ -134,19 +135,12 @@ void Proyectil::onTimerMovimiento()
 {
     if (!enMovimiento) return;
 
-    aplicarGravedad();
     actualizarPosicion();
-
-    if (verificarColision()) {
-        // La colisión fue manejada en verificarColision()
-    }
 
     bool fueraDePantalla = (posicion.x() > 1100 || posicion.x() < -100 || posicion.y() > 650);
     bool velocidadMuyBaja = (velocidad.length() < 0.5f);
 
     if (fueraDePantalla || velocidadMuyBaja) {
-        qDebug() << "Proyectil detenido - Razón:"
-                 << (fueraDePantalla ? "Fuera de pantalla" : "Velocidad muy baja");
         detenerMovimiento();
     }
 }
@@ -205,16 +199,11 @@ void Proyectil::aplicarGravedad()
 
 void Proyectil::actualizarPosicion()
 {
-    static QElapsedTimer timer;
-    static bool firstTime = true;
+    const float deltaTime = 0.01f;
+    const float resistenciaAire = 0.995f;
 
-    if (firstTime) {
-        timer.start();
-        firstTime = false;
-    }
-
-    float deltaTime = timer.restart() / 1000.0f;
-    deltaTime = qMin(deltaTime, 0.033f);
+    velocidad.setY(velocidad.y() + config.gravedad);
+    velocidad *= resistenciaAire;
 
     posicion.setX(posicion.x() + velocidad.x() * deltaTime * 60.0f);
     posicion.setY(posicion.y() + velocidad.y() * deltaTime * 60.0f);

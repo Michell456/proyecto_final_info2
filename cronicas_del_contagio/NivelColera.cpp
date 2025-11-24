@@ -1,4 +1,4 @@
-#include "nivelcolera.h"  // CAMBIA: nivel2.h → nivelcolera.h
+#include "nivelcolera.h"
 #include "doctor.h"
 #include "proyectil.h"
 #include "obstaculo.h"
@@ -24,8 +24,7 @@ NivelColera::NivelColera(QObject *parent)
     inicializarRecursos();
     inicializarConfiguraciones();
 
-    // CAMBIA: Doctor no necesita parámetro o usa nullptr
-    doctor = new Doctor();  // ← QUITAR 'this' o usar nullptr
+    doctor = new Doctor();
 
     // Crear proyectiles
     proyectilPiedra = new Proyectil(configPiedra.sprite, configPiedra.gravedad,
@@ -51,7 +50,7 @@ NivelColera::NivelColera(QObject *parent)
     qDebug() << "Nivel Cólera inicializado";
 }
 
-NivelColera::~NivelColera()  // CAMBIA: Nivel2 → NivelColera
+NivelColera::~NivelColera()
 {
     delete doctor;
     delete proyectilPiedra;
@@ -60,7 +59,7 @@ NivelColera::~NivelColera()  // CAMBIA: Nivel2 → NivelColera
     qDeleteAll(baldes);
 }
 
-void NivelColera::update()  // CAMBIA: Nivel2:: → NivelColera::
+void NivelColera::update()
 {
     tiempoTranscurrido++;
 
@@ -82,7 +81,7 @@ void NivelColera::update()  // CAMBIA: Nivel2:: → NivelColera::
     }
 }
 
-void NivelColera::draw(QPainter &p)  // CAMBIA: Nivel2:: → NivelColera::
+void NivelColera::draw(QPainter &p)
 {
     // 1. Dibujar fondo
     p.drawPixmap(0, 0, fondo);
@@ -140,7 +139,7 @@ void NivelColera::draw(QPainter &p)  // CAMBIA: Nivel2:: → NivelColera::
     // 7. Dibujar UI
     p.setPen(Qt::white);
     p.setFont(QFont("Arial", 16));
-    p.drawText(20, 30, QString("Nivel - Cólera"));  // CAMBIA: Quitar "2 -"
+    p.drawText(20, 30, QString("Nivel - Cólera"));
     p.drawText(20, 60, QString("Tiempo: %1").arg(tiempoTranscurrido / 60));
 
     // Mostrar proyectil actual
@@ -169,7 +168,7 @@ void NivelColera::draw(QPainter &p)  // CAMBIA: Nivel2:: → NivelColera::
     }
 }
 
-void NivelColera::handleInput(QKeyEvent *e)  // CAMBIA: Nivel2:: → NivelColera::
+void NivelColera::handleInput(QKeyEvent *e)
 {
     if (e->key() == Qt::Key_Space) {
         Proyectil* proyectil = obtenerProyectilActivo();
@@ -180,13 +179,13 @@ void NivelColera::handleInput(QKeyEvent *e)  // CAMBIA: Nivel2:: → NivelColera
     }
 }
 
-void NivelColera::handleKeyRelease(QKeyEvent *event)  // CAMBIA: Nivel2:: → NivelColera::
+void NivelColera::handleKeyRelease(QKeyEvent *event)
 {
-    // No se necesita implementación por ahora
+
     Q_UNUSED(event)
 }
 
-bool NivelColera::chequearVictoria()  // CAMBIA: Nivel2:: → NivelColera::
+bool NivelColera::chequearVictoria()
 {
     // Victoria: todos los baldes están llenos
     for (Balde* balde : baldes) {
@@ -197,13 +196,13 @@ bool NivelColera::chequearVictoria()  // CAMBIA: Nivel2:: → NivelColera::
     return true;
 }
 
-bool NivelColera::chequearDerrota()  // CAMBIA: Nivel2:: → NivelColera::
+bool NivelColera::chequearDerrota()
 {
     // Derrota: tiempo agotado (120 segundos)
     return (tiempoTranscurrido / 60) >= 120;
 }
 
-void NivelColera::handleMousePress(QMouseEvent *event)  // CAMBIA: Nivel2:: → NivelColera::
+void NivelColera::handleMousePress(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton && estado == EstadoNivel::jugando) {
         Proyectil* proyectil = obtenerProyectilActivo();
@@ -235,7 +234,7 @@ void NivelColera::handleMousePress(QMouseEvent *event)  // CAMBIA: Nivel2:: → 
     }
 }
 
-void NivelColera::handleMouseMove(QMouseEvent *event)  // CAMBIA: Nivel2:: → NivelColera::
+void NivelColera::handleMouseMove(QMouseEvent *event)
 {
     if (arrastrando && clickEnDoctor) {
         puntoActual = event->pos();
@@ -264,7 +263,7 @@ void NivelColera::handleMouseMove(QMouseEvent *event)  // CAMBIA: Nivel2:: → N
     }
 }
 
-void NivelColera::handleMouseRelease(QMouseEvent *event)  // CAMBIA: Nivel2:: → NivelColera::
+void NivelColera::handleMouseRelease(QMouseEvent *event)
 {
     if (arrastrando && clickEnDoctor) {
         QPointF scenePos = event->pos();
@@ -308,7 +307,7 @@ void NivelColera::handleMouseRelease(QMouseEvent *event)  // CAMBIA: Nivel2:: �
     }
 }
 
-void NivelColera::inicializarRecursos()  // CAMBIA: Nivel2:: → NivelColera::
+void NivelColera::inicializarRecursos()
 {
     // Cargar sprites desde recursos Qt
     fondo.load(":/sprites/Nivel2/fondoNivel2.png");
@@ -325,7 +324,7 @@ void NivelColera::inicializarRecursos()  // CAMBIA: Nivel2:: → NivelColera::
     }
 }
 
-void NivelColera::inicializarConfiguraciones()  // CAMBIA: Nivel2:: → NivelColera::
+void NivelColera::inicializarConfiguraciones()
 {
     // Configuración para piedra
     configPiedra.gravedad = 0.8f;
@@ -361,9 +360,9 @@ void NivelColera::inicializarConfiguraciones()  // CAMBIA: Nivel2:: → NivelCol
     }
 }
 
-void NivelColera::crearObstaculos()  // CAMBIA: Nivel2:: → NivelColera::
+void NivelColera::crearObstaculos()
 {
-    // Coordenadas de los obstáculos en el spritesheet
+    // Coordenadas de los obstaculos en el spritesheet
     struct CoordenadaObstaculo {
         int x, y, ancho, alto;
         QPointF posicionEscena;
@@ -397,7 +396,7 @@ void NivelColera::crearObstaculos()  // CAMBIA: Nivel2:: → NivelColera::
     }
 }
 
-void NivelColera::crearBaldes()  // CAMBIA: Nivel2:: → NivelColera::
+void NivelColera::crearBaldes()
 {
     QList<QPointF> posicionesBaldes = {
         QPointF(800, 450),
@@ -436,37 +435,31 @@ void NivelColera::dibujarTrayectoria(const QVector2D& velocidadInicial, const QP
     }
 }
 
-void NivelColera::limpiarLineas()  // CAMBIA: Nivel2:: → NivelColera::
+void NivelColera::limpiarLineas()
 {
     lineasTrayectoria.clear();
     puntosTrayectoria.clear();
 }
 
-QVector<QPointF> NivelColera::calcularTrayectoria(const QVector2D& velocidadInicial, const QPointF& posicionInicial)  // CAMBIA: Nivel2:: → NivelColera::
+QVector<QPointF> NivelColera::calcularTrayectoria(const QVector2D& velocidadInicial, const QPointF& posicionInicial)
 {
     QVector<QPointF> puntos;
-    const float deltaTime = 0.05f;
+    const float deltaTime = 0.01f;
+    const float resistenciaAire = 0.995f;
     const int maxSteps = 50;
 
     QVector2D pos(posicionInicial.x(), posicionInicial.y());
     QVector2D vel = velocidadInicial;
 
-    float gravedad = (proyectilActual == proyectilPiedra) ? 0.8f : 0.5f;
-    float resistenciaAire = 0.995f;
+    float gravedad = (proyectilActual == proyectilPiedra) ? configPiedra.gravedad : configAmpolla.gravedad;
 
     for (int i = 0; i < maxSteps; i++) {
         puntos.append(QPointF(pos.x(), pos.y()));
 
-        // Aplicar gravedad
         vel.setY(vel.y() + gravedad);
-
-        // Aplicar resistencia del aire
         vel *= resistenciaAire;
-
-        // Actualizar posición
         pos += vel * deltaTime * 60.0f;
 
-        // Condiciones de parada
         if (pos.x() > 1200 || pos.x() < -200 || pos.y() > 800 || vel.length() < 0.5f) {
             break;
         }
@@ -475,7 +468,12 @@ QVector<QPointF> NivelColera::calcularTrayectoria(const QVector2D& velocidadInic
     return puntos;
 }
 
-bool NivelColera::estaSobreDoctor(const QPointF& punto)  // CAMBIA: Nivel2:: → NivelColera::
+float NivelColera::getGravedadActual() const
+{
+    return (proyectilActual == proyectilPiedra) ? configPiedra.gravedad : configAmpolla.gravedad;
+}
+
+bool NivelColera::estaSobreDoctor(const QPointF& punto)
 {
     if (!doctor) return false;
 
@@ -486,7 +484,7 @@ bool NivelColera::estaSobreDoctor(const QPointF& punto)  // CAMBIA: Nivel2:: →
     return areaDoctor.contains(punto);
 }
 
-void NivelColera::cambiarProyectil()  // CAMBIA: Nivel2:: → NivelColera::
+void NivelColera::cambiarProyectil()
 {
     if (proyectilActual == proyectilPiedra) {
         proyectilActual = proyectilAmpolla;
@@ -495,12 +493,12 @@ void NivelColera::cambiarProyectil()  // CAMBIA: Nivel2:: → NivelColera::
     }
 }
 
-Proyectil* NivelColera::obtenerProyectilActivo()  // CAMBIA: Nivel2:: → NivelColera::
+Proyectil* NivelColera::obtenerProyectilActivo()
 {
     return proyectilActual;
 }
 
-float NivelColera::calcularFuerza(float distancia)  // CAMBIA: Nivel2:: → NivelColera::
+float NivelColera::calcularFuerza(float distancia)
 {
     float distanciaMin = 20;
     float distanciaMax = 200;
@@ -511,7 +509,7 @@ float NivelColera::calcularFuerza(float distancia)  // CAMBIA: Nivel2:: → Nive
     return ((distancia - distanciaMin) / (distanciaMax - distanciaMin)) * (fuerzaMax - fuerzaMin) + fuerzaMin;
 }
 
-QPixmap NivelColera::generarPiedraSprite()  // CAMBIA: Nivel2:: → NivelColera::
+QPixmap NivelColera::generarPiedraSprite()
 {
     QPixmap piedra(80, 80);
     piedra.fill(Qt::transparent);
@@ -523,7 +521,7 @@ QPixmap NivelColera::generarPiedraSprite()  // CAMBIA: Nivel2:: → NivelColera:
     return piedra;
 }
 
-QPixmap NivelColera::generarAmpollaSprite()  // CAMBIA: Nivel2:: → NivelColera::
+QPixmap NivelColera::generarAmpollaSprite()
 {
     QPixmap ampolla(40, 55);
     ampolla.fill(Qt::transparent);
@@ -536,7 +534,7 @@ QPixmap NivelColera::generarAmpollaSprite()  // CAMBIA: Nivel2:: → NivelColera
     return ampolla;
 }
 
-void NivelColera::generarObstaculosBasicos()  // CAMBIA: Nivel2:: → NivelColera::
+void NivelColera::generarObstaculosBasicos()
 {
     QList<QRectF> formas = {
         QRectF(100, 100, 235, 37),

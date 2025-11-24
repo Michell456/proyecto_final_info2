@@ -15,11 +15,11 @@ class Proyectil;
 class Obstaculo;
 class Balde;
 
-class NivelColera : public nivel  // CAMBIA: Nivel2 → NivelColera
+class NivelColera : public nivel
 {
 public:
-    explicit NivelColera(QObject *parent = nullptr);  // CAMBIA: Nivel2 → NivelColera
-    ~NivelColera();  // CAMBIA: Nivel2 → NivelColera
+    explicit NivelColera(QObject *parent = nullptr);
+    ~NivelColera();
 
     // Métodos virtuales de la clase base
     void update() override;
@@ -33,6 +33,9 @@ public:
     void handleMousePress(QMouseEvent *event);
     void handleMouseMove(QMouseEvent *event);
     void handleMouseRelease(QMouseEvent *event);
+
+    QVector<QPointF> calcularTrayectoria(const QVector2D& velocidadInicial, const QPointF& posicionInicial);
+    float getGravedadActual() const;
 
 private:
     // Sprites del nivel
@@ -75,7 +78,6 @@ private:
     void dibujarLineaFuerza(const QPointF &inicio, const QPointF &fin);
     void dibujarTrayectoria(const QVector2D& velocidadInicial, const QPointF& posicionInicial);
     void limpiarLineas();
-    QVector<QPointF> calcularTrayectoria(const QVector2D& velocidadInicial, const QPointF& posicionInicial);
     bool estaSobreDoctor(const QPointF& punto);
     void cambiarProyectil();
     Proyectil* obtenerProyectilActivo();
