@@ -6,6 +6,13 @@
 #include <QGraphicsPixmapItem>
 #include <QTimer>
 #include <QKeyEvent>
+#include <QObject>
+#include <QPainter>
+#include <QMouseEvent>
+
+#include "nivel.h"
+
+class NivelColera;
 
 namespace Ui {class MainWindow;}
 
@@ -16,42 +23,24 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-public slots:
-    void actualizarAnimacion();
-    void actualizarMovimiento();
-
 protected:
-    void keyPressEvent(QKeyEvent *event) override;
-    void keyReleaseEvent(QKeyEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
+
+    // AÑADIR métodos de mouse (NivelColera)
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
 
 private:
     Ui::MainWindow *ui;
-    QGraphicsScene *scene;
-    QGraphicsPixmapItem *fig;
 
-    Nivel *nivelActual;
+    nivel *nivelActual = nullptr;
     QTimer *timer;
 
     void cargarMenuPrincipal();
     void cargarNivel1();
     void cargarNivel2();
     void cargarNivel3();
-
-    // Variables para animación
-    QPixmap spriteSheet;
-    int frameWidth;
-    int frameHeight;
-    int frameActual;
-    int totalFrames;
-    QTimer *timerAnimacion;
-    QTimer *timerMovimiento;
-    bool moviendoseDerecha;
-    bool moviendoseIzquierda;
-    bool moviendoseArriba;
-    bool moviendoseAbajo;
-    int velocidad;
-    int filaAnimacion;
 };
 #endif // MAINWINDOW_H
-

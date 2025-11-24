@@ -1,5 +1,5 @@
-#ifndef NIVEL2_H
-#define NIVEL2_H
+#ifndef NIVELCOLERA_H
+#define NIVELCOLERA_H
 
 #include "nivel.h"
 #include <QTimer>
@@ -15,13 +15,11 @@ class Proyectil;
 class Obstaculo;
 class Balde;
 
-class Nivel2 : public nivel
+class NivelColera : public nivel  // CAMBIA: Nivel2 → NivelColera
 {
-    Q_OBJECT
-
 public:
-    explicit Nivel2(QObject *parent = nullptr);
-    ~Nivel2();
+    explicit NivelColera(QObject *parent = nullptr);  // CAMBIA: Nivel2 → NivelColera
+    ~NivelColera();  // CAMBIA: Nivel2 → NivelColera
 
     // Métodos virtuales de la clase base
     void update() override;
@@ -89,4 +87,4 @@ private:
     void generarObstaculosBasicos();
 };
 
-#endif // NIVEL2_H
+#endif // NIVELCOLERA_H  // CAMBIA: NIVEL2_H → NIVELCOLERA_H

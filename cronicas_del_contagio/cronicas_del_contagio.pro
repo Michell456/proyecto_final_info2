@@ -11,25 +11,23 @@ CONFIG += c++17
 SOURCES += \
     Balde.cpp \
     Doctor.cpp \
-    Nivel2.cpp \
+    NivelColera.cpp \
     ObjetoEstatico.cpp \
     Obstaculo.cpp \
+    Proyectil.cpp \
     main.cpp \
     mainwindow.cpp \
     nivel.cpp \
 
 HEADERS += \
-<<<<<<< HEAD
     Balde.h \
     Doctor.h \
-    Nivel2.h \
+    NivelColera.h \
     ObjetoEstatico.h \
     Obstaculo.h \
-    mainwindow.h
-=======
+    Proyectil.h \
     mainwindow.h \
-    nivel.h \
->>>>>>> origin/main
+    nivel.h
 
 FORMS += \
     mainwindow.ui

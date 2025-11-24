@@ -110,3 +110,12 @@ QPixmap Balde::generarBaldeSprite(const QColor &color)
 
     return balde;
 }
+QPointF Balde::getPosicion() const
+{
+    return pos();  // Devuelve la posicion del balde en la escena
+}
+
+QPixmap Balde::getSprite() const
+{
+    return pixmap();  // Devuelve el sprite actual del balde
+}

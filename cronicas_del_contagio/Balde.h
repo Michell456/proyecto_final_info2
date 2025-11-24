@@ -16,6 +16,8 @@ public:
     void llenar();
     void destruir();
     Estado getEstado() const;
+    QPointF getPosicion() const;
+    QPixmap getSprite() const;
 
 private:
     Estado estado;

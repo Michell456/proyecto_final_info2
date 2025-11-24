@@ -1,9 +1,9 @@
 #include "obstaculo.h"
 
-Obstaculo::Obstaculo(int tipo, const QPointF &posicion, QGraphicsItem *parent)
+Obstaculo::Obstaculo(const QPointF &posicion, const QPixmap &sprite, QGraphicsItem *parent)
     : ObjetoEstatico(parent)
     , destruido(false)
-    , tipo(tipo)
+    , tipo(0)
 {
     setPos(posicion);
     setZValue(5);
@@ -23,4 +23,14 @@ void Obstaculo::destruir()
 int Obstaculo::getTipo() const
 {
     return tipo;
+}
+
+QPointF Obstaculo::getPosicion() const
+{
+    return pos();
+}
+
+QPixmap Obstaculo::getSprite() const
+{
+    return pixmap();
 }

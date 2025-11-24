@@ -6,11 +6,13 @@
 class Obstaculo : public ObjetoEstatico
 {
 public:
-    Obstaculo(int tipo, const QPointF &posicion, QGraphicsItem *parent = nullptr);
+    Obstaculo(const QPointF &posicion, const QPixmap &sprite, QGraphicsItem *parent = nullptr);
 
     bool estaDestruido() const;
     void destruir();
     int getTipo() const;
+    QPointF getPosicion() const;
+    QPixmap getSprite() const;
 
 private:
     bool destruido;

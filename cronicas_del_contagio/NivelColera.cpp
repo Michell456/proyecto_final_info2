@@ -1,4 +1,4 @@
-#include "nivel2.h"
+#include "nivelcolera.h"  // CAMBIA: nivel2.h → nivelcolera.h
 #include "doctor.h"
 #include "proyectil.h"
 #include "obstaculo.h"
@@ -9,8 +9,9 @@
 #include <QPainter>
 #include <cmath>
 #include <QFileInfo>
+#include <QTimer>
 
-Nivel2::Nivel2(QObject *parent)
+NivelColera::NivelColera(QObject *parent)
     : nivel()
     , doctor(nullptr)
     , proyectilActual(nullptr)
@@ -23,8 +24,8 @@ Nivel2::Nivel2(QObject *parent)
     inicializarRecursos();
     inicializarConfiguraciones();
 
-    // Crear doctor
-    doctor = new Doctor(this);
+    // CAMBIA: Doctor no necesita parámetro o usa nullptr
+    doctor = new Doctor();  // ← QUITAR 'this' o usar nullptr
 
     // Crear proyectiles
     proyectilPiedra = new Proyectil(configPiedra.sprite, configPiedra.gravedad,
@@ -47,10 +48,10 @@ Nivel2::Nivel2(QObject *parent)
     proyectilPiedra->setObjetivos(&obstaculos, &baldes);
     proyectilAmpolla->setObjetivos(&obstaculos, &baldes);
 
-    qDebug() << "Nivel 2 - Colera inicializado";
+    qDebug() << "Nivel Cólera inicializado";
 }
 
-Nivel2::~Nivel2()
+NivelColera::~NivelColera()  // CAMBIA: Nivel2 → NivelColera
 {
     delete doctor;
     delete proyectilPiedra;
@@ -59,7 +60,7 @@ Nivel2::~Nivel2()
     qDeleteAll(baldes);
 }
 
-void Nivel2::update()
+void NivelColera::update()  // CAMBIA: Nivel2:: → NivelColera::
 {
     tiempoTranscurrido++;
 
@@ -81,7 +82,7 @@ void Nivel2::update()
     }
 }
 
-void Nivel2::draw(QPainter &p)
+void NivelColera::draw(QPainter &p)  // CAMBIA: Nivel2:: → NivelColera::
 {
     // 1. Dibujar fondo
     p.drawPixmap(0, 0, fondo);
@@ -139,7 +140,7 @@ void Nivel2::draw(QPainter &p)
     // 7. Dibujar UI
     p.setPen(Qt::white);
     p.setFont(QFont("Arial", 16));
-    p.drawText(20, 30, QString("Nivel 2 - Cólera"));
+    p.drawText(20, 30, QString("Nivel - Cólera"));  // CAMBIA: Quitar "2 -"
     p.drawText(20, 60, QString("Tiempo: %1").arg(tiempoTranscurrido / 60));
 
     // Mostrar proyectil actual
@@ -168,7 +169,7 @@ void Nivel2::draw(QPainter &p)
     }
 }
 
-void Nivel2::handleInput(QKeyEvent *e)
+void NivelColera::handleInput(QKeyEvent *e)  // CAMBIA: Nivel2:: → NivelColera::
 {
     if (e->key() == Qt::Key_Space) {
         Proyectil* proyectil = obtenerProyectilActivo();
@@ -179,13 +180,13 @@ void Nivel2::handleInput(QKeyEvent *e)
     }
 }
 
-void Nivel2::handleKeyRelease(QKeyEvent *event)
+void NivelColera::handleKeyRelease(QKeyEvent *event)  // CAMBIA: Nivel2:: → NivelColera::
 {
     // No se necesita implementación por ahora
     Q_UNUSED(event)
 }
 
-bool Nivel2::chequearVictoria()
+bool NivelColera::chequearVictoria()  // CAMBIA: Nivel2:: → NivelColera::
 {
     // Victoria: todos los baldes están llenos
     for (Balde* balde : baldes) {
@@ -196,13 +197,13 @@ bool Nivel2::chequearVictoria()
     return true;
 }
 
-bool Nivel2::chequearDerrota()
+bool NivelColera::chequearDerrota()  // CAMBIA: Nivel2:: → NivelColera::
 {
     // Derrota: tiempo agotado (120 segundos)
     return (tiempoTranscurrido / 60) >= 120;
 }
 
-void Nivel2::handleMousePress(QMouseEvent *event)
+void NivelColera::handleMousePress(QMouseEvent *event)  // CAMBIA: Nivel2:: → NivelColera::
 {
     if (event->button() == Qt::LeftButton && estado == EstadoNivel::jugando) {
         Proyectil* proyectil = obtenerProyectilActivo();
@@ -226,18 +227,20 @@ void Nivel2::handleMousePress(QMouseEvent *event)
             float proyectilX = posDoctor.x() + 50;
             float proyectilY = posDoctor.y() + 80;
 
-            proyectilActual->setPosicion(QPointF(proyectilX, proyectilY));
-            proyectilActual->setVisible(true);
-
+            if (proyectilActual) {
+                proyectilActual->setPosicion(QPointF(proyectilX, proyectilY));
+                proyectilActual->setVisible(true);
+            }
         }
     }
 }
 
-void Nivel2::handleMouseMove(QMouseEvent *event)
+void NivelColera::handleMouseMove(QMouseEvent *event)  // CAMBIA: Nivel2:: → NivelColera::
 {
     if (arrastrando && clickEnDoctor) {
         puntoActual = event->pos();
 
+        if (!proyectilActual) return;
         // Dibujar línea de fuerza
         QPointF posProyectil = proyectilActual->getPosicion();
         QPixmap spriteProyectil = proyectilActual->getSprite();
@@ -261,10 +264,16 @@ void Nivel2::handleMouseMove(QMouseEvent *event)
     }
 }
 
-void Nivel2::handleMouseRelease(QMouseEvent *event)
+void NivelColera::handleMouseRelease(QMouseEvent *event)  // CAMBIA: Nivel2:: → NivelColera::
 {
     if (arrastrando && clickEnDoctor) {
         QPointF scenePos = event->pos();
+
+        if (!proyectilActual) {
+            arrastrando = false;
+            clickEnDoctor = false;
+            return;
+        }
 
         QPointF posProyectil = proyectilActual->getPosicion();
         QPixmap spriteProyectil = proyectilActual->getSprite();
@@ -288,7 +297,9 @@ void Nivel2::handleMouseRelease(QMouseEvent *event)
         doctor->continuarLanzamiento();
 
         QTimer::singleShot(200, [this, velocidadInicial, posProyectil]() {
-            proyectilActual->lanzar(velocidadInicial, posProyectil);
+            if (proyectilActual) {
+                proyectilActual->lanzar(velocidadInicial, posProyectil);
+            }
         });
 
         arrastrando = false;
@@ -297,11 +308,11 @@ void Nivel2::handleMouseRelease(QMouseEvent *event)
     }
 }
 
-void Nivel2::inicializarRecursos()
+void NivelColera::inicializarRecursos()  // CAMBIA: Nivel2:: → NivelColera::
 {
     // Cargar sprites desde recursos Qt
     fondo.load(":/sprites/Nivel2/fondoNivel2.png");
-    spriteObstaculos.load(":/sprites/Nivel2/obsaculos.png");
+    spriteObstaculos.load(":/sprites/Nivel2/obstaculos.png");
 
     if (fondo.isNull()) {
         qDebug() << "ERROR: No se pudo cargar el fondo desde recursos";
@@ -314,7 +325,7 @@ void Nivel2::inicializarRecursos()
     }
 }
 
-void Nivel2::inicializarConfiguraciones()
+void NivelColera::inicializarConfiguraciones()  // CAMBIA: Nivel2:: → NivelColera::
 {
     // Configuración para piedra
     configPiedra.gravedad = 0.8f;
@@ -350,7 +361,7 @@ void Nivel2::inicializarConfiguraciones()
     }
 }
 
-void Nivel2::crearObstaculos()
+void NivelColera::crearObstaculos()  // CAMBIA: Nivel2:: → NivelColera::
 {
     // Coordenadas de los obstáculos en el spritesheet
     struct CoordenadaObstaculo {
@@ -384,10 +395,9 @@ void Nivel2::crearObstaculos()
             obstaculos.append(nuevoObstaculo);
         }
     }
-
 }
 
-void Nivel2::crearBaldes()
+void NivelColera::crearBaldes()  // CAMBIA: Nivel2:: → NivelColera::
 {
     QList<QPointF> posicionesBaldes = {
         QPointF(800, 450),
@@ -399,16 +409,15 @@ void Nivel2::crearBaldes()
         Balde *nuevoBalde = new Balde(posicionesBaldes[i]);
         baldes.append(nuevoBalde);
     }
-
 }
 
-void Nivel2::dibujarLineaFuerza(const QPointF &inicio, const QPointF &fin)
+void NivelColera::dibujarLineaFuerza(const QPointF &inicio, const QPointF &fin)  // CAMBIA: Nivel2:: → NivelColera::
 {
     limpiarLineas();
     lineasTrayectoria.append(QLineF(inicio, fin));
 }
 
-void Nivel2::dibujarTrayectoria(const QVector2D& velocidadInicial, const QPointF& posicionInicial)
+void NivelColera::dibujarTrayectoria(const QVector2D& velocidadInicial, const QPointF& posicionInicial)  // CAMBIA: Nivel2:: → NivelColera::
 {
     limpiarLineas();
 
@@ -427,13 +436,13 @@ void Nivel2::dibujarTrayectoria(const QVector2D& velocidadInicial, const QPointF
     }
 }
 
-void Nivel2::limpiarLineas()
+void NivelColera::limpiarLineas()  // CAMBIA: Nivel2:: → NivelColera::
 {
     lineasTrayectoria.clear();
     puntosTrayectoria.clear();
 }
 
-QVector<QPointF> Nivel2::calcularTrayectoria(const QVector2D& velocidadInicial, const QPointF& posicionInicial)
+QVector<QPointF> NivelColera::calcularTrayectoria(const QVector2D& velocidadInicial, const QPointF& posicionInicial)  // CAMBIA: Nivel2:: → NivelColera::
 {
     QVector<QPointF> puntos;
     const float deltaTime = 0.05f;
@@ -466,7 +475,7 @@ QVector<QPointF> Nivel2::calcularTrayectoria(const QVector2D& velocidadInicial, 
     return puntos;
 }
 
-bool Nivel2::estaSobreDoctor(const QPointF& punto)
+bool NivelColera::estaSobreDoctor(const QPointF& punto)  // CAMBIA: Nivel2:: → NivelColera::
 {
     if (!doctor) return false;
 
@@ -477,7 +486,7 @@ bool Nivel2::estaSobreDoctor(const QPointF& punto)
     return areaDoctor.contains(punto);
 }
 
-void Nivel2::cambiarProyectil()
+void NivelColera::cambiarProyectil()  // CAMBIA: Nivel2:: → NivelColera::
 {
     if (proyectilActual == proyectilPiedra) {
         proyectilActual = proyectilAmpolla;
@@ -486,12 +495,12 @@ void Nivel2::cambiarProyectil()
     }
 }
 
-Proyectil* Nivel2::obtenerProyectilActivo()
+Proyectil* NivelColera::obtenerProyectilActivo()  // CAMBIA: Nivel2:: → NivelColera::
 {
     return proyectilActual;
 }
 
-float Nivel2::calcularFuerza(float distancia)
+float NivelColera::calcularFuerza(float distancia)  // CAMBIA: Nivel2:: → NivelColera::
 {
     float distanciaMin = 20;
     float distanciaMax = 200;
@@ -502,7 +511,7 @@ float Nivel2::calcularFuerza(float distancia)
     return ((distancia - distanciaMin) / (distanciaMax - distanciaMin)) * (fuerzaMax - fuerzaMin) + fuerzaMin;
 }
 
-QPixmap Nivel2::generarPiedraSprite()
+QPixmap NivelColera::generarPiedraSprite()  // CAMBIA: Nivel2:: → NivelColera::
 {
     QPixmap piedra(80, 80);
     piedra.fill(Qt::transparent);
@@ -514,7 +523,7 @@ QPixmap Nivel2::generarPiedraSprite()
     return piedra;
 }
 
-QPixmap Nivel2::generarAmpollaSprite()
+QPixmap NivelColera::generarAmpollaSprite()  // CAMBIA: Nivel2:: → NivelColera::
 {
     QPixmap ampolla(40, 55);
     ampolla.fill(Qt::transparent);
@@ -527,7 +536,7 @@ QPixmap Nivel2::generarAmpollaSprite()
     return ampolla;
 }
 
-void Nivel2::generarObstaculosBasicos()
+void NivelColera::generarObstaculosBasicos()  // CAMBIA: Nivel2:: → NivelColera::
 {
     QList<QRectF> formas = {
         QRectF(100, 100, 235, 37),
@@ -553,5 +562,4 @@ void Nivel2::generarObstaculosBasicos()
         Obstaculo *obstaculo = new Obstaculo(formas[i].topLeft(), sprite);
         obstaculos.append(obstaculo);
     }
-
 }
