@@ -6,6 +6,7 @@ jugador1::jugador1(QObject *parent)
     : QObject(parent)
     , frameActual(0)
     , estado(quieto)
+    , vida(4)
     , velocidad(3)
     , anchoSprite(20)
     , altoSprite(50)
@@ -13,11 +14,18 @@ jugador1::jugador1(QObject *parent)
     , teclaArriba(false)
     , teclaDerecha(false)
     , teclaIzquierda(false)
+    , inmune(false)
 {
     timerAnimacion = new QTimer(this);
     connect(timerAnimacion, &QTimer::timeout, this, &jugador1::cambiarFrame);
 
     cargarSprites();
+
+    tiempoInmunidad = 1500; // 1.5 segundos de inmunidad
+
+    timerInmunidad = new QTimer(this);
+    timerInmunidad->setSingleShot(true);
+    connect(timerInmunidad, &QTimer::timeout, this, &jugador1::finInmunidad);
 }
 
 jugador1::~jugador1(){
@@ -52,6 +60,11 @@ void jugador1::cargarSprites(){
 
 }
 
+void jugador1::activarInmunidad(int milisegundos) {
+    inmune = true;
+    timerInmunidad->start(milisegundos);
+}
+
 void jugador1::draw(QPainter &painter){
 
     QPixmap spriteActual;
@@ -67,6 +80,12 @@ void jugador1::draw(QPainter &painter){
         spriteActual = spriteQuieto;
     }
 
+    if(inmune){
+        painter.setOpacity(0.5);
+    }
+    else{
+        painter.setOpacity(1.0);
+    }
     painter.drawPixmap(posicion.x(), posicion.y(), spriteActual);
 
 }
@@ -185,4 +204,12 @@ QPoint jugador1::getPosicion() const
 
 QRect jugador1::getRect() const {
     return QRect(posicion.x(), posicion.y(), anchoSprite, altoSprite);
+}
+
+int jugador1::consultarVida(){
+    return vida;
+}
+
+void jugador1::quitarVida(){
+    vida--;
 }

@@ -40,6 +40,9 @@ private:
     void spawnEnemigo();
     void limpiarEnemigos();
 
+    void verificarColisiones();
+    void manejarColision(jugador1 &jugador, enfermo *enfermo);
+
     int oleadaActual;
     int contadorOleadas;
     int intervaloEntreOleadas;

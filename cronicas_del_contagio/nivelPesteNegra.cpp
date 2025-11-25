@@ -30,6 +30,8 @@ nivelPesteNegra::nivelPesteNegra() {
 
 void nivelPesteNegra::update(){
 
+    chequearDerrota();
+
     fondoX1 -= velocidadFondo;
     fondoX2 -= velocidadFondo;
 
@@ -52,6 +54,7 @@ void nivelPesteNegra::update(){
     for(enfermo *enfermoActivo : enfermosActivos) {
         enfermoActivo->update();
     }
+    verificarColisiones();
     limpiarEnemigos();
 
 }
@@ -85,10 +88,47 @@ void nivelPesteNegra::draw(QPainter &p){
     p.drawPixmap(fondoX2, 0, fondo);
 
     jugador.draw(p);
+    p.setOpacity(1.0);
 
     for(enfermo *enfermo : enfermosActivos) {
         enfermo->draw(p);
     }
+
+    p.setPen(Qt::white);
+    p.setFont(QFont("Times New Roman", 14, QFont::Bold));
+
+    QString textoStats;
+    textoStats += "Vidas: " + QString::number(jugador.consultarVida()) + "\n";
+
+    p.setBrush(QColor(0,0,0,150));
+    p.setPen(Qt::NoPen);
+    p.drawRect(10, 10, 100, 40);
+
+    p.setPen(Qt::white);
+    p.drawText(20, 35, textoStats);
+
+}
+
+void nivelPesteNegra::verificarColisiones(){
+
+    QRect rectJugador = jugador.getRect();
+
+    for(enfermo *enfermo : enfermosActivos) {
+        QRect rectEnfermo = enfermo->getRect();
+
+        if(rectJugador.intersects(rectEnfermo)) {
+            if(!jugador.estaInmune()) {
+                manejarColision(jugador, enfermo);
+            }
+            break;
+        }
+    }
+
+}
+void nivelPesteNegra::manejarColision(jugador1 &jugador, enfermo *enfermo){
+
+    jugador.activarInmunidad(1500);
+    jugador.quitarVida();
 
 }
 
@@ -100,5 +140,11 @@ void nivelPesteNegra::handleKeyRelease(QKeyEvent *event){
     jugador.keyReleaseEvent(event);
 }
 
-bool nivelPesteNegra::chequearVictoria(){}
-bool nivelPesteNegra::chequearDerrota(){}
+bool nivelPesteNegra::chequearVictoria(){
+
+}
+bool nivelPesteNegra::chequearDerrota(){
+    if(jugador.consultarVida() == 0){
+
+    }
+}

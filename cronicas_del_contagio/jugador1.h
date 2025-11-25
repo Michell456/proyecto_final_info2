@@ -32,7 +32,18 @@ public:
     void setPosicion(int x, int y);
     QPoint getPosicion() const;
 
+    int consultarVida();
+    void quitarVida();
+    bool estaInmune() const { return inmune; }
+    void activarInmunidad(int milisegundos);
+    void finInmunidad() { inmune = false; }
+
 private:
+
+    int vida;
+    bool inmune;
+    int tiempoInmunidad;
+    QTimer *timerInmunidad;
 
     void cargarSprites();
     void cambiarFrame();
