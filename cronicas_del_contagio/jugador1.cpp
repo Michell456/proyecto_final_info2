@@ -5,14 +5,14 @@
 jugador1::jugador1(QObject *parent)
     : QObject(parent)
     , frameActual(0)
-    , direccion(1) // Mirando a la derecha
     , estado(quieto)
     , velocidad(3)
+    , anchoSprite(20)
+    , altoSprite(50)
     , teclaAbajo(false)
     , teclaArriba(false)
     , teclaDerecha(false)
     , teclaIzquierda(false)
-    , teclaPresionada(false)
 {
     timerAnimacion = new QTimer(this);
     connect(timerAnimacion, &QTimer::timeout, this, &jugador1::cambiarFrame);
@@ -76,8 +76,6 @@ void jugador1::update(const QSize &tamanioVentana, int velocidadFondo)
     int nuevaX = 0;
     int nuevaY = 0;
 
-    int anchoSprite = 20;
-    int altoSprite = 50;
     int margen = 10;
 
     if(estado == caminando) {
@@ -183,4 +181,8 @@ void jugador1::setPosicion(int x, int y)
 QPoint jugador1::getPosicion() const
 {
     return posicion;
+}
+
+QRect jugador1::getRect() const {
+    return QRect(posicion.x(), posicion.y(), anchoSprite, altoSprite);
 }

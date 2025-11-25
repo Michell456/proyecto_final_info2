@@ -3,7 +3,7 @@
 
 #include "nivel.h"
 #include "jugador1.h"
-//#include "enemigo.h"
+#include "enfermo.h"
 //#include "item.h"
 
 #include <QVector>
@@ -24,14 +24,25 @@ public:
 
 private:
     jugador1 jugador;
-    //QVector<Enemigo*> enemigos;
     //QVector<Item*> items;
 
-    // fondo con scroll
+    // Fondo con scroll
     QPixmap fondo;
     int fondoX1;
     int fondoX2;
     int velocidadFondo;
+
+    // Spawn de enemigos
+    int contadorSpawn;
+    int intervaloSpawn;
+    int probabilidadSpawn;
+    QList<enfermo*> enfermosActivos;
+    void spawnEnemigo();
+    void limpiarEnemigos();
+
+    int oleadaActual;
+    int contadorOleadas;
+    int intervaloEntreOleadas;
 
     const QSize tamanioVentana = QSize(1000, 600);
 

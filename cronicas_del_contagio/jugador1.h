@@ -22,9 +22,6 @@ public:
 
     void update(const QSize &tamanioVentana, int velocidadFondo);
     void draw(QPainter &painter);
-    void moverDerecha();
-    void moverIzquierda();
-    void parar();
     void actualizarDireccion();
 
     void keyPressEvent(QKeyEvent *event);
@@ -36,35 +33,27 @@ public:
     QPoint getPosicion() const;
 
 private:
-    float x, y;
-    float velocidad;
-    bool moverIzq;
-    bool moverDer;
-    bool moverArriba;
-    bool moverAbajo;
 
     void cargarSprites();
     void cambiarFrame();
     QVector<QPixmap> spritesCaminandoDerecha;
     QVector<QPixmap> spritesCaminandoIzquierda;
     QPixmap spriteQuieto;
+    int anchoSprite;
+    int altoSprite;
 
     int frameActual;
-    int direccion; // 1: derecha, -1: izquierda, 2: arriba, -2: abajo
     Estado estado;
     QPoint posicion;
+    QPoint direccionActual;
+    float velocidad;
 
     QTimer *timerAnimacion;
-    bool teclaPresionada;
-
     bool teclaDerecha;
     bool teclaIzquierda;
     bool teclaArriba;
     bool teclaAbajo;
-    QPoint direccionActual;
 
-    int ancho = 40;
-    int alto = 60;
 };
 
 

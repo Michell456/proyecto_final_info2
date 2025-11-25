@@ -1,4 +1,6 @@
 #include "nivelPesteNegra.h"
+#include <QRandomGenerator>
+#include <QPainter>
 
 nivelPesteNegra::nivelPesteNegra() {
 
@@ -14,7 +16,14 @@ nivelPesteNegra::nivelPesteNegra() {
 
     jugador.setPosicion(12,300);
 
-    //spawnEnemigos();
+    // Control spawn enemigos
+    contadorSpawn = 0;
+    intervaloSpawn = 20;  // Aprox 0.5 segundos (60 FPS × 0.5)
+    probabilidadSpawn = 80;  // 80% de probabilidad
+    oleadaActual = 1;
+    contadorOleadas = 0;
+    intervaloEntreOleadas = 300; // 5 segundos
+
     //spawnItems();
 
 }
@@ -33,6 +42,41 @@ void nivelPesteNegra::update(){
 
     jugador.update(tamanioVentana,velocidadFondo);
 
+    contadorSpawn++;
+    if(contadorSpawn >= intervaloSpawn) {
+        contadorSpawn = 0;
+        if(QRandomGenerator::global()->bounded(100) < probabilidadSpawn) {
+            spawnEnemigo();
+        }
+    }
+    for(enfermo *enfermoActivo : enfermosActivos) {
+        enfermoActivo->update();
+    }
+    limpiarEnemigos();
+
+}
+
+void nivelPesteNegra::limpiarEnemigos() {
+
+    for(int i = enfermosActivos.size() - 1; i >= 0; i--) {
+        enfermo *enfermo = enfermosActivos[i];
+
+        if(enfermo->getPosicion().x() + enfermo->getAncho() < 0) {
+            enfermosActivos.removeAt(i);
+            delete enfermo;
+        }
+    }
+}
+
+void nivelPesteNegra::spawnEnemigo() {
+    enfermo *nuevoEnfermo = new enfermo();
+    nuevoEnfermo->seleccionarSkin();
+
+    int posX = tamanioVentana.width()+3;
+    int posY = QRandomGenerator::global()->bounded(230, tamanioVentana.height() -200);
+
+    nuevoEnfermo->setPosicion(posX, posY);
+    enfermosActivos.append(nuevoEnfermo);
 }
 
 void nivelPesteNegra::draw(QPainter &p){
@@ -40,13 +84,11 @@ void nivelPesteNegra::draw(QPainter &p){
     p.drawPixmap(fondoX1, 0, fondo);
     p.drawPixmap(fondoX2, 0, fondo);
 
-    jugador.draw(p);/*
-    for (auto e : enemigos) e->draw(p);
-    for (auto it : items) it->draw(p);
+    jugador.draw(p);
 
-    p.setPen(Qt::white);
-    p.drawText(10, 20, "Vidas: " + QString::number(vidas));
-    p.drawText(10, 40, "Hierbas: " + QString::number(hierbasRecogidas)); */
+    for(enfermo *enfermo : enfermosActivos) {
+        enfermo->draw(p);
+    }
 
 }
 
