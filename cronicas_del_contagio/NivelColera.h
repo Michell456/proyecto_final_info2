@@ -89,4 +89,4 @@ private:
     void generarObstaculosBasicos();
 };
 
-#endif // NIVELCOLERA_H  // CAMBIA: NIVEL2_H → NIVELCOLERA_H
+#endif // NIVELCOLERA_H

@@ -39,9 +39,7 @@ void Doctor::cargarSpriteSheet()
         QPixmap frameInicial = spriteSheet.copy(frameX, frameY, frameWidth, frameHeight);
         spriteActual = frameInicial.scaled(frameWidth * 1.2, frameHeight * 1.2,
                                            Qt::KeepAspectRatio, Qt::SmoothTransformation);
-        qDebug() << "Sprite del doctor cargado correctamente desde recursos";
     } else {
-        qDebug() << "ERROR: No se pudo cargar el sprite del doctor desde recursos";
         generarSpriteFallback();
     }
 }
@@ -54,7 +52,6 @@ void Doctor::iniciarLanzamiento()
     if (timerAnimacion) {
         timerAnimacion->start();
     }
-    qDebug() << "Iniciando animación de lanzamiento - Fase 1 (frames 0-5)";
 }
 
 void Doctor::continuarLanzamiento()
@@ -64,7 +61,6 @@ void Doctor::continuarLanzamiento()
     if (timerAnimacion) {
         timerAnimacion->start();
     }
-    qDebug() << "Continuando animación de lanzamiento - Fase 2 (frames 6-12)";
 }
 
 void Doctor::detenerAnimacion()

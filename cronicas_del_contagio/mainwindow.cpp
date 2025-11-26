@@ -39,8 +39,8 @@ void MainWindow::cargarNivel1() {
         delete nivelActual;
         nivelActual = nullptr;
     }
-    //nivelActual = new nivelPesteNegra();  // COMENTAR
-    nivelActual = new NivelColera();  // TEMPORAL: usar tu nivel
+    //nivelActual = new nivelPesteNegra();
+    nivelActual = new NivelColera();  // TEMPORAL
 }
 
 void MainWindow::cargarNivel2() {

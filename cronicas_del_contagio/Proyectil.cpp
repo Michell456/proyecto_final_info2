@@ -5,6 +5,7 @@
 #include <QPainter>
 #include <QElapsedTimer>
 #include <cmath>
+#include <QVector2D>
 #include "nivelcolera.h"
 
 Proyectil::Proyectil(const QPixmap &sprite, float gravedad, float factorRebote,
@@ -135,9 +136,9 @@ void Proyectil::onTimerMovimiento()
 {
     if (!enMovimiento) return;
 
-    // Verificar colisiones ANTES de actualizar posición
+    //Verificar colisiones antes de actualizar posicion
     if (verificarColision()) {
-        return; // Si hay colisión, salir
+        return; //Si hay colision, salir
     }
 
     actualizarPosicion();
@@ -172,9 +173,6 @@ void Proyectil::detenerMovimiento()
         setZValue(9);
     }
 
-    qDebug() << "Proyectil detenido - Tipo:" << (config.tipo == PIEDRA ? "PIEDRA" : "AMPOLLA")
-             << "Colisiones:" << colisionesRealizadas;
-
     emit proyectilDetenido();
 }
 
@@ -198,17 +196,17 @@ bool Proyectil::verificarColision()
 {
     if (!enMovimiento) return false;
 
-    // Área del proyectil basada en el sprite real
+    //area del proyectil
     QRectF areaProyectil = boundingRect();
     areaProyectil.moveTo(posicion);
 
-    // Ajustar área para que sea más precisa (opcional, según necesidad)
-    areaProyectil.adjust(5, 5, -5, -5);
+    if (config.tipo == PIEDRA) {
+        areaProyectil.adjust(15, 15, -15, -15);
+    } else {
+        areaProyectil.adjust(5, 5, -5, -5);
+    }
 
-    qDebug() << "\n=== VERIFICACIÓN DE COLISIONES ===";
-    qDebug() << "📍 Proyectil - Pos:" << posicion << "Área:" << areaProyectil;
-
-    // Primero verificar colisiones con obstáculos
+    // Primero verificar colisiones con obstaculos
     if (obstaculos) {
         for (int i = 0; i < obstaculos->size(); ++i) {
             Obstaculo* obstaculo = obstaculos->at(i);
@@ -219,9 +217,11 @@ bool Proyectil::verificarColision()
             areaObstaculo.moveTo(posObstaculo);
 
             if (areaProyectil.intersects(areaObstaculo)) {
-                qDebug() << "💥 COLISIÓN CON OBSTÁCULO" << i;
-                manejarColisionConObstaculo(i);
-                return true;
+                // Verificar que no sea la misma colision consecutiva
+                if (i != indiceUltimoObstaculoChocado || !haRebotado) {
+                    manejarColisionConObstaculo(i);
+                    return true;
+                }
             }
         }
     }
@@ -237,10 +237,18 @@ bool Proyectil::verificarColision()
             areaBalde.moveTo(posBalde);
 
             if (areaProyectil.intersects(areaBalde)) {
-                qDebug() << "💥 COLISIÓN CON BALDE" << i;
                 manejarColisionConBalde(i);
                 return true;
             }
+        }
+    }
+
+    if (indiceUltimoObstaculoChocado != -1) {
+        QRectF areaUltimoObstaculo = obstaculos->at(indiceUltimoObstaculoChocado)->getAreaColision();
+        areaUltimoObstaculo.moveTo(obstaculos->at(indiceUltimoObstaculoChocado)->pos());
+
+        if (!areaProyectil.intersects(areaUltimoObstaculo)) {
+            indiceUltimoObstaculoChocado = -1;
         }
     }
 
@@ -249,32 +257,43 @@ bool Proyectil::verificarColision()
 
 void Proyectil::manejarColisionConObstaculo(int indiceObstaculo)
 {
-    if (indiceUltimoObstaculoChocado == indiceObstaculo) {
-        return; // Evitar colisiones múltiples con el mismo obstáculo
-    }
 
     Obstaculo* obstaculo = obstaculos->at(indiceObstaculo);
     if (!obstaculo || obstaculo->estaDestruido()) return;
 
-    qDebug() << "🔄 Manejando colisión con obstáculo" << indiceObstaculo;
 
     if (config.tipo == PIEDRA && config.puedeDestruirObstaculos) {
         obstaculo->destruir();
         colisionesRealizadas++;
-        qDebug() << "Piedra destruyó obstáculo - Colisiones:" << colisionesRealizadas;
 
         // Aplicar pequeño rebote
         velocidad.setY(-velocidad.y() * 0.3f);
         velocidad.setX(velocidad.x() * 0.6f);
 
-    } else if (config.tipo == AMPOLLA && config.puedeRebotar) {
-        manejarRebote();
-        indiceUltimoObstaculoChocado = indiceObstaculo;
-        colisionesRealizadas++;
-        qDebug() << "Ampolla rebotó - Rebotes:" << colisionesRealizadas;
+    } else if (config.tipo == AMPOLLA) {
+        if (!haRebotado) {
+            manejarRebote();
+            indiceUltimoObstaculoChocado = indiceObstaculo;
+            haRebotado = true;
+            colisionesRealizadas++;
+
+            // Asegurarse de que se separe del obstaculo
+            QRectF areaObstaculo = obstaculo->getAreaColision();
+            areaObstaculo.moveTo(obstaculo->pos());
+
+            // Mover la ampolla fuera del obstaculo
+            if (posicion.y() < areaObstaculo.top()) {
+                posicion.setY(areaObstaculo.top() - 20);
+            } else {
+                posicion.setY(areaObstaculo.bottom() + 20);
+            }
+
+        } else {
+            detenerMovimiento();
+            return;
+        }
     }
 
-    // Verificar si debe detenerse
     if (colisionesRealizadas >= config.maxColisiones) {
         detenerMovimiento();
     }
@@ -286,11 +305,9 @@ void Proyectil::manejarColisionConBalde(int indiceBalde)
 
     if (config.tipo == AMPOLLA && config.puedeLlenarBaldes) {
         balde->llenar();
-        qDebug() << "Ampolla llenó balde" << (indiceBalde + 1);
     } else if (config.tipo == PIEDRA) {
         if (!balde->estaLleno() && !balde->estaDestruido()) {
             balde->destruir();
-            qDebug() << "Piedra destruyó balde" << (indiceBalde + 1);
         }
     }
 
@@ -300,37 +317,38 @@ void Proyectil::manejarColisionConBalde(int indiceBalde)
 
 void Proyectil::manejarRebote()
 {
-    // Rebote más realista
-    velocidad.setY(-velocidad.y() * config.factorRebote);
-    velocidad.setX(velocidad.x() * 0.9f); // Reducir velocidad horizontal también
 
-    // Pequeño ajuste de posición para evitar que se quede pegado
-    posicion.setY(posicion.y() - 5);
+    float factorVertical = 0.7f;
+    float factorHorizontal = 0.8f;
 
-    qDebug() << "🔁 Rebote aplicado - Nueva velocidad:" << velocidad.length()
-             << "Factor:" << config.factorRebote;
+    velocidad.setY(-velocidad.y() * factorVertical);
+    velocidad.setX(velocidad.x() * factorHorizontal);
+
+    //velocidad minima despues del rebote
+    float velocidadMinima = 3.0f;
+    if (velocidad.length() < velocidadMinima) {
+        velocidad = velocidad.normalized() * velocidadMinima;
+    }
+
+    // Ajuste de posicion para evitar que se quede pegado
+    posicion.setY(posicion.y() - 15);
+
 }
 
 void Proyectil::actualizarPosicion()
 {
-    // USAR LOS MISMOS VALORES que la predicción
-    const float deltaTime = 0.01f;           // MISMO que NivelColera::calcularTrayectoria()
-    const float resistenciaAire = 0.995f;    // MISMO que NivelColera::calcularTrayectoria()
+    const float deltaTime = 0.01f;
+    const float resistenciaAire = 0.995f;
 
-    // FÍSICA IDÉNTICA a la predicción
     velocidad.setY(velocidad.y() + config.gravedad);
     velocidad *= resistenciaAire;
 
-    // MOVIMIENTO IDÉNTICO a la predicción
     posicion.setX(posicion.x() + velocidad.x() * deltaTime * 60.0f);
     posicion.setY(posicion.y() + velocidad.y() * deltaTime * 60.0f);
 
     setPos(posicion);
 
-    // Rotación natural basada en la dirección
     float angulo = std::atan2(velocidad.y(), velocidad.x()) * 180.0f / M_PI;
     setRotation(angulo);
 
-    // Debug opcional (puedes comentarlo después)
-    // qDebug() << "Proyectil actualizado - Pos:" << posicion << "Vel:" << velocidad.length();
 }

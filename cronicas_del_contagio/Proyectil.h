@@ -77,7 +77,6 @@ private:
     bool haRebotado;
     int indiceUltimoObstaculoChocado;
 
-    void aplicarGravedad();
     void actualizarPosicion();
     bool verificarColision();
     void manejarColisionConObstaculo(int indiceObstaculo);

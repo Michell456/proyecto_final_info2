@@ -25,6 +25,7 @@ NivelColera::NivelColera(QObject *parent)
     inicializarConfiguraciones();
 
     doctor = new Doctor();
+    doctor->setPosicion(QPointF(100, 350));
 
     // Crear proyectiles
     proyectilPiedra = new Proyectil(configPiedra.sprite, configPiedra.gravedad,
@@ -86,7 +87,7 @@ void NivelColera::draw(QPainter &p)
     // 1. Dibujar fondo
     p.drawPixmap(0, 0, fondo);
 
-    // 2. Dibujar obstáculos
+    // 2. Dibujar obstaculos
     for (Obstaculo* obstaculo : obstaculos) {
         if (!obstaculo->estaDestruido()) {
             QPointF pos = obstaculo->getPosicion();
@@ -122,7 +123,7 @@ void NivelColera::draw(QPainter &p)
         p.drawPixmap(pos.x(), pos.y(), sprite);
     }
 
-    // 6. Dibujar líneas de trayectoria (si estamos arrastrando)
+    // 6. Dibujar lineas de trayectoria
     if (arrastrando) {
         p.setPen(QPen(Qt::red, 3));
         for (const QLineF& linea : lineasTrayectoria) {
@@ -369,16 +370,52 @@ void NivelColera::crearObstaculos()
     };
 
     QList<CoordenadaObstaculo> coordenadas = {
-        {18, 13, 235, 37, QPointF(100, 100)},
-        {19, 70, 320, 37, QPointF(150, 200)},
-        {21, 127, 403, 38, QPointF(50, 300)},
-        {21, 189, 154, 38, QPointF(400, 150)},
-        {341, 196, 37, 230, QPointF(700, 100)},
-        {268, 197, 38, 160, QPointF(600, 150)},
-        {213, 198, 38, 69, QPointF(500, 250)},
-        {14, 249, 107, 38, QPointF(300, 350)},
-        {213, 292, 38, 37, QPointF(200, 400)},
-        {11, 322, 62, 38, QPointF(350, 450)}
+
+        // sprites maderas
+        //{18, 13, 235, 37, QPointF(100, 100)}, //1
+        //{19, 70, 320, 37, QPointF(150, 200)}, //2
+        //{21, 127, 403, 38, QPointF(50, 300)}, //3
+        //{21, 189, 154, 38, QPointF(400, 150)}, //4
+        //{341, 196, 37, 230, QPointF(700, 100)}, //5
+        //{268, 197, 38, 160, QPointF(600, 150)}, //6
+        //{213, 198, 38, 69, QPointF(750, 200)}, //7
+        //{14, 249, 107, 38, QPointF(300, 350)}, //8
+        //{213, 292, 38, 37, QPointF(200, 400)}, //9
+        //{11, 322, 62, 38, QPointF(350, 450)} //10
+
+        //base plataforma
+
+        {213, 198, 38, 69, QPointF(1500, 800)}, //7
+        {213, 198, 38, 69, QPointF(800, 800)}, //7
+        {21, 127, 403, 38, QPointF(1150, 770)}, //3
+        {21, 127, 403, 38, QPointF(800, 770)}, //3
+        {21, 189, 154, 38, QPointF(800, 770)}, //4
+
+        //primer piso
+
+        {268, 197, 38, 160, QPointF(950, 615)}, //6
+        {268, 197, 38, 160, QPointF(1150, 615)}, //6
+        {268, 197, 38, 160, QPointF(1350, 615)}, //6
+        {19, 70, 320, 37, QPointF(1300, 600)}, //2
+        {19, 70, 320, 37, QPointF(900, 600)}, //2
+        {14, 249, 107, 38, QPointF(1200, 600)}, //8
+
+        //segundo piso
+
+        {213, 198, 38, 69, QPointF(1200, 535)}, //7
+        {213, 198, 38, 69, QPointF(900, 535)}, //7
+        {213, 198, 38, 69, QPointF(1500, 535)}, //7
+        {21, 127, 403, 38, QPointF(1150, 500)}, //3
+        {21, 127, 403, 38, QPointF(800, 500)}, //3
+        {14, 249, 107, 38, QPointF(700, 500)}, //8
+
+        //tercer piso
+
+        {268, 197, 38, 160, QPointF(1350, 350)}, //6
+        {268, 197, 38, 160, QPointF(950, 350)}, //6
+        {21, 127, 403, 38, QPointF(1150, 370)}, //3
+        {21, 127, 403, 38, QPointF(800, 370)}, //3
+
     };
 
     if (spriteObstaculos.isNull()) {
@@ -399,24 +436,29 @@ void NivelColera::crearObstaculos()
 void NivelColera::crearBaldes()
 {
     QList<QPointF> posicionesBaldes = {
-        QPointF(800, 450),
-        QPointF(200, 450),
-        QPointF(500, 300)
+
+        QPointF(850, 710),
+        QPointF(1225, 710),
+        QPointF(1000, 540),
+        //QPointF(1300, 540),
+        QPointF(1150, 440),
+        QPointF(1000, 440),
+        QPointF(1275, 440),
+        QPointF(1150, 310),
+        QPointF(1400, 310),
+        QPointF(850, 310)
+
     };
 
-    qDebug() << "\n🎯 CREANDO BALDES:";
     for (int i = 0; i < posicionesBaldes.size(); ++i) {
         Balde *nuevoBalde = new Balde(posicionesBaldes[i]);
-        baldes.append(nuevoBalde);  // ← CAMBIAR: baldes en lugar de obstaculos
-        qDebug() << "   Balde" << i << "en posición:" << posicionesBaldes[i];
+        baldes.append(nuevoBalde);
 
-        // Verificar área de colisión inmediatamente
+        // Verificar area de colision inmediatamente
         QRectF area = nuevoBalde->getAreaColision();
         area.moveTo(posicionesBaldes[i]);
-        qDebug() << "   Área absoluta calculada:" << area;
     }
 
-    qDebug() << "Total baldes creados:" << baldes.size();
 }
 
 void NivelColera::dibujarLineaFuerza(const QPointF &inicio, const QPointF &fin)  // CAMBIA: Nivel2:: → NivelColera::

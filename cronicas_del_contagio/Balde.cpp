@@ -16,15 +16,12 @@ Balde::Balde(const QPointF &posicion, QGraphicsItem *parent)
     // Si no se cargan los sprites, generar unos básicos
     if (spriteSucio.isNull()) {
         spriteSucio = generarBaldeSprite(Qt::gray);
-        qDebug() << "Balde sucio generado";
     }
     if (spriteLleno.isNull()) {
         spriteLleno = generarBaldeSprite(Qt::blue);
-        qDebug() << "Balde lleno generado";
     }
     if (spriteDestruido.isNull()) {
         spriteDestruido = generarBaldeSprite(Qt::red);
-        qDebug() << "Balde destruido generado";
     }
 
     // Escalar sprites
@@ -34,11 +31,8 @@ Balde::Balde(const QPointF &posicion, QGraphicsItem *parent)
 
     setPixmap(spriteSucio);
 
-    // ¡CORREGIDO! Área de colisión RELATIVA (no absoluta)
-    areaColision = QRectF(15, 15, 50, 50);  // Relativo a la posición del balde
+    areaColision = QRectF(25, 15, 30, 15); //Relativo a la posicion del balde
 
-    qDebug() << "Balde creado - Posición:" << posicion
-             << "Área colisión relativa:" << areaColision;
 }
 
 bool Balde::estaLleno() const
@@ -54,25 +48,21 @@ bool Balde::estaDestruido() const
 void Balde::llenar()
 {
     if (estado != SUCIO) {
-        qDebug() << "Balde no se puede llenar - Estado actual:" << estado;
         return;
     }
 
     estado = LLENO;
     actualizarSprite();
-    qDebug() << "¡Balde cambiado a LLENO!";
 }
 
 void Balde::destruir()
 {
     if (estado != SUCIO) {
-        qDebug() << "Balde no se puede destruir - Estado actual:" << estado;
         return;
     }
 
     estado = DESTRUIDO;
     actualizarSprite();
-    qDebug() << "¡Balde cambiado a DESTRUIDO!";
 }
 
 Balde::Estado Balde::getEstado() const
@@ -85,15 +75,12 @@ void Balde::actualizarSprite()
     switch (estado) {
     case SUCIO:
         setPixmap(spriteSucio);
-        qDebug() << "Balde cambió a estado: SUCIO";
         break;
     case LLENO:
         setPixmap(spriteLleno);
-        qDebug() << "Balde cambió a estado: LLENO";
         break;
     case DESTRUIDO:
         setPixmap(spriteDestruido);
-        qDebug() << "Balde cambió a estado: DESTRUIDO";
         break;
     }
 }
@@ -133,7 +120,7 @@ QPixmap Balde::getSprite() const
 QRectF Balde::getAreaColision() const
 {
     QRectF area = areaColision;
-    qDebug() << "   📐 Balde - Área relativa:" << area << "Posición:" << pos();
+    area.moveTopLeft(pos() + areaColision.topLeft());
     return area;
 }
 
