@@ -4,6 +4,7 @@
 #include "nivel.h"
 #include "jugador1.h"
 #include "enfermo.h"
+#include "enfermointeligente.h"
 //#include "item.h"
 
 #include <QVector>
@@ -40,12 +41,16 @@ private:
     void spawnEnemigo();
     void limpiarEnemigos();
 
+    // Enemigo inteligente
+    enfermoInteligente *inteligenteActual;
+    int contadorInteligente;
+    int aparicionesInteligente;
+    int frecuenciaInteligente;
+    void spawnInteligente();
+    bool dibujarInteligente;
+
     void verificarColisiones();
     void manejarColision(jugador1 &jugador, enfermo *enfermo);
-
-    int oleadaActual;
-    int contadorOleadas;
-    int intervaloEntreOleadas;
 
     const QSize tamanioVentana = QSize(1000, 600);
 

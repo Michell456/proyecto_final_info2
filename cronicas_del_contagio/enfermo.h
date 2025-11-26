@@ -20,12 +20,12 @@ public:
     QRect getRect() const;
 
     void setPosicion(int x, int y);
-    QPoint getPosicion()const;
+    virtual QPoint getPosicion()const;
     int getAncho();
 
     void seleccionarSkin();
 
-private:
+protected:
 
     float velocidad;
     int frameActual;

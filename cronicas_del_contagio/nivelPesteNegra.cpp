@@ -18,19 +18,21 @@ nivelPesteNegra::nivelPesteNegra() {
 
     // Control spawn enemigos
     contadorSpawn = 0;
-    intervaloSpawn = 20;  // Aprox 0.5 segundos (60 FPS × 0.5)
-    probabilidadSpawn = 80;  // 80% de probabilidad
-    oleadaActual = 1;
-    contadorOleadas = 0;
-    intervaloEntreOleadas = 300; // 5 segundos
+    intervaloSpawn = 40;  // Aprox 0.7 segundos (60 FPS × 0.7)
+    probabilidadSpawn = 90;  // 90% de probabilidad
+
+    inteligenteActual = new enfermoInteligente();
+    contadorInteligente = 0;
+    dibujarInteligente = false;
+    aparicionesInteligente = 0;
+    frecuenciaInteligente = 420; // aprox 7 segundos
+    inteligenteActual->seleccionarSkin();
 
     //spawnItems();
 
 }
 
 void nivelPesteNegra::update(){
-
-    chequearDerrota();
 
     fondoX1 -= velocidadFondo;
     fondoX2 -= velocidadFondo;
@@ -54,8 +56,43 @@ void nivelPesteNegra::update(){
     for(enfermo *enfermoActivo : enfermosActivos) {
         enfermoActivo->update();
     }
+
+    contadorInteligente++;
+    if(contadorInteligente >= frecuenciaInteligente && aparicionesInteligente == 0){
+        spawnInteligente();
+        contadorInteligente = 0;
+    }
+    if(contadorInteligente >= frecuenciaInteligente && aparicionesInteligente != 0){
+        inteligenteActual->update(jugador.getPosicion());
+        if(inteligenteActual->getPosicion().x() + inteligenteActual->getAncho() < 0){
+            double posX = tamanioVentana.width()+3.0;
+            double minY = 230.0;
+            double maxY = tamanioVentana.height() - 200.0;
+            double posY = minY + QRandomGenerator::global()->generateDouble() * (maxY - minY);
+            inteligenteActual->setPosicion(posX,posY);
+            inteligenteActual->comenzarSeguimiento(20);
+            contadorInteligente = 0;
+            aparicionesInteligente++;
+        }
+    }
     verificarColisiones();
     limpiarEnemigos();
+
+}
+
+void nivelPesteNegra::spawnInteligente(){
+
+    double posX = tamanioVentana.width()+3.0;
+    double minY = 230.0;
+    double maxY = tamanioVentana.height() - 200.0;
+    double posY = minY + QRandomGenerator::global()->generateDouble() * (maxY - minY);
+    qDebug() << "Posicion X: " << posX;
+    qDebug() << "Posicion Y: " << posY;
+    inteligenteActual->setPosicion(posX,posY);
+    dibujarInteligente = true;
+    aparicionesInteligente++;
+
+    inteligenteActual->comenzarSeguimiento(20);
 
 }
 
@@ -75,7 +112,7 @@ void nivelPesteNegra::spawnEnemigo() {
     enfermo *nuevoEnfermo = new enfermo();
     nuevoEnfermo->seleccionarSkin();
 
-    int posX = tamanioVentana.width()+3;
+    int posX = tamanioVentana.width()+2;
     int posY = QRandomGenerator::global()->bounded(230, tamanioVentana.height() -200);
 
     nuevoEnfermo->setPosicion(posX, posY);
@@ -88,6 +125,12 @@ void nivelPesteNegra::draw(QPainter &p){
     p.drawPixmap(fondoX2, 0, fondo);
 
     jugador.draw(p);
+
+    p.setOpacity(0.5);
+    if (dibujarInteligente){
+        p.setOpacity(0.5);
+        inteligenteActual->draw(p);
+    }
     p.setOpacity(1.0);
 
     for(enfermo *enfermo : enfermosActivos) {
