@@ -17,8 +17,7 @@ Proyectil::Proyectil(const QPixmap &sprite, float gravedad, float factorRebote,
     , obstaculos(nullptr)
     , baldes(nullptr)
     , colisionesRealizadas(0)
-    , haRebotado(false)
-    , indiceUltimoObstaculoChocado(-1)
+
 {
     if (puedeLlenarBaldes) {
         config.tipo = AMPOLLA;
@@ -143,7 +142,7 @@ void Proyectil::onTimerMovimiento()
 
     actualizarPosicion();
 
-    bool fueraDePantalla = (posicion.x() > 1100 || posicion.x() < -100 || posicion.y() > 650);
+    bool fueraDePantalla = (posicion.x() > 1500 || posicion.x() < -300 || posicion.y() > 900);
     bool velocidadMuyBaja = (velocidad.length() < 0.5f);
 
     if (fueraDePantalla || velocidadMuyBaja) {
@@ -261,6 +260,7 @@ void Proyectil::manejarColisionConObstaculo(int indiceObstaculo)
     Obstaculo* obstaculo = obstaculos->at(indiceObstaculo);
     if (!obstaculo || obstaculo->estaDestruido()) return;
 
+    QPointF posObstaculo = obstaculo->getPosicion();
 
     if (config.tipo == PIEDRA && config.puedeDestruirObstaculos) {
         obstaculo->destruir();
@@ -338,17 +338,22 @@ void Proyectil::manejarRebote()
 void Proyectil::actualizarPosicion()
 {
     const float deltaTime = 0.01f;
-    const float resistenciaAire = 0.995f;
 
-    velocidad.setY(velocidad.y() + config.gravedad);
-    velocidad *= resistenciaAire;
+    QPointF nuevaPos = NivelColera::calcularPosicionFisica(
+        posicion,
+        velocidad,
+        config.gravedad,
+        deltaTime
+        );
 
-    posicion.setX(posicion.x() + velocidad.x() * deltaTime * 60.0f);
-    posicion.setY(posicion.y() + velocidad.y() * deltaTime * 60.0f);
+    QVector2D nuevaVelocidad(nuevaPos.x() - posicion.x(), nuevaPos.y() - posicion.y());
+    nuevaVelocidad /= (deltaTime * 60.0f);
+
+    posicion = nuevaPos;
+    velocidad = nuevaVelocidad;
 
     setPos(posicion);
 
     float angulo = std::atan2(velocidad.y(), velocidad.x()) * 180.0f / M_PI;
     setRotation(angulo);
-
 }

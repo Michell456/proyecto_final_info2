@@ -125,13 +125,10 @@ void NivelColera::draw(QPainter &p)
 
     // 6. Dibujar lineas de trayectoria
     if (arrastrando) {
-        p.setPen(QPen(Qt::red, 3));
-        for (const QLineF& linea : lineasTrayectoria) {
-            p.drawLine(linea);
-        }
-
-        p.setBrush(Qt::yellow);
+        // Puntos blancos
+        p.setBrush(Qt::white);
         p.setPen(Qt::NoPen);
+
         for (const QRectF& punto : puntosTrayectoria) {
             p.drawEllipse(punto);
         }
@@ -169,6 +166,11 @@ void NivelColera::draw(QPainter &p)
     }
 }
 
+void NivelColera::handleKeyRelease(QKeyEvent *event)
+{
+    Q_UNUSED(event)
+}
+
 void NivelColera::handleInput(QKeyEvent *e)
 {
     if (e->key() == Qt::Key_Space) {
@@ -178,12 +180,6 @@ void NivelColera::handleInput(QKeyEvent *e)
             cambiarProyectil();
         }
     }
-}
-
-void NivelColera::handleKeyRelease(QKeyEvent *event)
-{
-
-    Q_UNUSED(event)
 }
 
 bool NivelColera::chequearVictoria()
@@ -224,8 +220,8 @@ void NivelColera::handleMousePress(QMouseEvent *event)
             // Posicionar proyectil detrás del doctor
             QPointF posDoctor = doctor->getPosicion();
             QPixmap spriteDoctor = doctor->getSpriteActual();
-            float proyectilX = posDoctor.x() + 50;
-            float proyectilY = posDoctor.y() + 80;
+            float proyectilX = posDoctor.x() + 40;
+            float proyectilY = posDoctor.y() + 30;
 
             if (proyectilActual) {
                 proyectilActual->setPosicion(QPointF(proyectilX, proyectilY));
@@ -241,15 +237,12 @@ void NivelColera::handleMouseMove(QMouseEvent *event)
         puntoActual = event->pos();
 
         if (!proyectilActual) return;
-        // Dibujar línea de fuerza
+
         QPointF posProyectil = proyectilActual->getPosicion();
         QPixmap spriteProyectil = proyectilActual->getSprite();
         QPointF centroProyectil(posProyectil.x() + spriteProyectil.width()/2,
                                 posProyectil.y() + spriteProyectil.height()/2);
 
-        dibujarLineaFuerza(centroProyectil, puntoActual);
-
-        // Calcular y dibujar trayectoria
         QPointF diferencia = puntoInicio - puntoActual;
         float distancia = QVector2D(diferencia).length();
         float fuerza = calcularFuerza(distancia);
@@ -341,7 +334,7 @@ void NivelColera::inicializarConfiguraciones()
         QPixmap piedraRecortada = piedraSprite.copy(55, 28, 326, 378);
         configPiedra.sprite = piedraRecortada.scaled(80, 80, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     } else {
-        configPiedra.sprite = generarPiedraSprite();
+        qDebug() << "error al cargar sprite de piedra";
     }
 
     // Configuración para ampolla
@@ -357,7 +350,7 @@ void NivelColera::inicializarConfiguraciones()
     if (!ampollaSprite.isNull()) {
         configAmpolla.sprite = ampollaSprite.scaled(40, 55, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     } else {
-        configAmpolla.sprite = generarAmpollaSprite();
+        qDebug() << "Error al generar sprite de ampolla";
     }
 }
 
@@ -419,7 +412,7 @@ void NivelColera::crearObstaculos()
     };
 
     if (spriteObstaculos.isNull()) {
-        generarObstaculosBasicos();
+        qDebug() << "Error al generar sprite de obstaculos";
         return;
     }
 
@@ -431,6 +424,22 @@ void NivelColera::crearObstaculos()
             obstaculos.append(nuevoObstaculo);
         }
     }
+
+    QPixmap plataformaSprite(":/sprites/Nivel2/plataforma_dr.png");
+    if (!plataformaSprite.isNull()) {
+        // Escalar la plataforma (ajusta el tamaño según necesites)
+        plataformaSprite = plataformaSprite.scaled(2800, 520, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+        // Posicionar la plataforma - COORDENADAS ACTUALES DEL DOCTOR:
+        // El doctor está en (100, 350), así que la plataforma debe estar debajo
+        QPointF posPlataforma(10, 370);
+
+        Obstaculo *plataformaDoctor = new Obstaculo(posPlataforma, plataformaSprite);
+        obstaculos.append(plataformaDoctor);
+        plataformaDoctor->setAreaColision(QRectF(0, 0, 0, 0));
+
+    }
+
 }
 
 void NivelColera::crearBaldes()
@@ -461,28 +470,15 @@ void NivelColera::crearBaldes()
 
 }
 
-void NivelColera::dibujarLineaFuerza(const QPointF &inicio, const QPointF &fin)  // CAMBIA: Nivel2:: → NivelColera::
-{
-    limpiarLineas();
-    lineasTrayectoria.append(QLineF(inicio, fin));
-}
-
-void NivelColera::dibujarTrayectoria(const QVector2D& velocidadInicial, const QPointF& posicionInicial)  // CAMBIA: Nivel2:: → NivelColera::
+void NivelColera::dibujarTrayectoria(const QVector2D& velocidadInicial, const QPointF& posicionInicial)
 {
     limpiarLineas();
 
     QVector<QPointF> puntos = calcularTrayectoria(velocidadInicial, posicionInicial);
 
-    if (puntos.size() > 1) {
-        // Dibujar líneas entre puntos
-        for (int i = 0; i < puntos.size() - 1; i++) {
-            lineasTrayectoria.append(QLineF(puntos[i], puntos[i+1]));
-        }
-
-        // Dibujar puntos de referencia
-        for (int i = 0; i < puntos.size(); i += 3) {
-            puntosTrayectoria.append(QRectF(puntos[i].x() - 2, puntos[i].y() - 2, 4, 4));
-        }
+    // SOLO PUNTOS - sin líneas
+    for (int i = 0; i < puntos.size(); i += 2) {  // Cada 2 puntos
+        puntosTrayectoria.append(QRectF(puntos[i].x() - 3, puntos[i].y() - 3, 6, 6));
     }
 }
 
@@ -496,20 +492,24 @@ QVector<QPointF> NivelColera::calcularTrayectoria(const QVector2D& velocidadInic
 {
     QVector<QPointF> puntos;
     const float deltaTime = 0.01f;
-    const float resistenciaAire = 0.995f;
     const int maxSteps = 50;
 
     QVector2D pos(posicionInicial.x(), posicionInicial.y());
     QVector2D vel = velocidadInicial;
-
-    float gravedad = (proyectilActual == proyectilPiedra) ? configPiedra.gravedad : configAmpolla.gravedad;
+    float gravedad = getGravedadActual();
 
     for (int i = 0; i < maxSteps; i++) {
         puntos.append(QPointF(pos.x(), pos.y()));
 
-        vel.setY(vel.y() + gravedad);
-        vel *= resistenciaAire;
-        pos += vel * deltaTime * 60.0f;
+        // Usar la misma función física
+        QPointF nuevaPos = calcularPosicionFisica(QPointF(pos.x(), pos.y()), vel, gravedad, deltaTime);
+
+        // Actualizar posición y velocidad para el siguiente paso
+        QVector2D nuevaVel(nuevaPos.x() - pos.x(), nuevaPos.y() - pos.y());
+        nuevaVel /= (deltaTime * 60.0f);
+
+        pos = QVector2D(nuevaPos.x(), nuevaPos.y());
+        vel = nuevaVel;
 
         if (pos.x() > 1200 || pos.x() < -200 || pos.y() > 800 || vel.length() < 0.5f) {
             break;
@@ -553,62 +553,35 @@ float NivelColera::calcularFuerza(float distancia)
 {
     float distanciaMin = 20;
     float distanciaMax = 200;
-    float fuerzaMin = 8.0f;
-    float fuerzaMax = 25.0f;
+    float fuerzaMin = 16.0f;
+    float fuerzaMax = 50.0f;
 
     distancia = qMax(distanciaMin, qMin(distancia, distanciaMax));
     return ((distancia - distanciaMin) / (distanciaMax - distanciaMin)) * (fuerzaMax - fuerzaMin) + fuerzaMin;
 }
 
-QPixmap NivelColera::generarPiedraSprite()
+QPointF NivelColera::calcularPosicionFisica(const QPointF& posInicial, const QVector2D& velInicial, float gravedad, float tiempo, bool conResistenciaAire)
 {
-    QPixmap piedra(80, 80);
-    piedra.fill(Qt::transparent);
-    QPainter painter(&piedra);
-    painter.setRenderHint(QPainter::Antialiasing);
-    painter.setBrush(Qt::darkGray);
-    painter.setPen(Qt::black);
-    painter.drawEllipse(10, 10, 60, 60);
-    return piedra;
-}
+    if (!conResistenciaAire) {
+        // Física simple sin resistencia (para predicción más limpia)
+        float x = posInicial.x() + velInicial.x() * tiempo;
+        float y = posInicial.y() + velInicial.y() * tiempo + 0.5f * gravedad * tiempo * tiempo;
+        return QPointF(x, y);
+    } else {
+        // Física con resistencia (igual que tu Proyectil::actualizarPosicion)
+        const float deltaTime = 0.01f;
+        const float resistenciaAire = 0.995f;
 
-QPixmap NivelColera::generarAmpollaSprite()
-{
-    QPixmap ampolla(40, 55);
-    ampolla.fill(Qt::transparent);
-    QPainter painter(&ampolla);
-    painter.setRenderHint(QPainter::Antialiasing);
-    painter.setBrush(QColor(173, 216, 230, 180));
-    painter.setPen(Qt::blue);
-    painter.drawRect(10, 5, 20, 40);
-    painter.drawText(12, 25, "Amp");
-    return ampolla;
-}
+        QVector2D pos(posInicial.x(), posInicial.y());
+        QVector2D vel = velInicial;
+        int steps = tiempo / deltaTime;
 
-void NivelColera::generarObstaculosBasicos()
-{
-    QList<QRectF> formas = {
-        QRectF(100, 100, 235, 37),
-        QRectF(150, 200, 320, 37),
-        QRectF(50, 300, 403, 38),
-        QRectF(400, 150, 154, 38),
-        QRectF(700, 100, 37, 230),
-        QRectF(600, 150, 38, 160),
-        QRectF(500, 250, 38, 69),
-        QRectF(300, 350, 107, 38),
-        QRectF(200, 400, 38, 37),
-        QRectF(350, 450, 62, 38)
-    };
+        for (int i = 0; i < steps; i++) {
+            vel.setY(vel.y() + gravedad);
+            vel *= resistenciaAire;
+            pos += vel * deltaTime * 60.0f;
+        }
 
-    for (int i = 0; i < formas.size(); ++i) {
-        QPixmap sprite(formas[i].width(), formas[i].height());
-        sprite.fill(QColor(139, 69, 19));
-
-        QPainter painter(&sprite);
-        painter.setPen(Qt::black);
-        painter.drawText(10, 20, QString("Obs %1").arg(i + 1));
-
-        Obstaculo *obstaculo = new Obstaculo(formas[i].topLeft(), sprite);
-        obstaculos.append(obstaculo);
+        return QPointF(pos.x(), pos.y());
     }
 }

@@ -119,6 +119,10 @@ QPixmap Balde::getSprite() const
 
 QRectF Balde::getAreaColision() const
 {
+    if (estado != SUCIO) {
+        return QRectF();
+    }
+
     QRectF area = areaColision;
     area.moveTopLeft(pos() + areaColision.topLeft());
     return area;

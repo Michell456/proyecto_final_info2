@@ -37,10 +37,8 @@ void Doctor::cargarSpriteSheet()
         int frameX = 0 * frameWidth;
         int frameY = filaLanzamiento * frameHeight;
         QPixmap frameInicial = spriteSheet.copy(frameX, frameY, frameWidth, frameHeight);
-        spriteActual = frameInicial.scaled(frameWidth * 1.2, frameHeight * 1.2,
+        spriteActual = frameInicial.scaled(frameWidth * 1.6, frameHeight * 1.6,
                                            Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    } else {
-        generarSpriteFallback();
     }
 }
 
@@ -75,7 +73,7 @@ void Doctor::detenerAnimacion()
         int frameX = 0 * frameWidth;
         int frameY = filaLanzamiento * frameHeight;
         QPixmap frameOriginal = spriteSheet.copy(frameX, frameY, frameWidth, frameHeight);
-        spriteActual = frameOriginal.scaled(frameWidth * 1.2, frameHeight * 1.2,
+        spriteActual = frameOriginal.scaled(frameWidth * 1.6, frameHeight * 1.6,
                                             Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
 
@@ -119,31 +117,7 @@ void Doctor::actualizarFrame()
         int frameX = frameActual * frameWidth;
         int frameY = filaLanzamiento * frameHeight;
         QPixmap frameOriginal = spriteSheet.copy(frameX, frameY, frameWidth, frameHeight);
-        spriteActual = frameOriginal.scaled(frameWidth * 1.2, frameHeight * 1.2,
+        spriteActual = frameOriginal.scaled(frameWidth * 1.6, frameHeight * 1.6,
                                             Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
-}
-
-void Doctor::generarSpriteFallback()
-{
-    QPixmap fallback(64, 64);
-    fallback.fill(Qt::transparent);
-
-    QPainter painter(&fallback);
-    painter.setRenderHint(QPainter::Antialiasing);
-
-    // Cabeza
-    painter.setBrush(Qt::yellow);
-    painter.drawEllipse(20, 5, 24, 24);
-
-    // Cuerpo
-    painter.setBrush(Qt::blue);
-    painter.drawRect(22, 29, 20, 25);
-
-    // Brazos
-    painter.setBrush(Qt::red);
-    painter.drawRect(10, 30, 12, 15);
-    painter.drawRect(42, 30, 12, 15);
-
-    spriteActual = fallback.scaled(76, 76, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 }

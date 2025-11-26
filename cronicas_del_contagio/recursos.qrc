@@ -9,5 +9,6 @@
         <file>sprites/Nivel2/piedra.png</file>
         <file>sprites/Nivel2/ampolla.png</file>
         <file>sprites/Nivel2/doctor.png</file>
+        <file>sprites/Nivel2/plataforma_dr.png</file>  
     </qresource>
 </RCC>

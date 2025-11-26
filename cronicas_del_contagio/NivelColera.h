@@ -36,6 +36,8 @@ public:
 
     QVector<QPointF> calcularTrayectoria(const QVector2D& velocidadInicial, const QPointF& posicionInicial);
     float getGravedadActual() const;
+    static QPointF calcularPosicionFisica(const QPointF& posInicial, const QVector2D& velInicial, float gravedad, float tiempo, bool conResistenciaAire = true);
+
 
 private:
     // Sprites del nivel
@@ -75,7 +77,6 @@ private:
     void inicializarConfiguraciones();
     void crearObstaculos();
     void crearBaldes();
-    void dibujarLineaFuerza(const QPointF &inicio, const QPointF &fin);
     void dibujarTrayectoria(const QVector2D& velocidadInicial, const QPointF& posicionInicial);
     void limpiarLineas();
     bool estaSobreDoctor(const QPointF& punto);
@@ -83,10 +84,6 @@ private:
     Proyectil* obtenerProyectilActivo();
     float calcularFuerza(float distancia);
 
-    // Funciones auxiliares para sprites fallback
-    QPixmap generarPiedraSprite();
-    QPixmap generarAmpollaSprite();
-    void generarObstaculosBasicos();
 };
 
 #endif // NIVELCOLERA_H
