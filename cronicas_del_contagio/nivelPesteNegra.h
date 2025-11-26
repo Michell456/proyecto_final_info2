@@ -5,7 +5,7 @@
 #include "jugador1.h"
 #include "enfermo.h"
 #include "enfermointeligente.h"
-//#include "item.h"
+#include "item.h"
 
 #include <QVector>
 #include <QPixmap>
@@ -25,7 +25,14 @@ public:
 
 private:
     jugador1 jugador;
-    //QVector<Item*> items;
+    QVector<item*> items;
+
+    void spawnItem();
+    int contadorSpawn1;
+    int contadorSpawn2;
+    int intervaloSpawn1;
+    int intervaloSpawn1;
+    int probabilidadSpawn1;
 
     // Fondo con scroll
     QPixmap fondo;
@@ -48,6 +55,7 @@ private:
     int frecuenciaInteligente;
     void spawnInteligente();
     bool dibujarInteligente;
+    void regenerarInteligente();
 
     void verificarColisiones();
     void manejarColision(jugador1 &jugador, enfermo *enfermo);

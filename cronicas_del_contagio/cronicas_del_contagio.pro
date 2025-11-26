@@ -11,6 +11,7 @@ CONFIG += c++17
 SOURCES += \
     enfermo.cpp \
     enfermointeligente.cpp \
+    item.cpp \
     jugador1.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -20,6 +21,7 @@ SOURCES += \
 HEADERS += \
     enfermo.h \
     enfermointeligente.h \
+    item.h \
     jugador1.h \
     mainwindow.h \
     nivel.h \

@@ -1,6 +1,6 @@
 #include "enfermo.h"
 #include <cstdlib>
-#include <ctime>
+#include <random>
 #include <QDebug>
 #include <QDir>
 
@@ -74,8 +74,10 @@ void enfermo::draw(QPainter &painter){
 
 void enfermo::seleccionarSkin(){
 
-    std::srand(std::time(nullptr));
-    skin = 1 + std::rand() % 3;
+    static std::random_device rd;  // Fuente de entropía (para la semilla)
+    static std::mt19937 gen(rd());  // Genera numero
+    std::uniform_int_distribution<> dist(1, 3);  // 1-3
+    skin = dist(gen);
 
 }
 

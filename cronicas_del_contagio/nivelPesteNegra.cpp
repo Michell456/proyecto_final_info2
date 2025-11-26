@@ -21,6 +21,7 @@ nivelPesteNegra::nivelPesteNegra() {
     intervaloSpawn = 40;  // Aprox 0.7 segundos (60 FPS × 0.7)
     probabilidadSpawn = 90;  // 90% de probabilidad
 
+    // Control enemigo inteligente
     inteligenteActual = new enfermoInteligente();
     contadorInteligente = 0;
     dibujarInteligente = false;
@@ -28,7 +29,12 @@ nivelPesteNegra::nivelPesteNegra() {
     frecuenciaInteligente = 420; // aprox 7 segundos
     inteligenteActual->seleccionarSkin();
 
-    //spawnItems();
+    // Control spawn items
+    contadorSpawn1 = 0;
+    contadorSpawn2 = 0;
+    intervaloSpawn1 = 210; // aprox 3.5 segundos
+    intervaloSpawn1 = 540; // aprox 10 segundos
+    probabilidadSpawn1 = 80;  // 80% de probabilidad
 
 }
 
@@ -57,6 +63,17 @@ void nivelPesteNegra::update(){
         enfermoActivo->update();
     }
 
+    contadorSpawn1++;
+    if(contadorSpawn1 >= intervaloSpawn) {
+        contadorSpawn1 = 0;
+        if(QRandomGenerator::global()->bounded(100) < probabilidadSpawn1) {
+            spawnItem();
+        }
+    }
+    for(item *itemActivo : items) {
+        itemActivo->update(velocidadFondo);
+    }
+
     contadorInteligente++;
     if(contadorInteligente >= frecuenciaInteligente && aparicionesInteligente == 0){
         spawnInteligente();
@@ -65,19 +82,32 @@ void nivelPesteNegra::update(){
     if(contadorInteligente >= frecuenciaInteligente && aparicionesInteligente != 0){
         inteligenteActual->update(jugador.getPosicion());
         if(inteligenteActual->getPosicion().x() + inteligenteActual->getAncho() < 0){
-            double posX = tamanioVentana.width()+3.0;
-            double minY = 230.0;
-            double maxY = tamanioVentana.height() - 200.0;
-            double posY = minY + QRandomGenerator::global()->generateDouble() * (maxY - minY);
-            inteligenteActual->setPosicion(posX,posY);
-            inteligenteActual->comenzarSeguimiento(20);
-            contadorInteligente = 0;
-            aparicionesInteligente++;
+            regenerarInteligente();
         }
+
     }
     verificarColisiones();
     limpiarEnemigos();
 
+}
+
+void nivelPesteNegra::spawnItem(){
+    item *nuevoItem = new item();
+
+    nuevoItem->setParametrosAleatorios();
+    int posX = tamanioVentana.width();
+    int posY = QRandomGenerator::global()->bounded(230, tamanioVentana.height() -200);
+}
+
+void nivelPesteNegra::regenerarInteligente(){
+    double posX = tamanioVentana.width()+3.0;
+    double minY = 230.0;
+    double maxY = tamanioVentana.height() - 200.0;
+    double posY = minY + QRandomGenerator::global()->generateDouble() * (maxY - minY);
+    inteligenteActual->setPosicion(posX,posY);
+    inteligenteActual->comenzarSeguimiento(20);
+    contadorInteligente = 0;
+    aparicionesInteligente++;
 }
 
 void nivelPesteNegra::spawnInteligente(){
@@ -125,6 +155,11 @@ void nivelPesteNegra::draw(QPainter &p){
     p.drawPixmap(fondoX2, 0, fondo);
 
     jugador.draw(p);
+    p.setOpacity(1.0);
+
+    for(item *item : items) {
+        item->draw(p);
+    }
 
     p.setOpacity(0.5);
     if (dibujarInteligente){

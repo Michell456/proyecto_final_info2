@@ -1,0 +1,92 @@
+#include "item.h"
+#include <QRandomGenerator>
+#include "random"
+
+item::item(QObject *parent)
+    : QObject(parent)
+    , estado(rebotando)
+    , gravedad(9.8)
+{
+    cargarTexturas();
+}
+
+void item::update(int velocidadFondo) {
+    if(estado == posado){
+        int nuevaX = posicion.x() + (velocidadFondo * -1);
+        posicion.setX(nuevaX);
+    }
+    else{
+        velocidadY += gravedad;
+        posicion.setY(posicion.y() + velocidadY);
+
+        if(estado != posado) {
+            posicion.setX(posicion.x() + velocidadX);
+        }
+
+        if(posicion.y() >= yf) {
+            posicion.setY(yf);
+
+            if(rebotesRestantes > 0) {
+                velocidadY = -velocidadY * factorRebote;
+                rebotesRestantes--;
+                velocidadX *= friccion;
+
+                estado = rebotando;
+            }
+            else {
+                velocidadY = 0;
+                velocidadX = 0;
+                estado = posado;
+            }
+        }
+    }
+}
+
+void item::setParametrosAleatorios(){
+
+    velocidadX = QRandomGenerator::global()->bounded(1, 2);
+    velocidadY = QRandomGenerator::global()->bounded(1, 3);
+
+    factorRebote = 0.4 + (QRandomGenerator::global()->bounded(0, 40) / 100.0);  // entre 0.4 y 0.8
+
+    friccion = 0.8 + (QRandomGenerator::global()->bounded(0, 20) / 100.0);  // entre 0.8 y 0.99
+
+    rebotesRestantes = QRandomGenerator::global()->bounded(3, 7);
+
+}
+
+void item::cargarTexturas(){
+    for(int i = 1; i <= 2; i++) {
+        QPixmap sprite(QString("sprites/nivel_1/items/%1.png").arg(i));
+        if(!sprite.isNull()) {
+            texturas.append(sprite);
+        } else {
+            qDebug() << "No se pudo cargar sprite:" << QString("%1.png").arg(i);
+        }
+    }
+}
+
+void item::setTipo(int tipo_){
+    tipo = tipo_;
+    if(tipo == 1){
+        textura == 1;
+    }
+    else{
+        textura == 2;
+    }
+}
+
+void item::draw(QPainter &painter){
+
+    QPixmap texturaActual;
+    switch (textura) {
+    case 1:
+        texturaActual = texturas[0];
+        break;
+    case 2:
+        texturaActual = texturas[1];
+        break;
+    }
+    painter.drawPixmap(posicion.x(), posicion.y(), texturaActual);
+
+}
