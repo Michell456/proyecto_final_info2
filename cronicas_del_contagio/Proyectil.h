@@ -7,6 +7,7 @@
 #include <QTimer>
 #include <QList>
 #include <QPixmap>
+#include <NivelColera.h>
 
 class Obstaculo;
 class Balde;
@@ -37,6 +38,7 @@ public:
     Proyectil(const QPixmap &sprite, float gravedad, float factorRebote,
               bool puedeDestruirObstaculos, bool puedeLlenarBaldes,
               bool puedeRebotar, int maxColisiones,
+              NivelColera* nivel = nullptr,
               QGraphicsItem *parent = nullptr);
 
     Proyectil(const Configuracion &config, QGraphicsItem *parent = nullptr);
@@ -55,6 +57,7 @@ public:
     QPixmap getSprite() const;
 
     void setObjetivos(QList<Obstaculo*> *obstaculos, QList<Balde*> *baldes);
+    void setNivelColera(NivelColera* nivel);
 
 signals:
     void proyectilDetenido();
@@ -82,6 +85,7 @@ private:
     void manejarColisionConObstaculo(int indiceObstaculo);
     void manejarColisionConBalde(int indiceBalde);
     void manejarRebote();
+    NivelColera* nivelColera;
 };
 
 #endif // PROYECTIL_H

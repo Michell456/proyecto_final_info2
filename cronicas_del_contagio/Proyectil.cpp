@@ -10,14 +10,17 @@
 
 Proyectil::Proyectil(const QPixmap &sprite, float gravedad, float factorRebote,
                      bool puedeDestruirObstaculos, bool puedeLlenarBaldes,
-                     bool puedeRebotar, int maxColisiones, QGraphicsItem *parent)
+                     bool puedeRebotar, int maxColisiones,
+                     NivelColera* nivel, QGraphicsItem *parent)  // ← AÑADE NivelColera* nivel
     : QGraphicsPixmapItem(parent)
+    , nivelColera(nivel)  // ← INICIALIZA nivelColera (FALTABA)
     , enMovimiento(false)
     , visible(false)
     , obstaculos(nullptr)
     , baldes(nullptr)
     , colisionesRealizadas(0)
-
+    , haRebotado(false)          // ← FALTABA
+    , indiceUltimoObstaculoChocado(-1)  // ← FALTABA
 {
     if (puedeLlenarBaldes) {
         config.tipo = AMPOLLA;
@@ -270,12 +273,20 @@ void Proyectil::manejarColisionConObstaculo(int indiceObstaculo)
         velocidad.setY(-velocidad.y() * 0.3f);
         velocidad.setX(velocidad.x() * 0.6f);
 
+        if (nivelColera) {
+            nivelColera->reproducirSonidoDestruccionMadera();
+        }
+
     } else if (config.tipo == AMPOLLA) {
         if (!haRebotado) {
             manejarRebote();
             indiceUltimoObstaculoChocado = indiceObstaculo;
             haRebotado = true;
             colisionesRealizadas++;
+
+            if (nivelColera) {
+                nivelColera->reproducirSonidoReboteMadera();
+            }
 
             // Asegurarse de que se separe del obstaculo
             QRectF areaObstaculo = obstaculo->getAreaColision();

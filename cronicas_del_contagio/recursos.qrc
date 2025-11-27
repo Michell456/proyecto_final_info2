@@ -9,6 +9,11 @@
         <file>sprites/Nivel2/piedra.png</file>
         <file>sprites/Nivel2/ampolla.png</file>
         <file>sprites/Nivel2/doctor.png</file>
-        <file>sprites/Nivel2/plataforma_dr.png</file>  
+        <file>sprites/Nivel2/plataforma_dr.png</file>
+
+        <file>sonido/balde_ampolla.wav</file>
+        <file>sonido/destruccion_balde.wav</file>
+        <file>sonido/destruccion_madera.wav</file>
+        <file>sonido/rebote_madera.wav</file>  
     </qresource>
 </RCC>

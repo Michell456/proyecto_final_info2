@@ -27,16 +27,17 @@ NivelColera::NivelColera(QObject *parent)
     doctor = new Doctor();
     doctor->setPosicion(QPointF(100, 350));
 
-    // Crear proyectiles
     proyectilPiedra = new Proyectil(configPiedra.sprite, configPiedra.gravedad,
                                     configPiedra.factorRebote, configPiedra.puedeDestruirObstaculos,
                                     configPiedra.puedeLlenarBaldes, configPiedra.puedeRebotar,
-                                    configPiedra.maxColisiones);
+                                    configPiedra.maxColisiones,
+                                    this);
 
     proyectilAmpolla = new Proyectil(configAmpolla.sprite, configAmpolla.gravedad,
                                      configAmpolla.factorRebote, configAmpolla.puedeDestruirObstaculos,
                                      configAmpolla.puedeLlenarBaldes, configAmpolla.puedeRebotar,
-                                     configAmpolla.maxColisiones);
+                                     configAmpolla.maxColisiones,
+                                     this);
 
     proyectilActual = proyectilPiedra;
 
@@ -48,7 +49,17 @@ NivelColera::NivelColera(QObject *parent)
     proyectilPiedra->setObjetivos(&obstaculos, &baldes);
     proyectilAmpolla->setObjetivos(&obstaculos, &baldes);
 
-    qDebug() << "Nivel Cólera inicializado";
+    // Cargar sonidos
+    sonidoBaldeAmpolla.setSource(QUrl("qrc:/sonido/balde_ampolla.wav"));
+    sonidoDestruccionBalde.setSource(QUrl("qrc:/sonido/destruccion_balde.wav"));
+    sonidoDestruccionMadera.setSource(QUrl("qrc:/sonido/destruccion_madera.wav"));
+    sonidoReboteMadera.setSource(QUrl("qrc:/sonido/rebote_madera.wav"));
+
+    // Configurar volumen
+    sonidoBaldeAmpolla.setVolume(0.8f);
+    sonidoDestruccionBalde.setVolume(0.7f);
+    sonidoDestruccionMadera.setVolume(0.6f);
+    sonidoReboteMadera.setVolume(0.5f);
 }
 
 NivelColera::~NivelColera()
@@ -460,7 +471,7 @@ void NivelColera::crearBaldes()
     };
 
     for (int i = 0; i < posicionesBaldes.size(); ++i) {
-        Balde *nuevoBalde = new Balde(posicionesBaldes[i]);
+        Balde *nuevoBalde = new Balde(posicionesBaldes[i],this);
         baldes.append(nuevoBalde);
 
         // Verificar area de colision inmediatamente
@@ -584,4 +595,20 @@ QPointF NivelColera::calcularPosicionFisica(const QPointF& posInicial, const QVe
 
         return QPointF(pos.x(), pos.y());
     }
+}
+
+void NivelColera::reproducirSonidoBaldeAmpolla() {
+    sonidoBaldeAmpolla.play();
+}
+
+void NivelColera::reproducirSonidoDestruccionBalde() {
+    sonidoDestruccionBalde.play();
+}
+
+void NivelColera::reproducirSonidoDestruccionMadera() {
+    sonidoDestruccionMadera.play();
+}
+
+void NivelColera::reproducirSonidoReboteMadera() {
+    sonidoReboteMadera.play();
 }

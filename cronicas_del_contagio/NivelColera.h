@@ -8,6 +8,7 @@
 #include <QVector2D>
 #include <QPixmap>
 #include <QList>
+#include <QSoundEffect>
 
 // Forward declarations
 class Doctor;
@@ -38,6 +39,10 @@ public:
     float getGravedadActual() const;
     static QPointF calcularPosicionFisica(const QPointF& posInicial, const QVector2D& velInicial, float gravedad, float tiempo, bool conResistenciaAire = true);
 
+    void reproducirSonidoBaldeAmpolla();
+    void reproducirSonidoDestruccionBalde();
+    void reproducirSonidoDestruccionMadera();
+    void reproducirSonidoReboteMadera();
 
 private:
     // Sprites del nivel
@@ -57,6 +62,12 @@ private:
     QPointF puntoActual;
     bool arrastrando;
     bool clickEnDoctor;
+
+    // Efectos de sonido
+    QSoundEffect sonidoBaldeAmpolla;
+    QSoundEffect sonidoDestruccionBalde;
+    QSoundEffect sonidoDestruccionMadera;
+    QSoundEffect sonidoReboteMadera;
 
     // Elementos visuales temporales
     QList<QLineF> lineasTrayectoria;

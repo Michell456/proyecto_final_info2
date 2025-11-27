@@ -1,9 +1,11 @@
 #include "balde.h"
 #include <QPainter>
+#include "nivelcolera.h"
 
-Balde::Balde(const QPointF &posicion, QGraphicsItem *parent)
+Balde::Balde(const QPointF &posicion, NivelColera* nivel, QGraphicsItem *parent)
     : ObjetoEstatico(parent)
     , estado(SUCIO)
+    , nivelColera(nivel)
 {
     setPos(posicion);
     setZValue(3);
@@ -53,6 +55,10 @@ void Balde::llenar()
 
     estado = LLENO;
     actualizarSprite();
+
+    if (nivelColera) {
+        nivelColera->reproducirSonidoBaldeAmpolla();
+    }
 }
 
 void Balde::destruir()
@@ -63,6 +69,10 @@ void Balde::destruir()
 
     estado = DESTRUIDO;
     actualizarSprite();
+
+    if (nivelColera) {
+        nivelColera->reproducirSonidoDestruccionBalde();
+    }
 }
 
 Balde::Estado Balde::getEstado() const
@@ -128,3 +138,6 @@ QRectF Balde::getAreaColision() const
     return area;
 }
 
+void Balde::setNivelColera(NivelColera* nivel) {
+    nivelColera = nivel;
+}
