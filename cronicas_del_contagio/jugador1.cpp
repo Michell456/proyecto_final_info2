@@ -6,7 +6,7 @@ jugador1::jugador1(QObject *parent)
     : QObject(parent)
     , frameActual(0)
     , estado(quieto)
-    , vida(4)
+    , vida(5)
     , velocidad(3.5)
     , anchoSprite(20)
     , altoSprite(50)
@@ -15,6 +15,7 @@ jugador1::jugador1(QObject *parent)
     , teclaDerecha(false)
     , teclaIzquierda(false)
     , inmune(false)
+    , items(0)
 {
     timerAnimacion = new QTimer(this);
     connect(timerAnimacion, &QTimer::timeout, this, &jugador1::cambiarFrame);
@@ -197,19 +198,20 @@ void jugador1::setPosicion(int x, int y)
     posicion.setY(y);
 }
 
-QPoint jugador1::getPosicion() const
-{
-    return posicion;
-}
-
 QRect jugador1::getRect() const {
     return QRect(posicion.x(), posicion.y(), anchoSprite, altoSprite);
 }
 
-int jugador1::consultarVida(){
-    return vida;
-}
-
 void jugador1::quitarVida(){
     vida--;
+}
+
+void jugador1::sumarVida(){
+    if (vida < 5){
+        vida++;
+    }
+}
+
+void jugador1::sumarItem(){
+    items++;
 }

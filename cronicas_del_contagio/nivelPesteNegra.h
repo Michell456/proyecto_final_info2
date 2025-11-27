@@ -25,14 +25,16 @@ public:
 
 private:
     jugador1 jugador;
+    QList<enfermo*> enfermosActivos;
     QVector<item*> items;
+    void limpiarEntidades();
 
-    void spawnItem();
-    int contadorSpawn1;
-    int contadorSpawn2;
-    int intervaloSpawn1;
-    int intervaloSpawn1;
-    int probabilidadSpawn1;
+    void spawnItem(int tipo);
+    int contadorSpawnItem;
+    int intervaloSpawnItem;
+    int probabilidadSpawnItem1;
+    int probabilidadSpawnItem2;
+    void manejarColision(jugador1 &jugador, item *item_);
 
     // Fondo con scroll
     QPixmap fondo;
@@ -41,12 +43,10 @@ private:
     int velocidadFondo;
 
     // Spawn de enemigos
-    int contadorSpawn;
-    int intervaloSpawn;
-    int probabilidadSpawn;
-    QList<enfermo*> enfermosActivos;
+    int contadorSpawnEnemigo;
+    int intervaloSpawnEnemigo;
+    int probabilidadSpawnEnemigo;
     void spawnEnemigo();
-    void limpiarEnemigos();
 
     // Enemigo inteligente
     enfermoInteligente *inteligenteActual;

@@ -1,11 +1,14 @@
 #include "item.h"
 #include <QRandomGenerator>
+#include <QDebug>
 #include "random"
 
 item::item(QObject *parent)
     : QObject(parent)
     , estado(rebotando)
-    , gravedad(9.8)
+    , gravedad(0.35)
+    , altoItem(20)
+    , anchoItem(20)
 {
     cargarTexturas();
 }
@@ -27,7 +30,7 @@ void item::update(int velocidadFondo) {
             posicion.setY(yf);
 
             if(rebotesRestantes > 0) {
-                velocidadY = -velocidadY * factorRebote;
+                velocidadY = -velocidadY * coefRestitucion;
                 rebotesRestantes--;
                 velocidadX *= friccion;
 
@@ -42,12 +45,14 @@ void item::update(int velocidadFondo) {
     }
 }
 
-void item::setParametrosAleatorios(){
+void item::setParametrosAleatorios(int yfinal){
 
-    velocidadX = QRandomGenerator::global()->bounded(1, 2);
+    velocidadX = QRandomGenerator::global()->bounded(-6, -3);
     velocidadY = QRandomGenerator::global()->bounded(1, 3);
 
-    factorRebote = 0.4 + (QRandomGenerator::global()->bounded(0, 40) / 100.0);  // entre 0.4 y 0.8
+    yf = yfinal;
+
+    coefRestitucion = 0.4 + (QRandomGenerator::global()->bounded(0, 40) / 100.0);  // entre 0.4 y 0.8
 
     friccion = 0.8 + (QRandomGenerator::global()->bounded(0, 20) / 100.0);  // entre 0.8 y 0.99
 
@@ -69,10 +74,10 @@ void item::cargarTexturas(){
 void item::setTipo(int tipo_){
     tipo = tipo_;
     if(tipo == 1){
-        textura == 1;
+        textura = 1;
     }
     else{
-        textura == 2;
+        textura = 2;
     }
 }
 
@@ -89,4 +94,17 @@ void item::draw(QPainter &painter){
     }
     painter.drawPixmap(posicion.x(), posicion.y(), texturaActual);
 
+}
+
+void item::setPosicion(int x, int y){
+    posicion.setX(x);
+    posicion.setY(y);
+}
+
+QPoint item::getPosicion()const{
+    return posicion;
+}
+
+QRect item::getRect() const {
+    return QRect(posicion.x(), posicion.y(), anchoItem, altoItem);
 }

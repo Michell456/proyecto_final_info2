@@ -17,9 +17,9 @@ nivelPesteNegra::nivelPesteNegra() {
     jugador.setPosicion(12,300);
 
     // Control spawn enemigos
-    contadorSpawn = 0;
-    intervaloSpawn = 40;  // Aprox 0.7 segundos (60 FPS × 0.7)
-    probabilidadSpawn = 90;  // 90% de probabilidad
+    contadorSpawnEnemigo = 0;
+    intervaloSpawnEnemigo = 40;  // Aprox 0.7 segundos (60 FPS × 0.7)
+    probabilidadSpawnEnemigo = 100;  // 90% de probabilidad
 
     // Control enemigo inteligente
     inteligenteActual = new enfermoInteligente();
@@ -30,11 +30,10 @@ nivelPesteNegra::nivelPesteNegra() {
     inteligenteActual->seleccionarSkin();
 
     // Control spawn items
-    contadorSpawn1 = 0;
-    contadorSpawn2 = 0;
-    intervaloSpawn1 = 210; // aprox 3.5 segundos
-    intervaloSpawn1 = 540; // aprox 10 segundos
-    probabilidadSpawn1 = 80;  // 80% de probabilidad
+    contadorSpawnItem = 0;
+    intervaloSpawnItem = 240; // aprox 4 segundos
+    probabilidadSpawnItem1 = 70;  // 70% de probabilidad
+    probabilidadSpawnItem2 = 30;  // 30% de probabilidad
 
 }
 
@@ -52,10 +51,10 @@ void nivelPesteNegra::update(){
 
     jugador.update(tamanioVentana,velocidadFondo);
 
-    contadorSpawn++;
-    if(contadorSpawn >= intervaloSpawn) {
-        contadorSpawn = 0;
-        if(QRandomGenerator::global()->bounded(100) < probabilidadSpawn) {
+    contadorSpawnEnemigo++;
+    if(contadorSpawnEnemigo >= intervaloSpawnEnemigo) {
+        contadorSpawnEnemigo = 0;
+        if(QRandomGenerator::global()->bounded(100) < probabilidadSpawnEnemigo) {
             spawnEnemigo();
         }
     }
@@ -63,11 +62,14 @@ void nivelPesteNegra::update(){
         enfermoActivo->update();
     }
 
-    contadorSpawn1++;
-    if(contadorSpawn1 >= intervaloSpawn) {
-        contadorSpawn1 = 0;
-        if(QRandomGenerator::global()->bounded(100) < probabilidadSpawn1) {
-            spawnItem();
+    contadorSpawnItem++;
+    if(contadorSpawnItem >= intervaloSpawnItem) {
+        contadorSpawnItem = 0;
+        if(QRandomGenerator::global()->bounded(100) < probabilidadSpawnItem1) {
+            spawnItem(1);
+        }
+        if(QRandomGenerator::global()->bounded(100) < probabilidadSpawnItem2) {
+            spawnItem(2);
         }
     }
     for(item *itemActivo : items) {
@@ -87,19 +89,42 @@ void nivelPesteNegra::update(){
 
     }
     verificarColisiones();
-    limpiarEnemigos();
+    limpiarEntidades();
 
 }
 
-void nivelPesteNegra::spawnItem(){
+void nivelPesteNegra::spawnItem(int tipo){
     item *nuevoItem = new item();
 
-    nuevoItem->setParametrosAleatorios();
+    if (tipo == 1){
+        nuevoItem->setTipo(1);
+    }
+    else{
+        nuevoItem->setTipo(2);
+    }
+
     int posX = tamanioVentana.width();
-    int posY = QRandomGenerator::global()->bounded(230, tamanioVentana.height() -200);
+    int pisoMinimo = tamanioVentana.height() - 200;
+    int alturaCaidaMin = 50;
+    int alturaCaidaMax = 100;
+    int posYMin = 160;
+    int posYMax = pisoMinimo - alturaCaidaMin;
+    int posY = QRandomGenerator::global()->bounded(posYMin, posYMax);
+    int alturaCaida = QRandomGenerator::global()->bounded(alturaCaidaMin, alturaCaidaMax);
+    int yf = posY + alturaCaida;
+
+    if (yf > pisoMinimo){
+        yf = pisoMinimo;
+    }
+
+    nuevoItem->setPosicion(posX,posY);
+    nuevoItem->setParametrosAleatorios(yf);
+
+    items.append(nuevoItem);
 }
 
 void nivelPesteNegra::regenerarInteligente(){
+
     double posX = tamanioVentana.width()+3.0;
     double minY = 230.0;
     double maxY = tamanioVentana.height() - 200.0;
@@ -108,6 +133,7 @@ void nivelPesteNegra::regenerarInteligente(){
     inteligenteActual->comenzarSeguimiento(20);
     contadorInteligente = 0;
     aparicionesInteligente++;
+
 }
 
 void nivelPesteNegra::spawnInteligente(){
@@ -126,7 +152,7 @@ void nivelPesteNegra::spawnInteligente(){
 
 }
 
-void nivelPesteNegra::limpiarEnemigos() {
+void nivelPesteNegra::limpiarEntidades() {
 
     for(int i = enfermosActivos.size() - 1; i >= 0; i--) {
         enfermo *enfermo = enfermosActivos[i];
@@ -134,6 +160,17 @@ void nivelPesteNegra::limpiarEnemigos() {
         if(enfermo->getPosicion().x() + enfermo->getAncho() < 0) {
             enfermosActivos.removeAt(i);
             delete enfermo;
+            break;
+        }
+    }
+
+    for(int i = items.size() - 1; i >= 0; i--) {
+        item *item = items[i];
+
+        if(item->getPosicion().x() + item->getAncho() < 0) {
+            items.removeAt(i);
+            delete item;
+            break;
         }
     }
 }
@@ -154,12 +191,13 @@ void nivelPesteNegra::draw(QPainter &p){
     p.drawPixmap(fondoX1, 0, fondo);
     p.drawPixmap(fondoX2, 0, fondo);
 
-    jugador.draw(p);
     p.setOpacity(1.0);
 
     for(item *item : items) {
         item->draw(p);
     }
+
+    jugador.draw(p);
 
     p.setOpacity(0.5);
     if (dibujarInteligente){
@@ -175,15 +213,13 @@ void nivelPesteNegra::draw(QPainter &p){
     p.setPen(Qt::white);
     p.setFont(QFont("Times New Roman", 14, QFont::Bold));
 
-    QString textoStats;
-    textoStats += "Vidas: " + QString::number(jugador.consultarVida()) + "\n";
-
     p.setBrush(QColor(0,0,0,150));
     p.setPen(Qt::NoPen);
-    p.drawRect(10, 10, 100, 40);
+    p.drawRect(10, 10, 110, 60);
 
     p.setPen(Qt::white);
-    p.drawText(20, 35, textoStats);
+    p.drawText(20, 35, "Vidas: " + QString::number(jugador.consultarVida()));
+    p.drawText(20, 55, "Hierbas: " + QString::number(jugador.getCantidadItems()));
 
 }
 
@@ -202,12 +238,42 @@ void nivelPesteNegra::verificarColisiones(){
         }
     }
 
+    for(item *item : items) {
+        QRect rectItem = item->getRect();
+
+        if(rectJugador.intersects(rectItem)) {
+            manejarColision(jugador,item);
+            break;
+        }
+    }
+
 }
+
 void nivelPesteNegra::manejarColision(jugador1 &jugador, enfermo *enfermo){
 
     jugador.activarInmunidad(1500);
     jugador.quitarVida();
 
+}
+
+void nivelPesteNegra::manejarColision(jugador1 &jugador, item *item_){
+
+    if(item_->getTipo() == 1){
+        jugador.sumarItem();
+    }
+    else{
+        jugador.sumarVida();
+    }
+
+    for(int i = items.size() - 1; i >= 0; i--) {
+        item *item = items[i];
+
+        if(item == item_) {
+            items.removeAt(i);
+            delete item;
+            break;
+        }
+    }
 }
 
 void nivelPesteNegra::handleInput(QKeyEvent *event){

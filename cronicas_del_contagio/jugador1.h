@@ -30,18 +30,23 @@ public:
     QRect getRect() const;
 
     void setPosicion(int x, int y);
-    QPoint getPosicion() const;
+    QPoint getPosicion() const{ return posicion; }
 
-    int consultarVida();
+    int consultarVida(){ return vida; }
     void quitarVida();
+    void sumarVida();
     bool estaInmune() const { return inmune; }
     void activarInmunidad(int milisegundos);
     void finInmunidad() { inmune = false; }
+
+    int getCantidadItems(){ return items; }
+    void sumarItem();
 
 private:
 
     int vida;
     bool inmune;
+    int items;
     int tiempoInmunidad;
     QTimer *timerInmunidad;
 
