@@ -7,6 +7,12 @@ Dron::Dron() : posicion(400, 300), frameActual(0), contadorAnimacion(0) {
     aceleracion = QPointF(0, 0);
     for (int i = 0; i < 4; i++) teclas[i] = false;
     cargarSprites();
+
+    bateriaMaxima = 100.0f;
+    bateria = bateriaMaxima;
+    consumoMovimiento = 0.3f;
+    consumoBase = 0.05f;
+
 }
 
 void Dron::cargarSprites() {
@@ -35,8 +41,22 @@ void Dron::cargarSprites() {
 }
 
 void Dron::update() {
-    // Aplicar aceleración basada en teclas
+
     aceleracion = QPointF(0, 0);
+
+    bateria -= consumoBase;
+    bateria = qMax(0.0f, bateria);
+
+    if (bateria <= 0) {
+        velocidad *= 0.9f;
+        posicion += velocidad;
+        return;
+    }
+
+    if (aceleracion.manhattanLength() > 0) {
+        bateria -= consumoMovimiento;
+        bateria = qMax(0.0f, bateria);
+    }
 
     if (teclas[0]) aceleracion.setY(-ACELERACION); // W - Arriba
     if (teclas[1]) aceleracion.setY(ACELERACION);  // S - Abajo
@@ -46,43 +66,38 @@ void Dron::update() {
     // Actualizar velocidad
     velocidad += aceleracion;
 
-    // Limitar velocidad máxima
+    // Limitar velocidad maxima
     float velocidadActual = sqrt(velocidad.x() * velocidad.x() +
                                  velocidad.y() * velocidad.y());
     if (velocidadActual > VELOCIDAD_MAXIMA) {
         velocidad = (velocidad / velocidadActual) * VELOCIDAD_MAXIMA;
     }
 
-    // APLICAR MUCHA MENOS FRICCIÓN - se desliza mucho más
     velocidad *= FRICCION;
 
-    // DETENER MÁS LENTAMENTE - umbral más bajo
-    if (velocidadActual < 0.05f) {  // Cambiado de 0.2f a 0.05f
+    if (velocidadActual < 0.05f) {
         velocidad = QPointF(0, 0);
     }
 
-    // Actualizar posición
     posicion += velocidad;
 
-    // Límites de pantalla para dron grande con REBOTE SUAVE
     if (posicion.x() < 75) {
         posicion.setX(75);
-        velocidad.setX(-velocidad.x() * 0.5f); // Rebote más suave
+        velocidad.setX(-velocidad.x() * 0.5f);
     }
     if (posicion.x() > 725) {
         posicion.setX(725);
-        velocidad.setX(-velocidad.x() * 0.5f); // Rebote más suave
+        velocidad.setX(-velocidad.x() * 0.5f);
     }
     if (posicion.y() < 75) {
         posicion.setY(75);
-        velocidad.setY(-velocidad.y() * 0.5f); // Rebote más suave
+        velocidad.setY(-velocidad.y() * 0.5f);
     }
     if (posicion.y() > 525) {
         posicion.setY(525);
-        velocidad.setY(-velocidad.y() * 0.5f); // Rebote más suave
+        velocidad.setY(-velocidad.y() * 0.5f);
     }
 
-    // Animación (igual que antes)
     bool moviendose = teclas[0] || teclas[1] || teclas[2] || teclas[3];
     float velocidadParaAnimacion = velocidadActual / VELOCIDAD_MAXIMA;
 
@@ -127,4 +142,9 @@ void Dron::handleKeyRelease(QKeyEvent *event) {
     case Qt::Key_A: teclas[2] = false; break;
     case Qt::Key_D: teclas[3] = false; break;
     }
+}
+
+void Dron::cargarBateria(float cantidad) {
+    bateria += cantidad;
+    bateria = qMin(bateriaMaxima, bateria);
 }

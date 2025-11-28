@@ -4,6 +4,7 @@
 #include "nivel.h"
 #include "dron.h"
 #include <QPixmap>
+#include "BaseDeCarga.h"
 
 class NivelCovid : public nivel
 {
@@ -20,6 +21,7 @@ public:
 private:
     Dron dron;
     QPixmap fondo;
+    BaseDeCarga baseCarga;
 };
 
 #endif // NIVELCOVID_H

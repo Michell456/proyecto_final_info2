@@ -19,6 +19,10 @@ public:
 
     QPointF getPosition() const { return posicion; }
 
+    float getBateria() const { return bateria; }
+    float getBateriaMaxima() const { return bateriaMaxima; }
+    void cargarBateria(float cantidad);
+
 private:
     QPointF posicion;
     QPointF velocidad;
@@ -26,6 +30,11 @@ private:
     QVector<QPixmap> sprites;
     int frameActual;
     int contadorAnimacion;
+
+    float bateria;
+    float bateriaMaxima;
+    float consumoMovimiento;
+    float consumoBase;
 
     bool teclas[4]; // [W, S, A, D]
 
