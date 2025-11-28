@@ -2,7 +2,7 @@
 #include <QRandomGenerator>
 #include <QPainter>
 
-nivelPesteNegra::nivelPesteNegra() {
+nivelPesteNegra::nivelPesteNegra(QObject *parent) : nivel(parent) {
 
     fondo.load("sprites/nivel_1/fondo_nivel1.png");
 
@@ -15,6 +15,7 @@ nivelPesteNegra::nivelPesteNegra() {
     velocidadFondo = 2;
 
     jugador.setPosicion(12,300);
+    jugadorptr = &jugador;
 
     // Control spawn enemigos
     contadorSpawnEnemigo = 0;
@@ -22,11 +23,15 @@ nivelPesteNegra::nivelPesteNegra() {
     probabilidadSpawnEnemigo = 100;  // 90% de probabilidad
 
     // Control enemigo inteligente
+
     inteligenteActual = new enfermoInteligente();
     contadorInteligente = 0;
     dibujarInteligente = false;
     aparicionesInteligente = 0;
-    frecuenciaInteligente = 420; // aprox 7 segundos
+    frecuenciaInteligente = 300; // 5 segundos (más frecuente para testing)
+
+    // CONECTAR SEÑAL para items recogidos
+    connect(inteligenteActual, &enfermoInteligente::recogeItem, this, &nivelPesteNegra::borrarItemRecogido);
     inteligenteActual->seleccionarSkin();
 
     // Control spawn items
@@ -77,16 +82,19 @@ void nivelPesteNegra::update(){
     }
 
     contadorInteligente++;
-    if(contadorInteligente >= frecuenciaInteligente && aparicionesInteligente == 0){
+    if(contadorInteligente >= frecuenciaInteligente && !dibujarInteligente) {
         spawnInteligente();
         contadorInteligente = 0;
     }
-    if(contadorInteligente >= frecuenciaInteligente && aparicionesInteligente != 0){
-        inteligenteActual->update(jugador.getPosicion());
-        if(inteligenteActual->getPosicion().x() + inteligenteActual->getAncho() < 0){
+
+    if(dibujarInteligente) {
+        inteligenteActual->update(jugadorptr, jugador.getCantidadItems(), items);
+
+        if(inteligenteActual->getPosicion().x() + inteligenteActual->getAncho() < 0) {
+            inteligenteActual->verificarEstadoRobo();
+            inteligenteActual->resetRobo();
             regenerarInteligente();
         }
-
     }
     verificarColisiones();
     limpiarEntidades();
@@ -130,7 +138,14 @@ void nivelPesteNegra::regenerarInteligente(){
     double maxY = tamanioVentana.height() - 200.0;
     double posY = minY + QRandomGenerator::global()->generateDouble() * (maxY - minY);
     inteligenteActual->setPosicion(posX,posY);
-    inteligenteActual->comenzarSeguimiento(20);
+
+    inteligenteActual->estado = enfermoInteligente::Caminando;
+    inteligenteActual->itemObjetivo = nullptr;
+    inteligenteActual->logroRobar = false;
+    inteligenteActual->activo = true;
+
+    inteligenteActual->comenzarActividad(20);
+
     contadorInteligente = 0;
     aparicionesInteligente++;
 
@@ -148,7 +163,7 @@ void nivelPesteNegra::spawnInteligente(){
     dibujarInteligente = true;
     aparicionesInteligente++;
 
-    inteligenteActual->comenzarSeguimiento(20);
+    inteligenteActual->comenzarActividad(20);
 
 }
 
@@ -215,11 +230,13 @@ void nivelPesteNegra::draw(QPainter &p){
 
     p.setBrush(QColor(0,0,0,150));
     p.setPen(Qt::NoPen);
-    p.drawRect(10, 10, 110, 60);
+    p.drawRect(10, 10, 230, 80);
 
     p.setPen(Qt::white);
     p.drawText(20, 35, "Vidas: " + QString::number(jugador.consultarVida()));
     p.drawText(20, 55, "Hierbas: " + QString::number(jugador.getCantidadItems()));
+    p.drawText(20, 75, QString("Inmunidad: %1").arg(jugador.getInmunidadInteligente() ? "Activada" : "Desactivada"));
+
 
 }
 
@@ -261,14 +278,29 @@ void nivelPesteNegra::manejarColision(jugador1 &jugador, item *item_){
     if(item_->getTipo() == 1){
         jugador.sumarItem();
     }
-    else{
+    else if(item_->getTipo() == 2){
         jugador.sumarVida();
+    }
+    else if (item_->getTipo() == 2 && jugador.getInmunidadInteligente() == false){
+        jugador.setInmuneInteligente(15000);
     }
 
     for(int i = items.size() - 1; i >= 0; i--) {
         item *item = items[i];
 
         if(item == item_) {
+            items.removeAt(i);
+            delete item;
+            break;
+        }
+    }
+}
+
+void nivelPesteNegra::borrarItemRecogido(item* itemRecogido){
+    for(int i = items.size() - 1; i >= 0; i--) {
+        item *item = items[i];
+
+        if(item == itemRecogido) {
             items.removeAt(i);
             delete item;
             break;

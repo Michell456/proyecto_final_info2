@@ -9,11 +9,12 @@
 
 #include <QVector>
 #include <QPixmap>
+#include <QObject>
 
 class nivelPesteNegra : public nivel{
-
+    Q_OBJECT
 public:
-    nivelPesteNegra();
+    nivelPesteNegra(QObject *parent = nullptr);
 
     void update() override;
     void draw(QPainter &p) override;
@@ -25,6 +26,7 @@ public:
 
 private:
     jugador1 jugador;
+    jugador1* jugadorptr;
     QList<enfermo*> enfermosActivos;
     QVector<item*> items;
     void limpiarEntidades();
@@ -61,6 +63,9 @@ private:
     void manejarColision(jugador1 &jugador, enfermo *enfermo);
 
     const QSize tamanioVentana = QSize(1000, 600);
+
+public slots:
+    void borrarItemRecogido(item* itemRecogido);
 
 };
 

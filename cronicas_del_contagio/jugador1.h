@@ -42,12 +42,15 @@ public:
     int getCantidadItems(){ return items; }
     void sumarItem();
 
+    void setInmuneInteligente(int milisegundos);
+    void finInmunidadInteligente() { inmuneInteligente = false; }
+    bool getInmunidadInteligente() { return inmuneInteligente; }
+
 private:
 
     int vida;
     bool inmune;
     int items;
-    int tiempoInmunidad;
     QTimer *timerInmunidad;
 
     void cargarSprites();
@@ -69,6 +72,9 @@ private:
     bool teclaIzquierda;
     bool teclaArriba;
     bool teclaAbajo;
+
+    bool inmuneInteligente;
+    QTimer *timerInmunidadInteligente;
 
 };
 

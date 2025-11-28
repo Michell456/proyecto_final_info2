@@ -61,7 +61,7 @@ void item::setParametrosAleatorios(int yfinal){
 }
 
 void item::cargarTexturas(){
-    for(int i = 1; i <= 2; i++) {
+    for(int i = 1; i <= 3; i++) {
         QPixmap sprite(QString("sprites/nivel_1/items/%1.png").arg(i));
         if(!sprite.isNull()) {
             texturas.append(sprite);
@@ -76,8 +76,11 @@ void item::setTipo(int tipo_){
     if(tipo == 1){
         textura = 1;
     }
-    else{
+    else if(tipo == 2){
         textura = 2;
+    }
+    else{
+        textura = 3;
     }
 }
 
@@ -90,6 +93,9 @@ void item::draw(QPainter &painter){
         break;
     case 2:
         texturaActual = texturas[1];
+        break;
+    case 3:
+        texturaActual = texturas[2];
         break;
     }
     painter.drawPixmap(posicion.x(), posicion.y(), texturaActual);

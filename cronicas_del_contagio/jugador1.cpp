@@ -16,17 +16,20 @@ jugador1::jugador1(QObject *parent)
     , teclaIzquierda(false)
     , inmune(false)
     , items(0)
+    , inmuneInteligente(false)
 {
     timerAnimacion = new QTimer(this);
     connect(timerAnimacion, &QTimer::timeout, this, &jugador1::cambiarFrame);
 
     cargarSprites();
 
-    tiempoInmunidad = 1500; // 1.5 segundos de inmunidad
-
     timerInmunidad = new QTimer(this);
     timerInmunidad->setSingleShot(true);
     connect(timerInmunidad, &QTimer::timeout, this, &jugador1::finInmunidad);
+
+    timerInmunidadInteligente = new QTimer(this);
+    timerInmunidadInteligente->setSingleShot(true);
+    connect(timerInmunidadInteligente, &QTimer::timeout, this, &jugador1::finInmunidadInteligente);
 }
 
 jugador1::~jugador1(){
@@ -64,6 +67,11 @@ void jugador1::cargarSprites(){
 void jugador1::activarInmunidad(int milisegundos) {
     inmune = true;
     timerInmunidad->start(milisegundos);
+}
+
+void jugador1::setInmuneInteligente(int milisegundos){
+    inmuneInteligente = true;
+    timerInmunidadInteligente->start(milisegundos);
 }
 
 void jugador1::draw(QPainter &painter){
