@@ -33,6 +33,8 @@ public:
     void verificarEstadoRobo();
     bool activo;
     item* itemObjetivo;          // Puntero al item que quiere tomar
+    int cuantoRobar;
+    void draw(QPainter &painter) override;
 
     Estado estado;
 
@@ -63,6 +65,10 @@ private:
     void comportamientoPersiguiendo(jugador1* jugador);
 
     QPointF posicionF;
+
+    int getDireccionActual() const;
+
+    void cargarSprites() override;
 
 signals:
     void recogeItem(item* itemRecogido);

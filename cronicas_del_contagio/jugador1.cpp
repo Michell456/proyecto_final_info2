@@ -223,3 +223,7 @@ void jugador1::sumarVida(){
 void jugador1::sumarItem(){
     items++;
 }
+
+void jugador1::quitarItems(int cantidad){
+    items -= cantidad;
+}

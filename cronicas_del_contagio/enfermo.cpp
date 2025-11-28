@@ -83,7 +83,7 @@ void enfermo::seleccionarSkin(){
 
 void enfermo::cambiarFrame(){
 
-    if (frameActual >= sprites1.size()){
+    if (frameActual >= 9){
         frameActual = 0;
     }
     frameActual = (frameActual + 1) % 9;

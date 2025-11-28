@@ -6,9 +6,9 @@ nivelPesteNegra::nivelPesteNegra(QObject *parent) : nivel(parent) {
 
     fondo.load("sprites/nivel_1/fondo_nivel1.png");
 
-    if (fondo.isNull())
+    if (fondo.isNull()){
         qDebug() << "ERROR: fondo NO cargó";
-
+    }
     fondoX1 = 0;
     fondoX2 = fondo.width();
 
@@ -23,22 +23,22 @@ nivelPesteNegra::nivelPesteNegra(QObject *parent) : nivel(parent) {
     probabilidadSpawnEnemigo = 100;  // 90% de probabilidad
 
     // Control enemigo inteligente
-
     inteligenteActual = new enfermoInteligente();
     contadorInteligente = 0;
     dibujarInteligente = false;
     aparicionesInteligente = 0;
     frecuenciaInteligente = 300; // 5 segundos (más frecuente para testing)
 
-    // CONECTAR SEÑAL para items recogidos
+    // señal para items recogidos por el inteligente
     connect(inteligenteActual, &enfermoInteligente::recogeItem, this, &nivelPesteNegra::borrarItemRecogido);
     inteligenteActual->seleccionarSkin();
 
     // Control spawn items
     contadorSpawnItem = 0;
-    intervaloSpawnItem = 240; // aprox 4 segundos
-    probabilidadSpawnItem1 = 70;  // 70% de probabilidad
-    probabilidadSpawnItem2 = 30;  // 30% de probabilidad
+    intervaloSpawnItem = 180; // aprox 4 segundos 240
+    probabilidadSpawnItem1 = 60; // 60% de probabilidad
+    probabilidadSpawnItem2 = 20; // 20% de probabilidad
+    probabilidadSpawnItem3 = 20; // 20% de probabilidad
 
 }
 
@@ -76,6 +76,9 @@ void nivelPesteNegra::update(){
         if(QRandomGenerator::global()->bounded(100) < probabilidadSpawnItem2) {
             spawnItem(2);
         }
+        if(QRandomGenerator::global()->bounded(100) < probabilidadSpawnItem3) {
+            spawnItem(3);
+        }
     }
     for(item *itemActivo : items) {
         itemActivo->update(velocidadFondo);
@@ -107,8 +110,11 @@ void nivelPesteNegra::spawnItem(int tipo){
     if (tipo == 1){
         nuevoItem->setTipo(1);
     }
-    else{
+    else if (tipo == 2){
         nuevoItem->setTipo(2);
+    }
+    else{
+        nuevoItem->setTipo(3);
     }
 
     int posX = tamanioVentana.width();
@@ -281,7 +287,7 @@ void nivelPesteNegra::manejarColision(jugador1 &jugador, item *item_){
     else if(item_->getTipo() == 2){
         jugador.sumarVida();
     }
-    else if (item_->getTipo() == 2 && jugador.getInmunidadInteligente() == false){
+    else if (item_->getTipo() == 3 && jugador.getInmunidadInteligente() == false){
         jugador.setInmuneInteligente(15000);
     }
 

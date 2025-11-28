@@ -36,6 +36,7 @@ private:
     int intervaloSpawnItem;
     int probabilidadSpawnItem1;
     int probabilidadSpawnItem2;
+    int probabilidadSpawnItem3;
     void manejarColision(jugador1 &jugador, item *item_);
 
     // Fondo con scroll

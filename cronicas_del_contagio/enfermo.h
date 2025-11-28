@@ -16,7 +16,7 @@ public:
     ~enfermo();
 
     void update();
-    void draw(QPainter &painter);
+    virtual void draw(QPainter &painter);
     QRect getRect() const;
 
     void setPosicion(int x, int y);
@@ -32,7 +32,7 @@ protected:
     QPoint posicion;
     void cambiarFrame();
 
-    void cargarSprites();
+    virtual void cargarSprites();
     QVector<QPixmap> sprites1;
     QVector<QPixmap> sprites2;
     QVector<QPixmap> sprites3;

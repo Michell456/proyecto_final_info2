@@ -41,6 +41,7 @@ public:
 
     int getCantidadItems(){ return items; }
     void sumarItem();
+    void quitarItems(int cantidad);
 
     void setInmuneInteligente(int milisegundos);
     void finInmunidadInteligente() { inmuneInteligente = false; }

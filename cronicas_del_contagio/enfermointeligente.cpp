@@ -16,10 +16,11 @@ enfermoInteligente::enfermoInteligente(QObject *parent)
     , boostVelocidad(0.0f)
     , itemObjetivo(nullptr)
     , logroRobar(false)
+    , cuantoRobar(2)
 {
 
     frameActual = 0;
-    velocidad = 2;
+    velocidad = 3;
     anchoSprite = 20;
     altoSprite = 50;
 
@@ -39,34 +40,7 @@ enfermoInteligente::enfermoInteligente(QObject *parent)
             reducirBoostVelocidad();
         }
     });
-
-
 }
-
-/*void enfermoInteligente::update(const QPoint &posicionJugador) {
-
-    if(activo){
-        double dx = posicionJugador.x() - posicionF.x();
-        double dy = posicionJugador.y() - posicionF.y();
-
-        double distancia = sqrt(dx*dx + dy*dy);
-        if(distancia > 0) {
-            dx = (dx / distancia) * velocidad;
-            dy = (dy / distancia) * velocidad;
-        }
-
-        posicionF.setX(posicionF.x() + dx);
-        posicionF.setY(posicionF.y() + dy);
-
-        posicion = posicionF.toPoint();
-    }
-    else{
-        velocidad = 3;
-        int nuevaX = posicionF.x() + (velocidad * -1);
-        posicionF.setX(nuevaX);
-        posicion = posicionF.toPoint();
-    }
-}*/
 
 void enfermoInteligente::setPosicion(double x, double y) {
     posicionF.setX(x); //  Desplazamiento (decimal)
@@ -100,60 +74,54 @@ void enfermoInteligente::update(jugador1* jugador, int cantidadItemsJugador, con
         comportamientoHuyendo();
         break;
     case Autonomo:
-        // Solo movimiento base hacia izquierda (ya se aplicó arriba)
+        // movimiento base a la izquierda
         break;
     }
 }
 
 void enfermoInteligente::comportamientoCaminando(jugador1* jugador, int cantidadItemsJugador, const QList<item*>& itemsEnSuelo) {
-    // SOLO tomar decisiones si está activo
     if(!activo) return;
 
-    // 1. EVALUAR OPCIONES
+    // evalua opciones
     item* itemCercano = encontrarItemMasCercano(itemsEnSuelo);
     double distanciaAlJugador = QLineF(posicionF, jugador->getPosicion()).length();
     double distanciaAlItem = itemCercano ? QLineF(posicionF, itemCercano->getPosicion()).length() : 9999;
 
-    qDebug() << "Caminando - Dist Jugador:" << distanciaAlJugador << "Dist Item:" << distanciaAlItem;
-
-    // 2. TOMAR DECISIÓN - ORDEN DE PRIORIDAD
+    // toma de decisiones
+    if(itemCercano && distanciaAlItem < 80) {
+        estado = YendoAItem;
+        itemObjetivo = itemCercano;
+        return;
+    }
     if(jugador->getInmunidadInteligente() == false) {
-        // PRIORIDAD 1: Items muy cercanos
-        if(itemCercano && distanciaAlItem < 100) {
-            qDebug() << "Item MUY cercano - YendoAItem";
-            estado = YendoAItem;
-            itemObjetivo = itemCercano;
-            return;
-        }
-        // PRIORIDAD 2: Jugador con muchos items y cercano
-        else if(cantidadItemsJugador >= umbralRobo && distanciaAlJugador < 200) {
-            qDebug() << "Jugador con items - Persiguiendo";
+        if(cantidadItemsJugador >= umbralRobo && distanciaAlJugador < 200) {
             estado = PersiguiendoJugador;
             return;
         }
-        // PRIORIDAD 3: Items más cerca que jugador
-        else if(itemCercano && distanciaAlItem < distanciaAlJugador && distanciaAlItem < 250) {
-            qDebug() << "Item más cercano - YendoAItem";
-            estado = YendoAItem;
-            itemObjetivo = itemCercano;
-            return;
-        }
+    }
+    if(itemCercano && distanciaAlItem < distanciaAlJugador && distanciaAlItem < 200) {
+        estado = YendoAItem;
+        itemObjetivo = itemCercano;
+        return;
+    }
+    if(itemCercano && distanciaAlItem < 150) {
+        estado = YendoAItem;
+        itemObjetivo = itemCercano;
+        return;
     }
 
-    // Si no hay oportunidades interesantes, sigue caminando
-    qDebug() << "Sin oportunidades - Sigo Caminando";
+    // Sigue caminando si no hay elementos cercanos
 }
 
 void enfermoInteligente::comportamientoPersiguiendo(jugador1* jugador) {
-    // Movimiento hacia el jugador
+
+    objetivoActual = jugador->getPosicion();
     double dx = jugador->getPosicion().x() - posicionF.x();
     double dy = jugador->getPosicion().y() - posicionF.y();
 
     double distancia = sqrt(dx*dx + dy*dy);
 
-    // Si jugador se volvió inmune, dejar de perseguir
     if(jugador->getInmunidadInteligente()) {
-        qDebug() << "Jugador se volvió inmune - Volviendo a Caminar";
         estado = Caminando;
         return;
     }
@@ -167,34 +135,28 @@ void enfermoInteligente::comportamientoPersiguiendo(jugador1* jugador) {
     posicionF.setY(posicionF.y() + dy);
     posicion = posicionF.toPoint();
 
-    qDebug() << "Persiguiendo - Distancia:" << distancia;
-
-    // VERIFICAR SI ALCANZÓ AL JUGADOR PARA ROBAR
+    // Robo
     if(distancia < 30) {
-        qDebug() << "¡ROBO EXITOSO!";
         logroRobar = true;
         robosExitosos++;
         aplicarBoostVelocidad();
         estado = Huyendo;
 
-        // Aquí deberías quitarle un item al jugador
-        // jugador->quitarItem();
+        jugador->quitarItems(cuantoRobar);
     }
-    // Si el jugador se alejó demasiado, dejar de perseguir
+    // deja de perseguir si el jugador esta muy lejos
     else if(distancia > 400) {
-        qDebug() << "Jugador muy lejos - Volviendo a Caminar";
         estado = Caminando;
     }
 }
 
 void enfermoInteligente::comportamientoYendoAItem() {
     if(!itemObjetivo) {
-        qDebug() << "Item objetivo perdido - Volviendo a Caminar";
         estado = Caminando;
         return;
     }
 
-    // Movimiento hacia el item
+    objetivoActual = itemObjetivo->getPosicion();
     QPoint posItem = itemObjetivo->getPosicion();
     double dx = posItem.x() - posicionF.x();
     double dy = posItem.y() - posicionF.y();
@@ -210,24 +172,18 @@ void enfermoInteligente::comportamientoYendoAItem() {
     posicionF.setY(posicionF.y() + dy);
     posicion = posicionF.toPoint();
 
-    qDebug() << "YendoAItem - Distancia:" << distancia;
-
-    // VERIFICAR SI ALCANZÓ EL ITEM
+    // Toma item del suelo
     if(distancia < 25) {
-        qDebug() << "¡ITEM TOMADO!";
         tomarItem();
         estado = Huyendo;
     }
-    // Si el item desapareció o está muy lejos, dejar de perseguirlo
     else if(distancia > 300) {
-        qDebug() << "Item muy lejos - Volviendo a Caminar";
         estado = Caminando;
         itemObjetivo = nullptr;
     }
 }
 
 void enfermoInteligente::comportamientoHuyendo() {
-    // Movimiento rápido hacia la izquierda
     int nuevaX = posicionF.x() + ((velocidad * 1.5) * -1); // 50% más rápido
     posicionF.setX(nuevaX);
     posicion = posicionF.toPoint();
@@ -239,12 +195,11 @@ item* enfermoInteligente::encontrarItemMasCercano(const QList<item*>& itemsEnSue
 
     for(item* item : itemsEnSuelo) {
         double distancia = QLineF(posicionF, item->getPosicion()).length();
-        if(distancia < distanciaMinima) {
+        if(distancia < distanciaMinima && item->getTipo() != 3) {
             distanciaMinima = distancia;
             masCercano = item;
         }
     }
-
     return masCercano;
 }
 
@@ -257,7 +212,9 @@ void enfermoInteligente::tomarItem() {
 
 void enfermoInteligente::aplicarBoostVelocidad() {
     boostVelocidad += 0.2f; // +20% de velocidad
-    velocidad = velocidad * (1.0f + boostVelocidad);
+    if (velocidad * (1.0f + boostVelocidad) >= 6.5){
+        velocidad = velocidad * (1.0f + boostVelocidad);
+    }
 }
 
 void enfermoInteligente::reducirBoostVelocidad() {
@@ -274,5 +231,92 @@ void enfermoInteligente::resetRobo(){
 void enfermoInteligente::verificarEstadoRobo(){
     if(logroRobar == false){
         robosFallidos--;
+    }
+    reducirBoostVelocidad();
+}
+
+void enfermoInteligente::cargarSprites(){
+
+    for(int i = 1; i <= 9; i++) {
+        QPixmap sprite(QString("sprites/nivel_1/enemigos/enemigo_1/derecha/%1.png").arg(i));
+        if(!sprite.isNull()) {
+            sprites1.append(sprite);
+        } else {
+            qDebug() << "No se pudo cargar sprite:" << QString("%1.png").arg(i);
+        }
+    }
+
+    for(int i = 1; i <= 9; i++) {
+        QPixmap sprite(QString("sprites/nivel_1/enemigos/enemigo_2/derecha/%1.png").arg(i));
+        if(!sprite.isNull()) {
+            sprites2.append(sprite);
+        } else {
+            qDebug() << "No se pudo cargar sprite:" << QString("%1.png").arg(i);
+        }
+    }
+
+    for(int i = 1; i <= 9; i++) {
+        QPixmap sprite(QString("sprites/nivel_1/enemigos/enemigo_3/derecha/%1.png").arg(i));
+        if(!sprite.isNull()) {
+            sprites3.append(sprite);
+        } else {
+            qDebug() << "No se pudo cargar sprite:" << QString("%1.png").arg(i);
+        }
+    }
+}
+
+void enfermoInteligente::draw(QPainter &painter){
+    QPixmap spriteActual;
+    int direccion = getDireccionActual();
+
+    if(direccion == -1){
+        switch (skin) {
+        case 1:
+            spriteActual = sprites1[frameActual];
+            break;
+        case 2:
+            spriteActual = sprites2[frameActual];
+            break;
+        case 3:
+            spriteActual = sprites3[frameActual];
+            break;
+        }
+    }
+    else if (direccion == 1){
+        switch (skin) {
+        case 1:
+            spriteActual = sprites1[frameActual+9];
+            break;
+        case 2:
+            spriteActual = sprites2[frameActual+9];
+            break;
+        case 3:
+            spriteActual = sprites3[frameActual+9];
+            break;
+        }
+    }
+
+    painter.drawPixmap(posicion.x(), posicion.y(), spriteActual);
+
+}
+
+int enfermoInteligente::getDireccionActual() const {
+    switch(estado) {
+    case PersiguiendoJugador:
+        return (objetivoActual.x() > posicionF.x()) ? 1 : -1;
+
+    case YendoAItem:
+        if(itemObjetivo) {
+            return (itemObjetivo->getPosicion().x() > posicionF.x()) ? 1 : -1;
+        }
+        return -1;
+
+    case Huyendo:
+        return -1;
+
+    case Caminando:
+    case Autonomo:
+    default:
+        return -1;
     }
 }
