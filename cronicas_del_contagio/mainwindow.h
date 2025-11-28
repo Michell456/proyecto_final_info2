@@ -7,6 +7,12 @@
 #include <QTimer>
 #include <QKeyEvent>
 
+class nivel;
+//class menuPrincipal;
+//class NivelPesteNegra;
+//class NivelColera;
+class NivelCovid;
+
 namespace Ui {class MainWindow;}
 
 class MainWindow : public QMainWindow{
@@ -30,7 +36,7 @@ private:
     QGraphicsScene *scene;
     QGraphicsPixmapItem *fig;
 
-    Nivel *nivelActual;
+    nivel *nivelActual;
     QTimer *timer;
 
     void cargarMenuPrincipal();

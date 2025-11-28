@@ -1,14 +1,14 @@
 #ifndef NIVEL_H
 #define NIVEL_H
 
-// Abstract
+#include <QKeyEvent>
+#include <QPainter>
 
-enum class EstadoNivel { // Tipo de dato que solo puede tomar los 3 valores definidos
+enum class EstadoNivel {
     jugando,
     ganado,
     perdido
 };
-
 
 class nivel
 {
@@ -23,7 +23,7 @@ public:
     virtual bool chequearVictoria() = 0;
     virtual bool chequearDerrota() = 0;
 
-    virtual ~Nivel() {}
+    virtual ~nivel() {}
 
 protected:
     EstadoNivel estado;

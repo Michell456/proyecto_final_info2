@@ -1,0 +1,130 @@
+#include "dron.h"
+#include <QDebug>
+#include <cmath>
+
+Dron::Dron() : posicion(400, 300), frameActual(0), contadorAnimacion(0) {
+    velocidad = QPointF(0, 0);
+    aceleracion = QPointF(0, 0);
+    for (int i = 0; i < 4; i++) teclas[i] = false;
+    cargarSprites();
+}
+
+void Dron::cargarSprites() {
+    sprites.clear();
+
+    for (int i = 1; i <= 6; i++) {
+        QString ruta = QString("C:/Users/miche/Desktop/tercer_nivel/proyecto_final_info2/cronicas_del_contagio/sprites/Nivel3/mov_dron%1.png").arg(i);
+        QPixmap spriteOriginal(ruta);
+
+        if (spriteOriginal.isNull()) {
+            qDebug() << "Error cargando:" << ruta;
+            QPixmap fallback(150, 150);
+            fallback.fill(QColor(100, 100, 255));
+            sprites.append(fallback);
+        } else {
+            QPixmap spriteEscalado = spriteOriginal.scaled(150, 150, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            sprites.append(spriteEscalado);
+        }
+    }
+
+    if (sprites.isEmpty()) {
+        QPixmap fallback(150, 150);
+        fallback.fill(QColor(255, 0, 0));
+        sprites.append(fallback);
+    }
+}
+
+void Dron::update() {
+    // Aplicar aceleración basada en teclas
+    aceleracion = QPointF(0, 0);
+
+    if (teclas[0]) aceleracion.setY(-ACELERACION); // W - Arriba
+    if (teclas[1]) aceleracion.setY(ACELERACION);  // S - Abajo
+    if (teclas[2]) aceleracion.setX(-ACELERACION); // A - Izquierda
+    if (teclas[3]) aceleracion.setX(ACELERACION);  // D - Derecha
+
+    // Actualizar velocidad
+    velocidad += aceleracion;
+
+    // Limitar velocidad máxima
+    float velocidadActual = sqrt(velocidad.x() * velocidad.x() +
+                                 velocidad.y() * velocidad.y());
+    if (velocidadActual > VELOCIDAD_MAXIMA) {
+        velocidad = (velocidad / velocidadActual) * VELOCIDAD_MAXIMA;
+    }
+
+    // APLICAR MUCHA MENOS FRICCIÓN - se desliza mucho más
+    velocidad *= FRICCION;
+
+    // DETENER MÁS LENTAMENTE - umbral más bajo
+    if (velocidadActual < 0.05f) {  // Cambiado de 0.2f a 0.05f
+        velocidad = QPointF(0, 0);
+    }
+
+    // Actualizar posición
+    posicion += velocidad;
+
+    // Límites de pantalla para dron grande con REBOTE SUAVE
+    if (posicion.x() < 75) {
+        posicion.setX(75);
+        velocidad.setX(-velocidad.x() * 0.5f); // Rebote más suave
+    }
+    if (posicion.x() > 725) {
+        posicion.setX(725);
+        velocidad.setX(-velocidad.x() * 0.5f); // Rebote más suave
+    }
+    if (posicion.y() < 75) {
+        posicion.setY(75);
+        velocidad.setY(-velocidad.y() * 0.5f); // Rebote más suave
+    }
+    if (posicion.y() > 525) {
+        posicion.setY(525);
+        velocidad.setY(-velocidad.y() * 0.5f); // Rebote más suave
+    }
+
+    // Animación (igual que antes)
+    bool moviendose = teclas[0] || teclas[1] || teclas[2] || teclas[3];
+    float velocidadParaAnimacion = velocidadActual / VELOCIDAD_MAXIMA;
+
+    if (moviendose) {
+        contadorAnimacion++;
+        int velocidadAnimacion = qMax(1, 4 - int(velocidadParaAnimacion * 3));
+        if (contadorAnimacion >= velocidadAnimacion) {
+            frameActual = (frameActual + 1) % sprites.size();
+            contadorAnimacion = 0;
+        }
+    } else {
+        contadorAnimacion++;
+        if (contadorAnimacion >= 20) {
+            frameActual = (frameActual + 1) % sprites.size();
+            contadorAnimacion = 0;
+        }
+    }
+}
+void Dron::draw(QPainter &p) {
+    if (!sprites.isEmpty() && frameActual < sprites.size()) {
+        p.drawPixmap(posicion.x() - 75, posicion.y() - 75, 150, 150, sprites[frameActual]);
+    } else {
+        p.setBrush(QColor(0, 100, 200));
+        p.setPen(Qt::black);
+        p.drawEllipse(posicion, 75, 75);
+    }
+}
+
+void Dron::handleInput(QKeyEvent *e) {
+    switch (e->key()) {
+    case Qt::Key_W: teclas[0] = true; break;
+    case Qt::Key_S: teclas[1] = true; break;
+    case Qt::Key_A: teclas[2] = true; break;
+    case Qt::Key_D: teclas[3] = true; break;
+    }
+}
+
+void Dron::handleKeyRelease(QKeyEvent *event) {
+    switch (event->key()) {
+    case Qt::Key_W: teclas[0] = false; break;
+    case Qt::Key_S: teclas[1] = false; break;
+    case Qt::Key_A: teclas[2] = false; break;
+    case Qt::Key_D: teclas[3] = false; break;
+    }
+}

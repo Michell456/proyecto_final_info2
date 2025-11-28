@@ -9,11 +9,15 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    Dron.cpp \
+    NivelCovid.cpp \
     main.cpp \
     mainwindow.cpp \
     nivel.cpp \
 
 HEADERS += \
+    Dron.h \
+    NivelCovid.h \
     mainwindow.h \
     nivel.h \
 
