@@ -25,6 +25,8 @@ public:
 
     void seleccionarSkin();
 
+    void setVelocidad(float vel);
+
 protected:
 
     float velocidad;

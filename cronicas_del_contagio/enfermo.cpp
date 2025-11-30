@@ -115,3 +115,7 @@ QPoint enfermo::getPosicion() const
 QRect enfermo::getRect() const {
     return QRect(posicion.x(), posicion.y(), anchoSprite, altoSprite);
 }
+
+void enfermo::setVelocidad(float vel){
+    velocidad = vel;
+}

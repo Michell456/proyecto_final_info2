@@ -12,6 +12,10 @@ nivelPesteNegra::nivelPesteNegra(QObject *parent) : nivel(parent) {
     fondoX1 = 0;
     fondoX2 = fondo.width();
 
+    contadorTiempo = 0;
+    tiempoTranscurrido = 0;
+    multiplicadorDificultad = 1.0f;
+
     velocidadFondo = 2;
 
     jugador.setPosicion(12,300);
@@ -19,15 +23,15 @@ nivelPesteNegra::nivelPesteNegra(QObject *parent) : nivel(parent) {
 
     // Control spawn enemigos
     contadorSpawnEnemigo = 0;
-    intervaloSpawnEnemigo = 40;  // Aprox 0.7 segundos (60 FPS × 0.7)
-    probabilidadSpawnEnemigo = 100;  // 90% de probabilidad
+    intervaloSpawnEnemigo = 30;  // Aprox 0.7 segundos (60 FPS × 0.7)
+    probabilidadSpawnEnemigo = 90;
 
     // Control enemigo inteligente
     inteligenteActual = new enfermoInteligente();
     contadorInteligente = 0;
     dibujarInteligente = false;
     aparicionesInteligente = 0;
-    frecuenciaInteligente = 300; // 5 segundos (más frecuente para testing)
+    frecuenciaInteligente = 600;
 
     // señal para items recogidos por el inteligente
     connect(inteligenteActual, &enfermoInteligente::recogeItem, this, &nivelPesteNegra::borrarItemRecogido);
@@ -35,14 +39,64 @@ nivelPesteNegra::nivelPesteNegra(QObject *parent) : nivel(parent) {
 
     // Control spawn items
     contadorSpawnItem = 0;
-    intervaloSpawnItem = 180; // aprox 4 segundos 240
+    intervaloSpawnItem = 240; // aprox 4 segundos 240
     probabilidadSpawnItem1 = 60; // 60% de probabilidad
     probabilidadSpawnItem2 = 20; // 20% de probabilidad
-    probabilidadSpawnItem3 = 20; // 20% de probabilidad
+    probabilidadSpawnItem3 = 15; // 15% de probabilidad
 
+    velocidadFondoBase = 2;
+    intervaloSpawnEnemigoBase = 30;
+    intervaloSpawnItemBase = 240;
+    frecuenciaInteligenteBase = 600;
+
+    sonidoColision.setSource(QUrl::fromLocalFile("sprites/nivel_1/audios/colision.wav"));
+    sonidoColision.setVolume(1.0);
+
+    sonidoTos1.setSource(QUrl::fromLocalFile("sprites/nivel_1/audios/tos1.wav"));
+    sonidoTos1.setVolume(1.0);
+    sonidoTos2.setSource(QUrl::fromLocalFile("sprites/nivel_1/audios/tos2.wav"));
+    sonidoTos2.setVolume(1.0);
+    sonidoTos3.setSource(QUrl::fromLocalFile("sprites/nivel_1/audios/tos3.wav"));
+    sonidoTos3.setVolume(1.0);
+
+    sonidoEstornudo1.setSource(QUrl::fromLocalFile("sprites/nivel_1/audios/estornudo1.wav"));
+    sonidoEstornudo1.setVolume(1.0);
+    sonidoEstornudo2.setSource(QUrl::fromLocalFile("sprites/nivel_1/audios/estornudo2.wav"));
+    sonidoEstornudo2.setVolume(1.0);
+    sonidoEstornudo3.setSource(QUrl::fromLocalFile("sprites/nivel_1/audios/estornudo3.wav"));
+    sonidoEstornudo3.setVolume(1.0);
+
+    probabilidadSonido = 20;
+
+    sonidoItem2.setSource(QUrl::fromLocalFile("sprites/nivel_1/audios/item1.wav"));
+    sonidoItem2.setVolume(1.0);
+    sonidoItem3.setSource(QUrl::fromLocalFile("sprites/nivel_1/audios/item2.wav"));
+    sonidoItem3.setVolume(0.5);
+
+    player = new QMediaPlayer(this);
+    audioOutput = new QAudioOutput(this);
+    player->setAudioOutput(audioOutput);
+    player->setSource(QUrl::fromLocalFile("sprites/nivel_1/audios/musica_fondo.mp3"));
+    audioOutput->setVolume(0.3);
+    connect(player, &QMediaPlayer::mediaStatusChanged, this, [=](QMediaPlayer::MediaStatus status){
+        if (status == QMediaPlayer::EndOfMedia) {
+            player->play();
+        }
+    });
+    player->play();
 }
 
 void nivelPesteNegra::update(){
+
+    //chequearVictoria();
+    //chequearDerrota();
+
+    contadorTiempo++;
+    if(contadorTiempo >= 60) { // Cada 60 frames, 1 segundo
+        contadorTiempo = 0;
+        tiempoTranscurrido++;
+        aumentarDificultad();
+    }
 
     fondoX1 -= velocidadFondo;
     fondoX2 -= velocidadFondo;
@@ -197,6 +251,35 @@ void nivelPesteNegra::limpiarEntidades() {
 }
 
 void nivelPesteNegra::spawnEnemigo() {
+
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dist(1, 6);
+    int sonido = dist(gen);
+
+    if (QRandomGenerator::global()->bounded(100) < probabilidadSonido){
+        switch (sonido) {
+        case 1:
+            sonidoTos1.play();
+            break;
+        case 2:
+            sonidoTos2.play();
+            break;
+        case 3:
+            sonidoTos3.play();
+            break;
+        case 4:
+            sonidoEstornudo1.play();
+            break;
+        case 5:
+            sonidoEstornudo2.play();
+            break;
+        case 6:
+            sonidoEstornudo3.play();
+            break;
+        }
+    }
+
     enfermo *nuevoEnfermo = new enfermo();
     nuevoEnfermo->seleccionarSkin();
 
@@ -204,6 +287,7 @@ void nivelPesteNegra::spawnEnemigo() {
     int posY = QRandomGenerator::global()->bounded(230, tamanioVentana.height() -200);
 
     nuevoEnfermo->setPosicion(posX, posY);
+    nuevoEnfermo->setVelocidad(3 * multiplicadorDificultad);
     enfermosActivos.append(nuevoEnfermo);
 }
 
@@ -273,7 +357,7 @@ void nivelPesteNegra::verificarColisiones(){
 }
 
 void nivelPesteNegra::manejarColision(jugador1 &jugador, enfermo *enfermo){
-
+    sonidoColision.play();
     jugador.activarInmunidad(1500);
     jugador.quitarVida();
 
@@ -286,9 +370,11 @@ void nivelPesteNegra::manejarColision(jugador1 &jugador, item *item_){
     }
     else if(item_->getTipo() == 2){
         jugador.sumarVida();
+        sonidoItem2.play();
     }
     else if (item_->getTipo() == 3 && jugador.getInmunidadInteligente() == false){
         jugador.setInmuneInteligente(15000);
+        sonidoItem3.play();
     }
 
     for(int i = items.size() - 1; i >= 0; i--) {
@@ -323,10 +409,37 @@ void nivelPesteNegra::handleKeyRelease(QKeyEvent *event){
 }
 
 bool nivelPesteNegra::chequearVictoria(){
+    if(jugador.getCantidadItems() == 10){
 
+    }
 }
 bool nivelPesteNegra::chequearDerrota(){
     if(jugador.consultarVida() == 0){
 
     }
+}
+
+void nivelPesteNegra::aumentarDificultad() {
+
+    if(tiempoTranscurrido % 30 == 0 && tiempoTranscurrido > 0) {
+        float nuevoMultiplicador = 1.0f + (tiempoTranscurrido / 60.0f) * 0.15f;
+        multiplicadorDificultad = qMin(2.5f, nuevoMultiplicador);
+
+        velocidadFondo = qMin(6.0f, velocidadFondoBase * multiplicadorDificultad);
+
+        for(enfermo* e : enfermosActivos) {
+            e->setVelocidad(3 * multiplicadorDificultad);
+        }
+
+        if(inteligenteActual) {
+            inteligenteActual->setVelocidad(3 * multiplicadorDificultad);
+        }
+
+        intervaloSpawnEnemigo = qMax(15, (int)(intervaloSpawnEnemigoBase / multiplicadorDificultad));
+        intervaloSpawnItem = qMax(80, (int)(intervaloSpawnItemBase / multiplicadorDificultad));
+        frecuenciaInteligente = qMax(180, (int)(frecuenciaInteligenteBase / multiplicadorDificultad));
+
+        probabilidadSpawnEnemigo = qMin(95, 70 + (int)(tiempoTranscurrido / 15));
+    }
+
 }

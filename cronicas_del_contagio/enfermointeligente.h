@@ -29,8 +29,10 @@ public:
     void update(jugador1* jugador, int cantidadItemsJugador, const QList<item*>& itemsEnSuelo);
     void comenzarActividad(int segundos);
     bool logroRobar;
+    bool intentoRobar;
     void resetRobo();
     void verificarEstadoRobo();
+    void ajustarRobo();
     bool activo;
     item* itemObjetivo;          // Puntero al item que quiere tomar
     int cuantoRobar;

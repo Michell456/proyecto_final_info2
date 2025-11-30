@@ -10,6 +10,10 @@
 #include <QVector>
 #include <QPixmap>
 #include <QObject>
+#include <QSoundEffect>
+#include <QMediaPlayer>
+#include <QAudioOutput>
+#include <QUrl>
 
 class nivelPesteNegra : public nivel{
     Q_OBJECT
@@ -64,6 +68,30 @@ private:
     void manejarColision(jugador1 &jugador, enfermo *enfermo);
 
     const QSize tamanioVentana = QSize(1000, 600);
+
+    int contadorTiempo;
+    int tiempoTranscurrido;
+    float multiplicadorDificultad;
+    void aumentarDificultad();
+    float getMultiplicadorDificultad() const { return multiplicadorDificultad; }
+
+    int velocidadFondoBase;
+    int intervaloSpawnEnemigoBase;
+    int intervaloSpawnItemBase;
+    int frecuenciaInteligenteBase;
+
+    QSoundEffect sonidoColision;
+    QSoundEffect sonidoTos1;
+    QSoundEffect sonidoTos2;
+    QSoundEffect sonidoTos3;
+    QSoundEffect sonidoEstornudo1;
+    QSoundEffect sonidoEstornudo2;
+    QSoundEffect sonidoEstornudo3;
+    QSoundEffect sonidoItem2;
+    QSoundEffect sonidoItem3;
+    int probabilidadSonido;
+    QMediaPlayer* player;
+    QAudioOutput *audioOutput;
 
 public slots:
     void borrarItemRecogido(item* itemRecogido);

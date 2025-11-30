@@ -16,11 +16,12 @@ enfermoInteligente::enfermoInteligente(QObject *parent)
     , boostVelocidad(0.0f)
     , itemObjetivo(nullptr)
     , logroRobar(false)
-    , cuantoRobar(2)
+    , cuantoRobar(1)
+    , intentoRobar(false)
 {
 
     frameActual = 0;
-    velocidad = 3;
+    velocidad = 2.5;
     anchoSprite = 20;
     altoSprite = 50;
 
@@ -77,6 +78,8 @@ void enfermoInteligente::update(jugador1* jugador, int cantidadItemsJugador, con
         // movimiento base a la izquierda
         break;
     }
+
+    ajustarRobo();
 }
 
 void enfermoInteligente::comportamientoCaminando(jugador1* jugador, int cantidadItemsJugador, const QList<item*>& itemsEnSuelo) {
@@ -96,6 +99,7 @@ void enfermoInteligente::comportamientoCaminando(jugador1* jugador, int cantidad
     if(jugador->getInmunidadInteligente() == false) {
         if(cantidadItemsJugador >= umbralRobo && distanciaAlJugador < 200) {
             estado = PersiguiendoJugador;
+            intentoRobar = true;
             return;
         }
     }
@@ -142,7 +146,12 @@ void enfermoInteligente::comportamientoPersiguiendo(jugador1* jugador) {
         aplicarBoostVelocidad();
         estado = Huyendo;
 
-        jugador->quitarItems(cuantoRobar);
+        int cantidadARobar = qMin(cuantoRobar, jugador->getCantidadItems());
+        if(cantidadARobar > 0) {
+            jugador->quitarItems(cantidadARobar);
+        } else {
+            logroRobar = false;
+        }
     }
     // deja de perseguir si el jugador esta muy lejos
     else if(distancia > 400) {
@@ -212,7 +221,7 @@ void enfermoInteligente::tomarItem() {
 
 void enfermoInteligente::aplicarBoostVelocidad() {
     boostVelocidad += 0.2f; // +20% de velocidad
-    if (velocidad * (1.0f + boostVelocidad) >= 6.5){
+    if (velocidad * (1.0f + boostVelocidad) <= 4){
         velocidad = velocidad * (1.0f + boostVelocidad);
     }
 }
@@ -226,13 +235,34 @@ void enfermoInteligente::reducirBoostVelocidad() {
 
 void enfermoInteligente::resetRobo(){
     logroRobar = false;
+    intentoRobar = false;
 }
 
 void enfermoInteligente::verificarEstadoRobo(){
-    if(logroRobar == false){
-        robosFallidos--;
+    if(logroRobar == false && intentoRobar == true){
+        robosFallidos++;
+        reducirBoostVelocidad();
     }
-    reducirBoostVelocidad();
+}
+
+void enfermoInteligente::ajustarRobo(){
+    if(robosExitosos >= 6) {
+        cuantoRobar = 4;
+    }
+    else if(robosExitosos >= 5) {
+        cuantoRobar = 3;
+    }
+    else if(robosExitosos >= 3) {
+        cuantoRobar = 2;
+    }
+    else {
+        cuantoRobar = 1;
+    }
+
+    if(robosFallidos >= 3) {
+        cuantoRobar = qMax(1, cuantoRobar - 1);
+        robosFallidos = 0;
+    }
 }
 
 void enfermoInteligente::cargarSprites(){
