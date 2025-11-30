@@ -8,8 +8,11 @@
 #include <QKeyEvent>
 #include <QObject>
 #include <QPainter>
+#include <QMouseEvent>
 
 #include "nivel.h"
+
+class NivelColera;
 
 namespace Ui {class MainWindow;}
 
@@ -20,14 +23,14 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-public slots:
-    //void actualizarAnimacion();
-    //void actualizarMovimiento();
-
 protected:
-    void keyPressEvent(QKeyEvent *event) override;
-    void keyReleaseEvent(QKeyEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
+
+    // AÑADIR métodos de mouse (NivelColera)
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
 
 private:
     Ui::MainWindow *ui;
@@ -42,4 +45,3 @@ private:
 
 };
 #endif // MAINWINDOW_H
-

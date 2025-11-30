@@ -7,6 +7,10 @@
 
 // Abstract
 
+#include <QKeyEvent>
+#include <QMouseEvent>
+#include <QPainter>
+
 enum class EstadoNivel { // Tipo de dato que solo puede tomar los 3 valores definidos
     jugando,
     ganado,
