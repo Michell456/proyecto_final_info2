@@ -4,8 +4,8 @@
 #include <QMouseEvent>
 #include <QDebug>
 
-//#include "nivelPesteNegra.h"
 #include "nivelcolera.h"
+#include "nivelPesteNegra.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -27,35 +27,22 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 void MainWindow::cargarMenuPrincipal() {
-    if (nivelActual) {
-        delete nivelActual;
-        nivelActual = nullptr;
-    }
+    delete nivelActual;
     //nivelActual = new menuPrincipal();
 }
 
 void MainWindow::cargarNivel1() {
-    if (nivelActual) {
-        delete nivelActual;
-        nivelActual = nullptr;
-    }
-    //nivelActual = new nivelPesteNegra();
-    nivelActual = new NivelColera();  // TEMPORAL
+    delete nivelActual;
+    nivelActual = new nivelPesteNegra();
 }
 
 void MainWindow::cargarNivel2() {
-    if (nivelActual) {
-        delete nivelActual;
-        nivelActual = nullptr;
-    }
-    nivelActual = new NivelColera();
+    delete nivelActual;
+    //nivelActual = new nivelColera();
 }
 
 void MainWindow::cargarNivel3() {
-    if (nivelActual) {
-        delete nivelActual;
-        nivelActual = nullptr;
-    }
+    delete nivelActual;
     //nivelActual = new nivelCovid();
 }
 
@@ -102,6 +89,10 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
         cargarNivel3();
     }
     */
+}
+
+void MainWindow::keyReleaseEvent(QKeyEvent *event) {
+    nivelActual->handleKeyRelease(event);
 }
 
 MainWindow::~MainWindow()

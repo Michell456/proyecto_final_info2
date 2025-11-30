@@ -42,5 +42,6 @@ private:
     void cargarNivel1();
     void cargarNivel2();
     void cargarNivel3();
+
 };
 #endif // MAINWINDOW_H

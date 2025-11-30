@@ -1,4 +1,4 @@
-QT       += core gui multimedia  # ← AÑADE 'multimedia' aquí
+QT += core gui multimedia widgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -15,9 +15,14 @@ SOURCES += \
     ObjetoEstatico.cpp \
     Obstaculo.cpp \
     Proyectil.cpp \
+    enfermo.cpp \
+    enfermointeligente.cpp \
+    item.cpp \
+    jugador1.cpp \
     main.cpp \
     mainwindow.cpp \
     nivel.cpp \
+    nivelPesteNegra.cpp
 
 HEADERS += \
     Balde.h \
@@ -26,8 +31,13 @@ HEADERS += \
     ObjetoEstatico.h \
     Obstaculo.h \
     Proyectil.h \
+    enfermo.h \
+    enfermointeligente.h \
+    item.h \
+    jugador1.h \
     mainwindow.h \
-    nivel.h
+    nivel.h \
+    nivelPesteNegra.h
 
 FORMS += \
     mainwindow.ui
