@@ -8,14 +8,26 @@ CONFIG += c++17
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+QT += multimedia
+
 SOURCES += \
+    enfermo.cpp \
+    enfermointeligente.cpp \
+    item.cpp \
+    jugador1.cpp \
     main.cpp \
     mainwindow.cpp \
     nivel.cpp \
+    nivelPesteNegra.cpp
 
 HEADERS += \
+    enfermo.h \
+    enfermointeligente.h \
+    item.h \
+    jugador1.h \
     mainwindow.h \
     nivel.h \
+    nivelPesteNegra.h
 
 FORMS += \
     mainwindow.ui

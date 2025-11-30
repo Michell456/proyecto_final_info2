@@ -3,11 +3,15 @@
 #include <QKeyEvent>
 #include <QDebug>
 
+#include "nivelPesteNegra.h"
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-    cargarMenuPrincipal();
+    ui->setupUi(this);
+    setFixedSize(1000, 600);
+    cargarNivel1();
 
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, [this](){
@@ -20,22 +24,22 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::cargarMenuPrincipal() {
     delete nivelActual;
-    nivelActual = new menuPrincipal();
+    //nivelActual = new menuPrincipal();
 }
 
 void MainWindow::cargarNivel1() {
     delete nivelActual;
-    nivelActual = new NivelPesteNegra();
+    nivelActual = new nivelPesteNegra();
 }
 
 void MainWindow::cargarNivel2() {
     delete nivelActual;
-    nivelActual = new NivelColera();
+    //nivelActual = new nivelColera();
 }
 
 void MainWindow::cargarNivel3() {
     delete nivelActual;
-    nivelActual = new NivelCovid();
+    //nivelActual = new nivelCovid();
 }
 
 void MainWindow::paintEvent(QPaintEvent *) {
@@ -45,6 +49,10 @@ void MainWindow::paintEvent(QPaintEvent *) {
 
 void MainWindow::keyPressEvent(QKeyEvent *event) {
     nivelActual->handleInput(event);
+}
+
+void MainWindow::keyReleaseEvent(QKeyEvent *event) {
+    nivelActual->handleKeyRelease(event);
 }
 
 MainWindow::~MainWindow()
