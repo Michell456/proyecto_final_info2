@@ -5,6 +5,7 @@
 #include "dron.h"
 #include <QPixmap>
 #include "BaseDeCarga.h"
+#include "pajaro.h"
 
 class NivelCovid : public nivel
 {
@@ -22,6 +23,16 @@ private:
     Dron dron;
     QPixmap fondo;
     BaseDeCarga baseCarga;
+    const QSize tamanioVentana = QSize(1100, 650);
+
+    int contadorSpawnPajaro;
+    int intervaloSpawnPajaro;
+    int probabilidadSpawnPajaro;
+    QVector<pajaro*> pajaros;
+    void limpiarEntidades();
+
+    void spawnPajaro();
+
 };
 
 #endif // NIVELCOVID_H

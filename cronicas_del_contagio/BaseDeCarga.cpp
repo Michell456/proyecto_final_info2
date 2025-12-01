@@ -9,7 +9,7 @@ BaseDeCarga::BaseDeCarga(QPointF posicion)
 
 void BaseDeCarga::cargarSprite() {
     // Cargar sprite de base de carga
-    spriteBase.load("C:/Users/miche/Desktop/tercer_nivel/proyecto_final_info2/cronicas_del_contagio/sprites/Nivel3/base_carga.png");
+    spriteBase.load("sprites/Nivel3/base_carga.png");
 
     if (spriteBase.isNull()) {
         // Fallback si no carga el sprite

@@ -19,7 +19,7 @@ void Dron::cargarSprites() {
     sprites.clear();
 
     for (int i = 1; i <= 6; i++) {
-        QString ruta = QString("C:/Users/miche/Desktop/tercer_nivel/proyecto_final_info2/cronicas_del_contagio/sprites/Nivel3/mov_dron%1.png").arg(i);
+        QString ruta = QString("sprites/Nivel3/mov_dron%1.png").arg(i);
         QPixmap spriteOriginal(ruta);
 
         if (spriteOriginal.isNull()) {
@@ -40,7 +40,7 @@ void Dron::cargarSprites() {
     }
 }
 
-void Dron::update() {
+void Dron::update(QSize tamanioVentana) {
 
     aceleracion = QPointF(0, 0);
 
@@ -81,20 +81,20 @@ void Dron::update() {
 
     posicion += velocidad;
 
-    if (posicion.x() < 75) {
-        posicion.setX(75);
+    if (posicion.x() < 20) {
+        posicion.setX(20);
         velocidad.setX(-velocidad.x() * 0.5f);
     }
-    if (posicion.x() > 725) {
-        posicion.setX(725);
+    if (posicion.x() > tamanioVentana.width()-20) {
+        posicion.setX(tamanioVentana.width()-20);
         velocidad.setX(-velocidad.x() * 0.5f);
     }
-    if (posicion.y() < 75) {
-        posicion.setY(75);
+    if (posicion.y() < 40) {
+        posicion.setY(40);
         velocidad.setY(-velocidad.y() * 0.5f);
     }
-    if (posicion.y() > 525) {
-        posicion.setY(525);
+    if (posicion.y() > tamanioVentana.height()-20) {
+        posicion.setY(tamanioVentana.height()-20);
         velocidad.setY(-velocidad.y() * 0.5f);
     }
 

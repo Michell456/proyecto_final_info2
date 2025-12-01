@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
     , nivelActual(nullptr)
 {
     ui->setupUi(this);
+    setFixedSize(1100, 650);
 
     // Para probar, cargar directamente el nivel 3
     cargarNivel3();

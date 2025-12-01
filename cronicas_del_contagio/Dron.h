@@ -12,7 +12,7 @@ class Dron
 public:
     Dron();
 
-    void update();
+    void update(QSize tamanioVentana);
     void draw(QPainter &p);
     void handleInput(QKeyEvent *e);
     void handleKeyRelease(QKeyEvent *event);
