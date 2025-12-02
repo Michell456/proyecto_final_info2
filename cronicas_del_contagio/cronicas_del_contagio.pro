@@ -45,6 +45,51 @@ HEADERS += \
     jugador1.h \
     mainwindow.h \
     nivel.h \
+    BaseDeCarga.cpp \
+    Dron.cpp \
+    NivelCovid.cpp \
+    main.cpp \
+    mainwindow.cpp \
+    nivel.cpp \
+    pajaro.cpp \
+    zonainfeccion.cpp
+
+HEADERS += \
+    BaseDeCarga.h \
+    Dron.h \
+    NivelCovid.h \
+    mainwindow.h \
+    nivel.h \
+    pajaro.h \
+    zonainfeccion.h
+    Balde.cpp \
+    Doctor.cpp \
+    NivelColera.cpp \
+    ObjetoEstatico.cpp \
+    Obstaculo.cpp \
+    Proyectil.cpp \
+    enfermo.cpp \
+    enfermointeligente.cpp \
+    item.cpp \
+    jugador1.cpp \
+    main.cpp \
+    mainwindow.cpp \
+    nivel.cpp \
+    nivelPesteNegra.cpp
+
+HEADERS += \
+    Balde.h \
+    Doctor.h \
+    NivelColera.h \
+    ObjetoEstatico.h \
+    Obstaculo.h \
+    Proyectil.h \
+    enfermo.h \
+    enfermointeligente.h \
+    item.h \
+    jugador1.h \
+    mainwindow.h \
+    nivel.h \
     nivelPesteNegra.h
 
 FORMS += \

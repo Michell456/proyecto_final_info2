@@ -10,6 +10,7 @@
 #include <QList>
 #include <QSoundEffect>
 
+// Forward declarations
 class Doctor;
 class Proyectil;
 class Obstaculo;

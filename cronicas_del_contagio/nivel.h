@@ -1,6 +1,10 @@
 #ifndef NIVEL_H
 #define NIVEL_H
 
+#include <QKeyEvent>
+#include <QPainter>
+
+enum class EstadoNivel {
 #include <QPainter>
 #include <QKeyEvent>
 #include <QObject>

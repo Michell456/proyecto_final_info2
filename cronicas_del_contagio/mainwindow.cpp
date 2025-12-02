@@ -5,6 +5,9 @@
 #include "nivelcolera.h"
 #include <QDebug>
 
+#include "nivelcolera.h"
+#include "nivelPesteNegra.h"
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
