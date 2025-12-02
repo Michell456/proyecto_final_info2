@@ -169,3 +169,10 @@ bool ZonaInfeccion::estaDemasiadoCercaDe(const QPointF& otraPos, float radioOtro
 
     return distancia < distanciaMinima;
 }
+
+float ZonaInfeccion::getProgresoDesinfeccion() const {
+    if (tiempoDesinfeccionNecesario > 0) {
+        return tiempoDesinfeccionActual / tiempoDesinfeccionNecesario;
+    }
+    return 0.0f;
+}

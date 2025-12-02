@@ -33,6 +33,8 @@ public:
     void detenerDesinfeccion();
     bool estaDemasiadoCercaDe(const QPointF& otraPos, float radioOtro) const;
 
+    float getProgresoDesinfeccion() const;
+
 private:
     void generarPosicionAleatoria(const QSize& tamanioVentana, const QVector<ZonaInfeccion*>& zonasExistentes);
 

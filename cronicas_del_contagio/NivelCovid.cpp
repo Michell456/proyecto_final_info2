@@ -21,6 +21,10 @@ NivelCovid::NivelCovid()
     contadorSpawnInfeccion = 0;
     intervaloSpawnInfeccion = 200;
     probabilidadSpawnInfeccion = 90;
+
+    zonasDesinfectadas = 0;
+    zonasObjetivo = 10;
+    zonaExcedioLimite = false;
 }
 
 void NivelCovid::update() {
@@ -65,12 +69,25 @@ void NivelCovid::update() {
     }
 
     limpiarEntidades();
+    limpiarZonasInfeccion();
 
     if (baseCarga.estaCargando(dron.getPosition())) {
         dron.cargarBateria(0.8f);
     }
 
     verificarColisiones();
+
+    /*if (chequearVictoria()) {
+        estado = EstadoNivel::ganado;
+        return;
+    }
+
+    if (chequearDerrota()) {
+        estado = EstadoNivel::perdido;
+        zonaExcedioLimite = true;
+        return;
+    }*/
+
 }
 
 void NivelCovid::limpiarEntidades() {
@@ -90,6 +107,21 @@ void NivelCovid::limpiarEntidades() {
         }
     }
 
+}
+
+void NivelCovid::limpiarZonasInfeccion() {
+    for (int i = zonasInfeccion.size() - 1; i >= 0; i--) {
+        ZonaInfeccion* zona = zonasInfeccion[i];
+        if (zona && zona->debeEliminarse()) {
+            if (zona->getProgresoDesinfeccion() >= 1.0f ||
+                zona->getRadio() <= 5.0f) {
+                zonasDesinfectadas++;
+            }
+
+            zonasInfeccion.removeAt(i);
+            delete zona;
+        }
+    }
 }
 
 void NivelCovid::spawnZonaInfeccion() {
@@ -177,6 +209,24 @@ void NivelCovid::draw(QPainter &p) {
         p.setFont(QFont("Arial", 24, QFont::Bold));
         p.drawText(300, 300, "¡DERROTA!");
     }
+
+    p.setPen(Qt::black);
+    p.setBrush(QColor(255, 255, 255, 200));
+    p.drawRect(10, 140, 250, 40);
+
+    p.drawText(20, 160, QString("Zonas desinfectadas: %1/%2")
+                            .arg(zonasDesinfectadas)
+                            .arg(zonasObjetivo));
+
+    // Barra de progreso de victoria
+    if (zonasObjetivo > 0) {
+        float porcentaje = (float)zonasDesinfectadas / zonasObjetivo;
+        QRectF barraRect(20, 165, 100, 10);
+        p.drawRect(barraRect);
+        p.fillRect(QRectF(barraRect.left(), barraRect.top(),
+                          barraRect.width() * porcentaje, barraRect.height()),
+                   Qt::green);
+    }
 }
 
 void NivelCovid::verificarColisiones(){
@@ -223,10 +273,30 @@ void NivelCovid::handleKeyRelease(QKeyEvent *event) {
 }
 
 bool NivelCovid::chequearVictoria() {
-    return tiempoTranscurrido > 600;
+    if (zonasDesinfectadas >= zonasObjetivo) {
+        return true;
+    }
+
+    return false;
 }
 
 bool NivelCovid::chequearDerrota() {
-    QPointF pos = dron.getPosition();
-    return (pos.x() <= 0 || pos.x() >= 800 || pos.y() <= 0 || pos.y() >= 600);
+
+    for (ZonaInfeccion* zona : zonasInfeccion) {
+        if (zona && zona->estaActiva()) {
+            if (zona->getRadio() >= zona->getRadioMaximo()) {
+                return true;
+            }
+        }
+    }
+
+    if (dron.getBateria() <= 0) {
+        return true;
+    }
+
+    if (tiempoTranscurrido > 3600) { // 1 minuto
+        return true;
+    }
+
+    return false;
 }

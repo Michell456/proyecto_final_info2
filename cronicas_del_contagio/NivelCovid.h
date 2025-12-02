@@ -32,6 +32,7 @@ private:
     int intervaloSpawnPajaro;
     int probabilidadSpawnPajaro;
     QVector<pajaro*> pajaros;
+    void spawnPajaro();
     void limpiarEntidades();
 
     QVector<ZonaInfeccion*> zonasInfeccion;
@@ -39,8 +40,11 @@ private:
     int intervaloSpawnInfeccion;
     int probabilidadSpawnInfeccion;
     void spawnZonaInfeccion();
+    void limpiarZonasInfeccion();
 
-    void spawnPajaro();
+    int zonasDesinfectadas;
+    int zonasObjetivo;
+    bool zonaExcedioLimite;
 
 };
 
