@@ -1,7 +1,15 @@
 #ifndef NIVEL_H
 #define NIVEL_H
 
+#include <QPainter>
+#include <QKeyEvent>
+#include <QObject>
+
 // Abstract
+
+#include <QKeyEvent>
+#include <QMouseEvent>
+#include <QPainter>
 
 enum class EstadoNivel { // Tipo de dato que solo puede tomar los 3 valores definidos
     jugando,
@@ -10,10 +18,10 @@ enum class EstadoNivel { // Tipo de dato que solo puede tomar los 3 valores defi
 };
 
 
-class nivel
-{
+class nivel : public QObject {
+    Q_OBJECT
 public:
-    nivel(): estado(EstadoNivel::jugando), tiempoTranscurrido(0) {}
+    nivel(QObject *parent);
 
     virtual void update() = 0;
     virtual void draw(QPainter &p) = 0;
@@ -23,7 +31,7 @@ public:
     virtual bool chequearVictoria() = 0;
     virtual bool chequearDerrota() = 0;
 
-    virtual ~Nivel() {}
+    virtual ~nivel() {}
 
 protected:
     EstadoNivel estado;
