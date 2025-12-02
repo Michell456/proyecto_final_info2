@@ -16,7 +16,7 @@ NivelCovid::NivelCovid()
 
     contadorSpawnPajaro = 0;
     intervaloSpawnPajaro = 120;  // Aprox 2 segundos (60 FPS × 0.7)
-    probabilidadSpawnPajaro = 70;
+    probabilidadSpawnPajaro = 90;
 }
 
 void NivelCovid::update() {
@@ -24,6 +24,19 @@ void NivelCovid::update() {
 
     tiempoTranscurrido++;
     dron.update(tamanioVentana);
+
+    static QElapsedTimer timer;
+    static bool firstTime = true;
+
+    if (firstTime) {
+        timer.start();
+        firstTime = false;
+    }
+
+    float deltaTime = timer.elapsed() / 1000.0f;
+    timer.restart();
+
+    if (deltaTime > 0.1f) deltaTime = 0.1f;
 
     contadorSpawnPajaro++;
     if(contadorSpawnPajaro >= intervaloSpawnPajaro) {
@@ -33,8 +46,10 @@ void NivelCovid::update() {
         }
     }
     for(pajaro *pajaroActivo : pajaros) {
-        pajaroActivo->update();
+        pajaroActivo->update(deltaTime, tamanioVentana);
     }
+
+    limpiarEntidades();
 
     if (baseCarga.estaCargando(dron.getPosition())) {
         dron.cargarBateria(0.8f);
@@ -44,15 +59,17 @@ void NivelCovid::update() {
 void NivelCovid::limpiarEntidades() {
 
     for(int i = pajaros.size() - 1; i >= 0; i--) {
-        pajaro *pajaro = pajaros[i];
+        pajaro *p = pajaros[i];
+        QPointF pos = p->getPosicion();
 
-        if(pajaro->getPosicion().x() + pajaro->getAncho() < -6
-            || pajaro->getPosicion().x() + pajaro->getAncho() > tamanioVentana.width() + 7
-            || pajaro->getPosicion().y() + pajaro->getAltura() < -6
-            || pajaro->getPosicion().y() + pajaro->getAltura() > tamanioVentana.height() + 7) {
+        int margen = 100;
+
+        if(pos.x() + p->getAncho() < -margen
+            || pos.x() > tamanioVentana.width() + margen
+            || pos.y() + p->getAltura() < -margen
+            || pos.y() > tamanioVentana.height() + margen) {
             pajaros.removeAt(i);
-            delete pajaro;
-            break;
+            delete p;
         }
     }
 
@@ -61,12 +78,7 @@ void NivelCovid::limpiarEntidades() {
 void NivelCovid::spawnPajaro() {
 
     pajaro *nuevoPajaro = new pajaro();
-    nuevoPajaro->setParametrosAleatorios();
-
-    int posX = QRandomGenerator::global()->bounded(-5, tamanioVentana.width() + 6);
-    int posY = QRandomGenerator::global()->bounded(-5, tamanioVentana.height() + 6);
-
-    nuevoPajaro->setPosicion(posX,posY);
+    nuevoPajaro->setParametrosAleatorios(tamanioVentana);
     pajaros.append(nuevoPajaro);
 }
 

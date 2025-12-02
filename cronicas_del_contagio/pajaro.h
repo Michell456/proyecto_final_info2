@@ -12,27 +12,28 @@ public:
     pajaro(QObject *parent = nullptr);
     ~pajaro();
 
-    void update();
+    void update(float dt, const QSize& tamanioVentana);
     void draw(QPainter &painter);
     QRect getRect() const;
 
-    void setPosicion(int x, int y);
-    QPoint getPosicion()const;
+    void setPosicion(float x, float y);
+    QPointF getPosicion()const;
     int getAncho() { return anchoSprite; }
     int getAltura() { return altoSprite; }
 
-    void setParametrosAleatorios();
+    void setParametrosAleatorios(const QSize& tamanioVentana);
 
 private:
 
     float velocidad;
     int frameActual;
-    QPoint posicion;
+    QPointF posicion;
     void cambiarFrame();
 
     void cargarSprites();
     QVector<QPixmap> sprites;
     QTimer *timerAnimacion;
+    void inicializarMovimientoDesdeBorde(const QSize& tamanioVentana);
 
     int skin;
     int anchoSprite = 10;
@@ -40,15 +41,18 @@ private:
 
     int movimiento;
 
-    double vx=0;
-    double vy=0;
-    double x0=0;
-    double y0=0;
-    double a=0;
-    double amplitud=0;
-    double frecuencia=0;
-    double curva=0;
-    double curvaFrecuencia=0;
+    double vx = 0;
+    double vy = 0;
+    double x = 0;
+    double y = 0;
+    double a = 0;
+    double amplitud = 0;
+    double frecuencia = 0;
+    double fase = 0;
+    double tiempo = 0;
+    float deltaTime = 1.0f/60.0f;
+
+    bool spawnDesdeBorde = true;
 };
 
 #endif // PAJARO_H
