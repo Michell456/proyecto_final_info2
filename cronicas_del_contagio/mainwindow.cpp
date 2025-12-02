@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "nivel.h"
+#include "nivelcovid.h"
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QDebug>
@@ -10,10 +12,13 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , nivelActual(nullptr)
 {
     ui->setupUi(this);
-    setFixedSize(1000, 600);
-    cargarNivel2(); // Tu nivel de cólera
+    setFixedSize(1100, 650);
+
+    // Para probar, cargar directamente el nivel 3
+    cargarNivel3();
 
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, [this](){
@@ -26,73 +31,40 @@ MainWindow::MainWindow(QWidget *parent)
     timer->start(16);
 }
 
-void MainWindow::cargarMenuPrincipal() {
-    delete nivelActual;
-    //nivelActual = new menuPrincipal();
-}
-
-void MainWindow::cargarNivel1() {
-    delete nivelActual;
-    nivelActual = new nivelPesteNegra();
-}
-
-void MainWindow::cargarNivel2() {
-    delete nivelActual;
-    //nivelActual = new nivelColera();
-}
-
 void MainWindow::cargarNivel3() {
-    delete nivelActual;
-    //nivelActual = new nivelCovid();
+    if (nivelActual) {
+        delete nivelActual;
+        nivelActual = nullptr;
+    }
+    nivelActual = new NivelCovid();
 }
 
-void MainWindow::paintEvent(QPaintEvent *) {
+void MainWindow::paintEvent(QPaintEvent *event) {
     QPainter p(this);
     if (nivelActual) {
         nivelActual->draw(p);
     }
 }
 
-void MainWindow::mousePressEvent(QMouseEvent *event) {
-    NivelColera* nivelColera = dynamic_cast<NivelColera*>(nivelActual);
-    if (nivelColera) {
-        nivelColera->handleMousePress(event);
-    }
-}
-
-void MainWindow::mouseMoveEvent(QMouseEvent *event) {
-    NivelColera* nivelColera = dynamic_cast<NivelColera*>(nivelActual);
-    if (nivelColera) {
-        nivelColera->handleMouseMove(event);
-    }
-}
-
-void MainWindow::mouseReleaseEvent(QMouseEvent *event) {
-    NivelColera* nivelColera = dynamic_cast<NivelColera*>(nivelActual);
-    if (nivelColera) {
-        nivelColera->handleMouseRelease(event);
-    }
-}
-
 void MainWindow::keyPressEvent(QKeyEvent *event) {
-    NivelColera* nivelColera = dynamic_cast<NivelColera*>(nivelActual);
-    if (nivelColera) {
-        nivelColera->handleInput(event);
+    if (nivelActual) {
+        nivelActual->handleInput(event);
     }
-
-    /*
-    if (event->key() == Qt::Key_1) {
-        cargarNivel1();
-    } else if (event->key() == Qt::Key_2) {
-        cargarNivel2();
-    } else if (event->key() == Qt::Key_3) {
-        cargarNivel3();
-    }
-    */
+    update(); // Forzar redibujado cuando se presiona tecla
 }
 
 void MainWindow::keyReleaseEvent(QKeyEvent *event) {
-    nivelActual->handleKeyRelease(event);
+    if (nivelActual) {
+        nivelActual->handleKeyRelease(event);
+    }
+}
+
+void MainWindow::actualizarAnimacion() {
+    // Puedes implementar esto si necesitas animaciones específicas
+}
+
+void MainWindow::actualizarMovimiento() {
+    // Puedes implementar esto si necesitas movimiento específico
 }
 
 MainWindow::~MainWindow()

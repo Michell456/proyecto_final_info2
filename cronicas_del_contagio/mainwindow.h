@@ -14,6 +14,12 @@
 
 class NivelColera;
 
+class nivel;
+//class menuPrincipal;
+//class NivelPesteNegra;
+//class NivelColera;
+class NivelCovid;
+
 namespace Ui {class MainWindow;}
 
 class MainWindow : public QMainWindow{
