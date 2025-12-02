@@ -6,11 +6,18 @@
 #include <QVector>
 #include <QPointF>
 #include <QKeyEvent>
+#include <QObject>
+#include <QTimer>
 
-class Dron
-{
+class Dron : public QObject{
+    Q_OBJECT
 public:
     Dron();
+
+    QRect getRect() const;
+
+    int anchoSprite;
+    int altoSprite;
 
     void update(QSize tamanioVentana);
     void draw(QPainter &p);
@@ -22,6 +29,11 @@ public:
     float getBateria() const { return bateria; }
     float getBateriaMaxima() const { return bateriaMaxima; }
     void cargarBateria(float cantidad);
+    void quitarBateria();
+
+    bool estaInmune() const { return inmune; }
+    void activarInmunidad(int milisegundos);
+    void finInmunidad() { inmune = false; }
 
 private:
     QPointF posicion;
@@ -43,6 +55,9 @@ private:
     const float VELOCIDAD_MAXIMA = 10.0f;
 
     void cargarSprites();
+
+    bool inmune;
+    QTimer *timerInmunidad;
 };
 
 #endif // DRON_H

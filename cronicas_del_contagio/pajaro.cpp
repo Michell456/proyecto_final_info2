@@ -8,8 +8,8 @@ pajaro::pajaro(QObject *parent)
     : QObject(parent)
     , frameActual(0)
     , velocidad(80.0f)
-    , anchoSprite(20)
-    , altoSprite(50)
+    , anchoSprite(10)
+    , altoSprite(20)
     , tiempo(0.0)
 {
     timerAnimacion = new QTimer(this);
@@ -76,8 +76,21 @@ void pajaro::update(float dt, const QSize& tamanioVentana) {
         float dirX = (tamanioVentana.width() / 2.0f - posicion.x());
         float dirY = (tamanioVentana.height() / 2.0f - posicion.y());
 
-        vx += dirX * 0.02f;
-        vy += dirY * 0.02f;
+        float distanciaCentro = qSqrt(dirX * dirX + dirY * dirY);
+        if (distanciaCentro > 0) {
+            dirX /= distanciaCentro;
+            dirY /= distanciaCentro;
+        }
+
+
+        float magnitudActual = qSqrt(vx * vx + vy * vy);
+
+        if (magnitudActual < velocidad * 0.3) {
+            magnitudActual = velocidad * 0.6;
+        }
+
+        vx = (dirX * 0.7f + (vx / magnitudActual) * 0.3f) * magnitudActual;
+        vy = (dirY * 0.7f + (vy / magnitudActual) * 0.3f) * magnitudActual;
     }
 
 
@@ -113,16 +126,30 @@ void pajaro::update(float dt, const QSize& tamanioVentana) {
         }
 
         case 5: { // Inestable
-            double ruidoX = (QRandomGenerator::global()->generateDouble() - 0.5) * 50.0;
-            double ruidoY = (QRandomGenerator::global()->generateDouble() - 0.5) * 50.0;
 
-            if (QRandomGenerator::global()->bounded(100) < 70) {
+            double factorRuido = 30.0;
+            double ruidoX = (QRandomGenerator::global()->generateDouble() - 0.5) * factorRuido;
+            double ruidoY = (QRandomGenerator::global()->generateDouble() - 0.5) * factorRuido;
+
+            if (QRandomGenerator::global()->bounded(100) < 85) {
                 posicion.rx() += (vx + ruidoX) * deltaTime;
                 posicion.ry() += (vy + ruidoY) * deltaTime;
             } else {
                 posicion.rx() += vx * deltaTime;
                 posicion.ry() += vy * deltaTime;
             }
+
+            static int contador = 0;
+            contador++;
+            if (contador % 30 == 0) {
+                double velocidadActual = qSqrt(vx*vx + vy*vy);
+                if (velocidadActual < velocidad * 0.4) {
+                    double factor = (velocidad * 0.6) / velocidadActual;
+                    vx *= factor;
+                    vy *= factor;
+                }
+            }
+
             break;
         }
     }
@@ -137,27 +164,30 @@ void pajaro::inicializarMovimientoDesdeBorde(const QSize& tamanioVentana) {
     int margenFuera = 5;
     int margenBorde = 5;
 
-    // Limitar márgenes
     margenBorde = qMin(margenBorde, screenWidth / 4);
     margenBorde = qMin(margenBorde, screenHeight / 4);
+
+    float minComponente = velocidad * 0.3f;
 
     switch(borde) {
     case 0: // ARRIBA - Movimiento hacia ABAJO con variación horizontal
         posicion.setX(QRandomGenerator::global()->bounded(margenBorde, screenWidth - margenBorde));
         posicion.setY(-altoSprite - margenFuera);
 
-        // Dirección PRINCIPAL hacia abajo (positivo Y) con algo de horizontal
-        vx = (QRandomGenerator::global()->generateDouble() - 0.5) * velocidad * 0.6; // -30% a +30% variación
-        vy = QRandomGenerator::global()->generateDouble() * velocidad * 0.4 + velocidad * 0.6; // 60% a 100% hacia abajo
+        vx = (QRandomGenerator::global()->generateDouble() - 0.5) * velocidad * 0.6;
+        vy = QRandomGenerator::global()->generateDouble() * velocidad * 0.4 + velocidad * 0.6;
 
-        // Asegurar que la componente vertical sea dominante y positiva
         if (qAbs(vx) > qAbs(vy) * 0.8) {
-            // Si el movimiento horizontal es muy fuerte, reducirlo
             vx *= 0.5;
         }
         if (vy < velocidad * 0.4) {
-            // Asegurar mínimo movimiento hacia abajo
             vy = velocidad * 0.4;
+        }
+        if (qAbs(vx) < minComponente) {
+            vx = (vx >= 0) ? minComponente : -minComponente;
+        }
+        if (qAbs(vy) < minComponente) {
+            vy = (vy >= 0) ? minComponente : -minComponente;
         }
         break;
 
@@ -165,9 +195,8 @@ void pajaro::inicializarMovimientoDesdeBorde(const QSize& tamanioVentana) {
         posicion.setX(screenWidth + anchoSprite + margenFuera);
         posicion.setY(QRandomGenerator::global()->bounded(margenBorde, screenHeight - margenBorde));
 
-        // Dirección PRINCIPAL hacia izquierda (negativo X)
-        vx = -(QRandomGenerator::global()->generateDouble() * velocidad * 0.4 + velocidad * 0.6); // -60% a -100%
-        vy = (QRandomGenerator::global()->generateDouble() - 0.5) * velocidad * 0.6; // -30% a +30%
+        vx = -(QRandomGenerator::global()->generateDouble() * velocidad * 0.6 + velocidad * 0.8);
+        vy = (QRandomGenerator::global()->generateDouble() - 0.5) * velocidad * 0.8;
 
         if (qAbs(vy) > qAbs(vx) * 0.8) {
             vy *= 0.5;
@@ -175,15 +204,20 @@ void pajaro::inicializarMovimientoDesdeBorde(const QSize& tamanioVentana) {
         if (vx > -velocidad * 0.4) {
             vx = -velocidad * 0.4;
         }
+        if (qAbs(vx) < minComponente) {
+            vx = (vx >= 0) ? minComponente : -minComponente;
+        }
+        if (qAbs(vy) < minComponente) {
+            vy = (vy >= 0) ? minComponente : -minComponente;
+        }
         break;
 
     case 2: // ABAJO - Movimiento hacia ARRIBA con variación horizontal
         posicion.setX(QRandomGenerator::global()->bounded(margenBorde, screenWidth - margenBorde));
         posicion.setY(screenHeight + altoSprite + margenFuera);
 
-        // Dirección PRINCIPAL hacia arriba (negativo Y)
-        vx = (QRandomGenerator::global()->generateDouble() - 0.5) * velocidad * 0.6;
-        vy = -(QRandomGenerator::global()->generateDouble() * velocidad * 0.4 + velocidad * 0.6);
+        vx = (QRandomGenerator::global()->generateDouble() - 0.5) * velocidad * 0.8;
+        vy = -(QRandomGenerator::global()->generateDouble() * velocidad * 0.6 + velocidad * 0.8);
 
         if (qAbs(vx) > qAbs(vy) * 0.8) {
             vx *= 0.5;
@@ -191,15 +225,20 @@ void pajaro::inicializarMovimientoDesdeBorde(const QSize& tamanioVentana) {
         if (vy > -velocidad * 0.4) {
             vy = -velocidad * 0.4;
         }
+        if (qAbs(vx) < minComponente) {
+            vx = (vx >= 0) ? minComponente : -minComponente;
+        }
+        if (qAbs(vy) < minComponente) {
+            vy = (vy >= 0) ? minComponente : -minComponente;
+        }
         break;
 
     case 3: // IZQUIERDA - Movimiento hacia DERECHA con variación vertical
         posicion.setX(-anchoSprite - margenFuera);
         posicion.setY(QRandomGenerator::global()->bounded(margenBorde, screenHeight - margenBorde));
 
-        // Dirección PRINCIPAL hacia derecha (positivo X)
-        vx = QRandomGenerator::global()->generateDouble() * velocidad * 0.4 + velocidad * 0.6;
-        vy = (QRandomGenerator::global()->generateDouble() - 0.5) * velocidad * 0.6;
+        vx = QRandomGenerator::global()->generateDouble() * velocidad * 0.6 + velocidad * 0.8;
+        vy = (QRandomGenerator::global()->generateDouble() - 0.5) * velocidad * 0.8;
 
         if (qAbs(vy) > qAbs(vx) * 0.8) {
             vy *= 0.5;
@@ -207,38 +246,51 @@ void pajaro::inicializarMovimientoDesdeBorde(const QSize& tamanioVentana) {
         if (vx < velocidad * 0.4) {
             vx = velocidad * 0.4;
         }
+        if (qAbs(vx) < minComponente) {
+            vx = (vx >= 0) ? minComponente : -minComponente;
+        }
+        if (qAbs(vy) < minComponente) {
+            vy = (vy >= 0) ? minComponente : -minComponente;
+        }
         break;
     }
 
     // Garantizar velocidad mínima
     double velocidadActual = qSqrt(vx * vx + vy * vy);
-    if (velocidadActual < velocidad * 0.3) {
-        double factor = (velocidad * 0.3) / velocidadActual;
-        vx *= factor;
-        vy *= factor;
+    double velocidadMinimaTotal = velocidad * 0.6;  // AUMENTAR A 60% como mínimo total
+
+    if (velocidadActual < velocidadMinimaTotal) {
+        if (velocidadActual > 0) {
+            double factor = velocidadMinimaTotal / velocidadActual;
+            vx *= factor;
+            vy *= factor;
+        } else {
+            double angulo = QRandomGenerator::global()->generateDouble() * M_PI * 2;
+            vx = velocidadMinimaTotal * qCos(angulo);
+            vy = velocidadMinimaTotal * qSin(angulo);
+        }
     }
 
-    // FORZAR QUE EL ÁNGULO NO SEA CASI PARALELO AL BORDE
-    double angulo = qAtan2(vy, vx);     // radianes
+    double angulo = qAtan2(vy, vx);
     double minAng = qDegreesToRadians(20.0); // mínimo 20° hacia adentro
 
     switch(borde) {
-    case 0: // Arriba → debe apuntar mínimo 20° hacia abajo
+    case 0: // Arriba
         if (fabs(angulo - M_PI/2) < minAng)
-            vy += velocidad * 0.5;     // aumentar vertical
+            vy += velocidad * 0.5;
         break;
 
-    case 2: // Abajo → mínimo 20° hacia arriba
+    case 2: // Abajo
         if (fabs(angulo + M_PI/2) < minAng)
             vy -= velocidad * 0.5;
         break;
 
-    case 1: // Derecha → mínimo 20° hacia izquierda
+    case 1: // Derecha
         if (fabs(angulo - M_PI) < minAng)
             vx -= velocidad * 0.5;
         break;
 
-    case 3: // Izquierda → mínimo 20° hacia derecha
+    case 3: // Izquierda
         if (fabs(angulo) < minAng)
             vx += velocidad * 0.5;
         break;
@@ -258,7 +310,7 @@ void pajaro::setParametrosAleatorios(const QSize& tamanioVentana){
 
     tiempo = 0.0;
 
-    std::uniform_real_distribution<> distVel(60.0, 150.0);
+    std::uniform_real_distribution<> distVel(100.0, 150.0);
     velocidad = distVel(gen);
 
     inicializarMovimientoDesdeBorde(tamanioVentana);
@@ -288,6 +340,13 @@ QPointF pajaro::getPosicion()const{
     return posicion;
 }
 
-QRect pajaro::getRect() const {
-    return QRect(posicion.x(), posicion.y(), anchoSprite, altoSprite);
+QRect pajaro::getRect() const {    
+    if (!sprites.isEmpty() && frameActual < sprites.size()) {
+        QPixmap currentSprite = sprites[frameActual];
+        return QRect(posicion.x(), posicion.y(),
+                     currentSprite.width(), currentSprite.height());
+    }
+
+    return QRect(posicion.x(), posicion.y(), 50, 60);
+
 }

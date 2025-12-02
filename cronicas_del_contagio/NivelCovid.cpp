@@ -54,6 +54,8 @@ void NivelCovid::update() {
     if (baseCarga.estaCargando(dron.getPosition())) {
         dron.cargarBateria(0.8f);
     }
+
+    verificarColisiones();
 }
 
 void NivelCovid::limpiarEntidades() {
@@ -91,6 +93,7 @@ void NivelCovid::draw(QPainter &p) {
 
     // Dibujar dron
     dron.draw(p);
+    p.setOpacity(1.0);
 
     for(pajaro *pajaro : pajaros) {
         pajaro->draw(p);
@@ -132,6 +135,24 @@ void NivelCovid::draw(QPainter &p) {
         p.setFont(QFont("Arial", 24, QFont::Bold));
         p.drawText(300, 300, "¡DERROTA!");
     }
+}
+
+void NivelCovid::verificarColisiones(){
+
+    QRect rectDron = dron.getRect();
+
+    for(pajaro *pajaro : pajaros) {
+        QRect rectPajaro = pajaro->getRect();
+
+        if(rectDron.intersects(rectPajaro)) {
+            if(!dron.estaInmune()) {
+                dron.activarInmunidad(1500);
+                dron.quitarBateria();
+            }
+            break;
+        }
+    }
+
 }
 
 void NivelCovid::handleInput(QKeyEvent *e) {

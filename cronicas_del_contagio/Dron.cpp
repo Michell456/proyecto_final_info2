@@ -11,8 +11,20 @@ Dron::Dron() : posicion(400, 300), frameActual(0), contadorAnimacion(0) {
     bateriaMaxima = 100.0f;
     bateria = bateriaMaxima;
     consumoMovimiento = 0.3f;
-    consumoBase = 0.05f;
+    consumoBase = 0.03f;
 
+    anchoSprite = 20;
+    altoSprite = 30;
+
+    timerInmunidad = new QTimer(this);
+    timerInmunidad->setSingleShot(true);
+    connect(timerInmunidad, &QTimer::timeout, this, &Dron::finInmunidad);
+
+}
+
+void Dron::activarInmunidad(int milisegundos) {
+    inmune = true;
+    timerInmunidad->start(milisegundos);
 }
 
 void Dron::cargarSprites() {
@@ -21,7 +33,6 @@ void Dron::cargarSprites() {
     for (int i = 1; i <= 6; i++) {
         QString ruta = QString("sprites/Nivel3/mov_dron%1.png").arg(i);
         QPixmap spriteOriginal(ruta);
-
         if (spriteOriginal.isNull()) {
             qDebug() << "Error cargando:" << ruta;
             QPixmap fallback(150, 150);
@@ -117,6 +128,12 @@ void Dron::update(QSize tamanioVentana) {
     }
 }
 void Dron::draw(QPainter &p) {
+    if(inmune){
+        p.setOpacity(0.5);
+    }
+    else{
+        p.setOpacity(1.0);
+    }
     if (!sprites.isEmpty() && frameActual < sprites.size()) {
         p.drawPixmap(posicion.x() - 75, posicion.y() - 75, 150, 150, sprites[frameActual]);
     } else {
@@ -147,4 +164,12 @@ void Dron::handleKeyRelease(QKeyEvent *event) {
 void Dron::cargarBateria(float cantidad) {
     bateria += cantidad;
     bateria = qMin(bateriaMaxima, bateria);
+}
+
+QRect Dron::getRect() const {
+    return QRect(posicion.x() - 50, posicion.y() - 50, 100, 100);
+}
+
+void Dron::quitarBateria(){
+    bateria -= 10.0f;
 }

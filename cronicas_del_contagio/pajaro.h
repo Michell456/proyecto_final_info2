@@ -53,6 +53,7 @@ private:
     float deltaTime = 1.0f/60.0f;
 
     bool spawnDesdeBorde = true;
+
 };
 
 #endif // PAJARO_H

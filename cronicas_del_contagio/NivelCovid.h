@@ -25,6 +25,8 @@ private:
     BaseDeCarga baseCarga;
     const QSize tamanioVentana = QSize(1100, 650);
 
+    void verificarColisiones();
+
     int contadorSpawnPajaro;
     int intervaloSpawnPajaro;
     int probabilidadSpawnPajaro;
