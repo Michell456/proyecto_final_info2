@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/">
+        <file>sprites/Nivel2/fondoNivel2.png</file>
+        <file>sprites/Nivel2/baldeSucio.png</file>
+        <file>sprites/Nivel2/balde_lleno.png</file>
+        <file>sprites/Nivel2/balde_vacio.png</file>
+        <file>sprites/Nivel2/baldeDestruido.png</file>
+        <file>sprites/Nivel2/obstaculos.png</file>
+        <file>sprites/Nivel2/piedra.png</file>
+        <file>sprites/Nivel2/ampolla.png</file>
+        <file>sprites/Nivel2/doctor.png</file>
+        <file>sprites/Nivel2/plataforma_dr.png</file>
+
+        <file>sonido/balde_ampolla.wav</file>
+        <file>sonido/destruccion_balde.wav</file>
+        <file>sonido/destruccion_madera.wav</file>
+        <file>sonido/rebote_madera.wav</file>  
+    </qresource>
+</RCC>

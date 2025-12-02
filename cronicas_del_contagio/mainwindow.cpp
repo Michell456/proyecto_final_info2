@@ -3,6 +3,11 @@
 #include "nivel.h"
 #include "nivelcovid.h"
 #include <QKeyEvent>
+#include <QMouseEvent>
+#include <QDebug>
+
+#include "nivelcolera.h"
+#include "nivelPesteNegra.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -19,11 +24,11 @@ MainWindow::MainWindow(QWidget *parent)
     connect(timer, &QTimer::timeout, this, [this](){
         if (nivelActual) {
             nivelActual->update();
-            update();   // vuelve a dibujar
+            update();
         }
     });
 
-    timer->start(16); // 60 FPS
+    timer->start(16);
 }
 
 void MainWindow::cargarNivel3() {
@@ -64,6 +69,14 @@ void MainWindow::actualizarMovimiento() {
 
 MainWindow::~MainWindow()
 {
-    delete nivelActual;
+    if (nivelActual) {
+        delete nivelActual;
+        nivelActual = nullptr;
+    }
+
+    if (timer) {
+        timer->stop();
+    }
+
     delete ui;
 }
