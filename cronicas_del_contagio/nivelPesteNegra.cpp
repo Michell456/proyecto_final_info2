@@ -4,7 +4,7 @@
 
 nivelPesteNegra::nivelPesteNegra(QObject *parent) : nivel(parent) {
 
-    fondo.load("sprites/nivel_1/fondo_nivel1.png");
+    fondo.load(":/sprites/Nivel1/fondo_nivel1.png");
 
     if (fondo.isNull()){
         qDebug() << "ERROR: fondo NO cargó";
@@ -49,34 +49,34 @@ nivelPesteNegra::nivelPesteNegra(QObject *parent) : nivel(parent) {
     intervaloSpawnItemBase = 240;
     frecuenciaInteligenteBase = 600;
 
-    sonidoColision.setSource(QUrl::fromLocalFile("sprites/nivel_1/audios/colision.wav"));
+    sonidoColision.setSource(QUrl("qrc:/sonido/Nivel1/colision.wav"));
     sonidoColision.setVolume(1.0);
 
-    sonidoTos1.setSource(QUrl::fromLocalFile("sprites/nivel_1/audios/tos1.wav"));
+    sonidoTos1.setSource(QUrl("qrc:/sonido/Nivel1/tos1.wav"));
     sonidoTos1.setVolume(1.0);
-    sonidoTos2.setSource(QUrl::fromLocalFile("sprites/nivel_1/audios/tos2.wav"));
+    sonidoTos2.setSource(QUrl("qrc:/sonido/Nivel1/tos2.wav"));
     sonidoTos2.setVolume(1.0);
-    sonidoTos3.setSource(QUrl::fromLocalFile("sprites/nivel_1/audios/tos3.wav"));
+    sonidoTos3.setSource(QUrl("qrc:/sonido/Nivel1/tos3.wav"));
     sonidoTos3.setVolume(1.0);
 
-    sonidoEstornudo1.setSource(QUrl::fromLocalFile("sprites/nivel_1/audios/estornudo1.wav"));
+    sonidoEstornudo1.setSource(QUrl("qrc:/sonido/Nivel1/estornudo1.wav"));
     sonidoEstornudo1.setVolume(1.0);
-    sonidoEstornudo2.setSource(QUrl::fromLocalFile("sprites/nivel_1/audios/estornudo2.wav"));
+    sonidoEstornudo2.setSource(QUrl("qrc:/sonido/Nivel1/estornudo2.wav"));
     sonidoEstornudo2.setVolume(1.0);
-    sonidoEstornudo3.setSource(QUrl::fromLocalFile("sprites/nivel_1/audios/estornudo3.wav"));
+    sonidoEstornudo3.setSource(QUrl("qrc:/sonido/Nivel1/estornudo3.wav"));
     sonidoEstornudo3.setVolume(1.0);
 
     probabilidadSonido = 20;
 
-    sonidoItem2.setSource(QUrl::fromLocalFile("sprites/nivel_1/audios/item1.wav"));
+    sonidoItem2.setSource(QUrl("qrc:/sonido/Nivel1/item1.wav"));
     sonidoItem2.setVolume(1.0);
-    sonidoItem3.setSource(QUrl::fromLocalFile("sprites/nivel_1/audios/item2.wav"));
+    sonidoItem3.setSource(QUrl("qrc:/sonido/Nivel1/item2.wav"));
     sonidoItem3.setVolume(0.5);
 
     player = new QMediaPlayer(this);
     audioOutput = new QAudioOutput(this);
     player->setAudioOutput(audioOutput);
-    player->setSource(QUrl::fromLocalFile("sprites/nivel_1/audios/musica_fondo.mp3"));
+    player->setSource(QUrl("qrc:/sonido/Nivel1/musica_fondo.mp3"));
     audioOutput->setVolume(0.3);
     connect(player, &QMediaPlayer::mediaStatusChanged, this, [=](QMediaPlayer::MediaStatus status){
         if (status == QMediaPlayer::EndOfMedia) {
@@ -409,14 +409,11 @@ void nivelPesteNegra::handleKeyRelease(QKeyEvent *event){
 }
 
 bool nivelPesteNegra::chequearVictoria(){
-    if(jugador.getCantidadItems() == 10){
-
-    }
+    return jugador.getCantidadItems() >= 10;
 }
-bool nivelPesteNegra::chequearDerrota(){
-    if(jugador.consultarVida() == 0){
 
-    }
+bool nivelPesteNegra::chequearDerrota(){
+    return jugador.consultarVida() <= 0;
 }
 
 void nivelPesteNegra::aumentarDificultad() {

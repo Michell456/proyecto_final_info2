@@ -12,7 +12,7 @@
 #include <QTimer>
 
 NivelColera::NivelColera(QObject *parent)
-    : nivel()
+    : nivel(parent)
     , doctor(nullptr)
     , proyectilActual(nullptr)
     , proyectilPiedra(nullptr)
@@ -50,10 +50,10 @@ NivelColera::NivelColera(QObject *parent)
     proyectilAmpolla->setObjetivos(&obstaculos, &baldes);
 
     // Cargar sonidos
-    sonidoBaldeAmpolla.setSource(QUrl("qrc:/sonido/balde_ampolla.wav"));
-    sonidoDestruccionBalde.setSource(QUrl("qrc:/sonido/destruccion_balde.wav"));
-    sonidoDestruccionMadera.setSource(QUrl("qrc:/sonido/destruccion_madera.wav"));
-    sonidoReboteMadera.setSource(QUrl("qrc:/sonido/rebote_madera.wav"));
+    sonidoBaldeAmpolla.setSource(QUrl("qrc:/sonido/Nivel2/balde_ampolla.wav"));
+    sonidoDestruccionBalde.setSource(QUrl("qrc:/sonido/Nivel2/destruccion_balde.wav"));
+    sonidoDestruccionMadera.setSource(QUrl("qrc:/sonido/Nivel2/destruccion_madera.wav"));
+    sonidoReboteMadera.setSource(QUrl("qrc:/sonido/Nivel2/rebote_madera.wav"));
 
     // Configurar volumen
     sonidoBaldeAmpolla.setVolume(0.8f);

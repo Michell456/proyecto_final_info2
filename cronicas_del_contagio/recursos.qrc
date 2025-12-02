@@ -1,5 +1,126 @@
 <RCC>
     <qresource prefix="/">
+
+        <!-- =================== -->
+        <!--     NIVEL 1         -->
+        <!-- =================== -->
+
+        <!-- Fondo -->
+        <file>sprites/Nivel1/fondo_nivel1.png</file>
+
+        <!-- Jugador -->
+        <file>sprites/Nivel1/jugador/jugador_quieto.png</file>
+
+        <!-- Jugador corre derecha -->
+        <file>sprites/Nivel1/jugador/corre_derecha/1.png</file>
+        <file>sprites/Nivel1/jugador/corre_derecha/2.png</file>
+        <file>sprites/Nivel1/jugador/corre_derecha/3.png</file>
+        <file>sprites/Nivel1/jugador/corre_derecha/4.png</file>
+        <file>sprites/Nivel1/jugador/corre_derecha/5.png</file>
+        <file>sprites/Nivel1/jugador/corre_derecha/6.png</file>
+        <file>sprites/Nivel1/jugador/corre_derecha/7.png</file>
+        <file>sprites/Nivel1/jugador/corre_derecha/8.png</file>
+
+        <!-- Jugador corre izquierda -->
+        <file>sprites/Nivel1/jugador/corre_izquierda/1.png</file>
+        <file>sprites/Nivel1/jugador/corre_izquierda/2.png</file>
+        <file>sprites/Nivel1/jugador/corre_izquierda/3.png</file>
+        <file>sprites/Nivel1/jugador/corre_izquierda/4.png</file>
+        <file>sprites/Nivel1/jugador/corre_izquierda/5.png</file>
+        <file>sprites/Nivel1/jugador/corre_izquierda/6.png</file>
+        <file>sprites/Nivel1/jugador/corre_izquierda/7.png</file>
+        <file>sprites/Nivel1/jugador/corre_izquierda/8.png</file>
+
+        <!-- Items -->
+        <file>sprites/Nivel1/items/1.png</file>
+        <file>sprites/Nivel1/items/2.png</file>
+        <file>sprites/Nivel1/items/3.png</file>
+
+        <!-- Enemigos Nivel 1 (1, 2, 3) -->
+        <!-- enemigo_1 derecha -->
+        <file>sprites/Nivel1/enemigos/enemigo_1/derecha/1.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_1/derecha/2.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_1/derecha/3.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_1/derecha/4.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_1/derecha/5.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_1/derecha/6.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_1/derecha/7.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_1/derecha/8.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_1/derecha/9.png</file>
+
+        <!-- enemigo_1 izquierda -->
+        <file>sprites/Nivel1/enemigos/enemigo_1/izquierda/1.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_1/izquierda/2.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_1/izquierda/3.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_1/izquierda/4.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_1/izquierda/5.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_1/izquierda/6.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_1/izquierda/7.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_1/izquierda/8.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_1/izquierda/9.png</file>
+
+        <!-- enemigo_2 derecha -->
+        <file>sprites/Nivel1/enemigos/enemigo_2/derecha/1.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_2/derecha/2.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_2/derecha/3.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_2/derecha/4.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_2/derecha/5.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_2/derecha/6.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_2/derecha/7.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_2/derecha/8.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_2/derecha/9.png</file>
+
+        <!-- enemigo_2 izquierda -->
+        <file>sprites/Nivel1/enemigos/enemigo_2/izquierda/1.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_2/izquierda/2.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_2/izquierda/3.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_2/izquierda/4.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_2/izquierda/5.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_2/izquierda/6.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_2/izquierda/7.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_2/izquierda/8.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_2/izquierda/9.png</file>
+
+        <!-- enemigo_3 derecha -->
+        <file>sprites/Nivel1/enemigos/enemigo_3/derecha/1.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_3/derecha/2.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_3/derecha/3.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_3/derecha/4.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_3/derecha/5.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_3/derecha/6.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_3/derecha/7.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_3/derecha/8.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_3/derecha/9.png</file>
+
+        <!-- enemigo_3 izquierda -->
+        <file>sprites/Nivel1/enemigos/enemigo_3/izquierda/1.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_3/izquierda/2.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_3/izquierda/3.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_3/izquierda/4.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_3/izquierda/5.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_3/izquierda/6.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_3/izquierda/7.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_3/izquierda/8.png</file>
+        <file>sprites/Nivel1/enemigos/enemigo_3/izquierda/9.png</file>
+
+
+        <!-- Sonidos Nivel 1 -->
+        <file>sonido/Nivel1/colision.wav</file>
+        <file>sonido/Nivel1/estornudo1.wav</file>
+        <file>sonido/Nivel1/estornudo2.wav</file>
+        <file>sonido/Nivel1/estornudo3.wav</file>
+        <file>sonido/Nivel1/item1.wav</file>
+        <file>sonido/Nivel1/item2.wav</file>
+        <file>sonido/Nivel1/musica_fondo.mp3</file>
+        <file>sonido/Nivel1/tos1.wav</file>
+        <file>sonido/Nivel1/tos2.wav</file>
+        <file>sonido/Nivel1/tos3.wav</file>
+
+
+        <!-- =================== -->
+        <!--     NIVEL 2         -->
+        <!-- =================== -->
+
         <file>sprites/Nivel2/fondoNivel2.png</file>
         <file>sprites/Nivel2/baldeSucio.png</file>
         <file>sprites/Nivel2/balde_lleno.png</file>
@@ -11,9 +132,30 @@
         <file>sprites/Nivel2/doctor.png</file>
         <file>sprites/Nivel2/plataforma_dr.png</file>
 
-        <file>sonido/balde_ampolla.wav</file>
-        <file>sonido/destruccion_balde.wav</file>
-        <file>sonido/destruccion_madera.wav</file>
-        <file>sonido/rebote_madera.wav</file>  
+        <!-- Sonidos Nivel 2 -->
+        <file>sonido/Nivel2/balde_ampolla.wav</file>
+        <file>sonido/Nivel2/destruccion_balde.wav</file>
+        <file>sonido/Nivel2/destruccion_madera.wav</file>
+        <file>sonido/Nivel2/rebote_madera.wav</file>
+
+        <!-- =================== -->
+        <!--     MENÚS           -->
+        <!-- =================== -->
+
+        <!-- Menu Pausa -->
+        <file>sprites/Menu_pausa/Juego_pausado.png</file>
+
+        <!-- Menu Principal -->
+        <file>sprites/Menu_principal/fondo_menu_principal.jpg</file>
+        <file>sprites/Menu_principal/Titulo_juego.png</file>
+
+        <!-- Menu seleccion nivel -->
+        <file>sprites/Menu_seleccion_nivel/nivel_peste_bn.png</file>
+        <file>sprites/Menu_seleccion_nivel/nivel_peste_color.png</file>
+        <file>sprites/Menu_seleccion_nivel/nivel_colera_bn.png</file>
+        <file>sprites/Menu_seleccion_nivel/nivel_colera_color.png</file>
+        <file>sprites/Menu_seleccion_nivel/nivel_covid_bn.png</file>
+        <file>sprites/Menu_seleccion_nivel/nivel_covid_color.png</file>
+
     </qresource>
 </RCC>

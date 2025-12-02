@@ -13,14 +13,14 @@ Proyectil::Proyectil(const QPixmap &sprite, float gravedad, float factorRebote,
                      bool puedeRebotar, int maxColisiones,
                      NivelColera* nivel, QGraphicsItem *parent)  // ← AÑADE NivelColera* nivel
     : QGraphicsPixmapItem(parent)
-    , nivelColera(nivel)  // ← INICIALIZA nivelColera (FALTABA)
+    , nivelColera(nivel)
     , enMovimiento(false)
     , visible(false)
     , obstaculos(nullptr)
     , baldes(nullptr)
     , colisionesRealizadas(0)
-    , haRebotado(false)          // ← FALTABA
-    , indiceUltimoObstaculoChocado(-1)  // ← FALTABA
+    , haRebotado(false)
+    , indiceUltimoObstaculoChocado(-1)
 {
     if (puedeLlenarBaldes) {
         config.tipo = AMPOLLA;

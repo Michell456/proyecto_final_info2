@@ -268,7 +268,7 @@ void enfermoInteligente::ajustarRobo(){
 void enfermoInteligente::cargarSprites(){
 
     for(int i = 1; i <= 9; i++) {
-        QPixmap sprite(QString("sprites/nivel_1/enemigos/enemigo_1/derecha/%1.png").arg(i));
+        QPixmap sprite(QString(":/sprites/Nivel1/enemigos/enemigo_1/derecha/%1.png").arg(i));
         if(!sprite.isNull()) {
             sprites1.append(sprite);
         } else {
@@ -277,7 +277,7 @@ void enfermoInteligente::cargarSprites(){
     }
 
     for(int i = 1; i <= 9; i++) {
-        QPixmap sprite(QString("sprites/nivel_1/enemigos/enemigo_2/derecha/%1.png").arg(i));
+        QPixmap sprite(QString(":/sprites/Nivel1/enemigos/enemigo_2/derecha/%1.png").arg(i));
         if(!sprite.isNull()) {
             sprites2.append(sprite);
         } else {
@@ -286,7 +286,7 @@ void enfermoInteligente::cargarSprites(){
     }
 
     for(int i = 1; i <= 9; i++) {
-        QPixmap sprite(QString("sprites/nivel_1/enemigos/enemigo_3/derecha/%1.png").arg(i));
+        QPixmap sprite(QString(":/sprites/Nivel1/enemigos/enemigo_3/derecha/%1.png").arg(i));
         if(!sprite.isNull()) {
             sprites3.append(sprite);
         } else {

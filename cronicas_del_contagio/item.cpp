@@ -62,7 +62,7 @@ void item::setParametrosAleatorios(int yfinal){
 
 void item::cargarTexturas(){
     for(int i = 1; i <= 3; i++) {
-        QPixmap sprite(QString("sprites/nivel_1/items/%1.png").arg(i));
+        QPixmap sprite(QString(":/sprites/Nivel1/items/%1.png").arg(i));
         if(!sprite.isNull()) {
             texturas.append(sprite);
         } else {

@@ -40,7 +40,7 @@ jugador1::~jugador1(){
 
 void jugador1::cargarSprites(){
     for(int i = 1; i <= 8; i++) {
-        QPixmap sprite(QString("sprites/nivel_1/jugador/corre_derecha/%1.png").arg(i));
+        QPixmap sprite(QString(":/sprites/Nivel1/jugador/corre_derecha/%1.png").arg(i));
         if(!sprite.isNull()) {
             spritesCaminandoDerecha.append(sprite);
         } else {
@@ -49,7 +49,7 @@ void jugador1::cargarSprites(){
     }
 
     for(int i = 1; i <= 8; i++) {
-        QPixmap sprite(QString("sprites/nivel_1/jugador/corre_izquierda/%1.png").arg(i));
+        QPixmap sprite(QString(":/sprites/Nivel1/jugador/corre_izquierda/%1.png").arg(i));
         if(!sprite.isNull()) {
             spritesCaminandoIzquierda.append(sprite);
         } else {
@@ -57,7 +57,7 @@ void jugador1::cargarSprites(){
         }
     }
 
-    spriteQuieto = QPixmap("sprites/nivel_1/jugador/jugador_quieto.png");
+    spriteQuieto = QPixmap(":/sprites/Nivel1/jugador/jugador_quieto.png");
     if(spriteQuieto.isNull()) {
         qDebug() << "Sprite quieto no encontrado";
     }

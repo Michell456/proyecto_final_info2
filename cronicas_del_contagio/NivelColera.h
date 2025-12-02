@@ -22,7 +22,7 @@ public:
     explicit NivelColera(QObject *parent = nullptr);
     ~NivelColera();
 
-    // Métodos virtuales de la clase base
+    // Metodos virtuales de la clase base
     void update() override;
     void draw(QPainter &p) override;
     void handleInput(QKeyEvent *e) override;

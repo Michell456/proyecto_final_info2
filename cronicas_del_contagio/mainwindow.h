@@ -2,27 +2,22 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QGraphicsScene>
-#include <QGraphicsPixmapItem>
 #include <QTimer>
-#include <QKeyEvent>
-#include <QObject>
 #include <QPainter>
+#include <QKeyEvent>
 #include <QMouseEvent>
 
-#include "nivel.h"
+#include "MenuPrincipal.h"
+#include "MenuSeleccionNivel.h"
+#include "MenuPausa.h"
+#include "Nivel.h"
 
-class NivelColera;
+QT_BEGIN_NAMESPACE
+namespace Ui { class MainWindow; }
+QT_END_NAMESPACE
 
-class nivel;
-//class menuPrincipal;
-//class NivelPesteNegra;
-//class NivelColera;
-class NivelCovid;
-
-namespace Ui {class MainWindow;}
-
-class MainWindow : public QMainWindow{
+class MainWindow : public QMainWindow
+{
     Q_OBJECT
 
 public:
@@ -31,6 +26,11 @@ public:
 
 protected:
     void paintEvent(QPaintEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
+    void keyReleaseEvent(QKeyEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
 
     // AÑADIR métodos de mouse (NivelColera)
     void mousePressEvent(QMouseEvent *event) override;
@@ -41,13 +41,20 @@ protected:
 private:
     Ui::MainWindow *ui;
 
-    nivel *nivelActual = nullptr;
+    MenuPrincipal *menuPrincipal;
+    MenuSeleccionNivel *menuSeleccionNivel;
+    MenuPausa *menuPausa;
+
+    nivel *nivelActual;
+
     QTimer *timer;
 
     void cargarMenuPrincipal();
     void cargarNivel1();
     void cargarNivel2();
     void cargarNivel3();
-
+    void cargarMenuPausa();
+    void reanudarJuego();
 };
+
 #endif // MAINWINDOW_H
