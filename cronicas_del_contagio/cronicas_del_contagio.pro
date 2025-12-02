@@ -15,7 +15,8 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     nivel.cpp \
-    pajaro.cpp
+    pajaro.cpp \
+    zonainfeccion.cpp
 
 HEADERS += \
     BaseDeCarga.h \
@@ -23,7 +24,8 @@ HEADERS += \
     NivelCovid.h \
     mainwindow.h \
     nivel.h \
-    pajaro.h
+    pajaro.h \
+    zonainfeccion.h
 
 FORMS += \
     mainwindow.ui

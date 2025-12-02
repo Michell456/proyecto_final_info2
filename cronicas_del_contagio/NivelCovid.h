@@ -6,6 +6,7 @@
 #include <QPixmap>
 #include "BaseDeCarga.h"
 #include "pajaro.h"
+#include "zonainfeccion.h"
 
 class NivelCovid : public nivel
 {
@@ -32,6 +33,12 @@ private:
     int probabilidadSpawnPajaro;
     QVector<pajaro*> pajaros;
     void limpiarEntidades();
+
+    QVector<ZonaInfeccion*> zonasInfeccion;
+    int contadorSpawnInfeccion;
+    int intervaloSpawnInfeccion;
+    int probabilidadSpawnInfeccion;
+    void spawnZonaInfeccion();
 
     void spawnPajaro();
 

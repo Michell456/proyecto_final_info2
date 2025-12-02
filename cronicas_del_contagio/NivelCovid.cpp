@@ -15,8 +15,12 @@ NivelCovid::NivelCovid()
     }
 
     contadorSpawnPajaro = 0;
-    intervaloSpawnPajaro = 120;  // Aprox 2 segundos (60 FPS × 0.7)
+    intervaloSpawnPajaro = 120;
     probabilidadSpawnPajaro = 90;
+
+    contadorSpawnInfeccion = 0;
+    intervaloSpawnInfeccion = 200;
+    probabilidadSpawnInfeccion = 90;
 }
 
 void NivelCovid::update() {
@@ -49,6 +53,17 @@ void NivelCovid::update() {
         pajaroActivo->update(deltaTime, tamanioVentana);
     }
 
+    contadorSpawnInfeccion++;
+    if(contadorSpawnInfeccion >= intervaloSpawnInfeccion) {
+        contadorSpawnInfeccion = 0;
+        if(QRandomGenerator::global()->bounded(100) < probabilidadSpawnInfeccion) {
+            spawnZonaInfeccion();
+        }
+    }
+    for(ZonaInfeccion *zona : zonasInfeccion) {
+        zona->update(deltaTime);
+    }
+
     limpiarEntidades();
 
     if (baseCarga.estaCargando(dron.getPosition())) {
@@ -77,6 +92,29 @@ void NivelCovid::limpiarEntidades() {
 
 }
 
+void NivelCovid::spawnZonaInfeccion() {
+    if (zonasInfeccion.size() >= 7) return;
+
+    ZonaInfeccion* nuevaZona = new ZonaInfeccion(tamanioVentana);
+    bool demasiadoCerca = false;
+
+    for (ZonaInfeccion* zonaExistente : zonasInfeccion) {
+        if (nuevaZona->estaDemasiadoCercaDe(zonaExistente->getPosicion(),
+                                            zonaExistente->getRadio())) {
+            demasiadoCerca = true;
+            break;
+        }
+    }
+
+    if (demasiadoCerca) {
+        delete nuevaZona;
+        return;
+    }
+
+    zonasInfeccion.append(nuevaZona);
+}
+
+
 void NivelCovid::spawnPajaro() {
 
     pajaro *nuevoPajaro = new pajaro();
@@ -97,6 +135,10 @@ void NivelCovid::draw(QPainter &p) {
 
     for(pajaro *pajaro : pajaros) {
         pajaro->draw(p);
+    }
+
+    for(ZonaInfeccion *zona : zonasInfeccion) {
+        zona->draw(p);
     }
 
     // UI
@@ -150,6 +192,22 @@ void NivelCovid::verificarColisiones(){
                 dron.quitarBateria();
             }
             break;
+        }
+    }
+
+    for (ZonaInfeccion* zona : zonasInfeccion) {
+        if (zona && zona->estaActiva()) {
+            QRect rectZona = zona->getRect();
+
+            if (rectDron.intersects(rectZona)) {
+                if (!zona->estaSiendoDesinfectada()) {
+                    zona->iniciarDesinfeccion();
+                }
+            } else {
+                if (zona->estaSiendoDesinfectada()) {
+                    zona->detenerDesinfeccion();
+                }
+            }
         }
     }
 
