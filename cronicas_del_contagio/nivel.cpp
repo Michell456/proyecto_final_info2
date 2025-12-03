@@ -1,3 +1,9 @@
 #include "nivel.h"
 
-//nivel::nivel() {}
+nivel::nivel(QObject *parent)
+    : QObject(parent),
+    estado(EstadoNivel::jugando),
+    tiempoTranscurrido(0)
+{
+    // Implementación del constructor
+}

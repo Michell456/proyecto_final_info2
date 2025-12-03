@@ -3,8 +3,6 @@
 
 #include <QKeyEvent>
 #include <QPainter>
-
-enum class EstadoNivel {
 #include <QPainter>
 #include <QKeyEvent>
 #include <QObject>

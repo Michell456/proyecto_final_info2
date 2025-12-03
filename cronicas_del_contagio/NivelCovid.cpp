@@ -4,10 +4,10 @@
 #include <QRandomGenerator>
 #include "BaseDeCarga.h"
 
-NivelCovid::NivelCovid()
-    : baseCarga(QPointF(1050, 50))
+NivelCovid::NivelCovid(QObject *parent)
+    : nivel(parent),
+    baseCarga(QPointF(1050, 50))
 {
-
     fondo.load("sprites/Nivel3/fondo3.1.png");
     if (fondo.isNull()) {
         fondo = QPixmap(800, 600);
@@ -25,8 +25,11 @@ NivelCovid::NivelCovid()
     zonasDesinfectadas = 0;
     zonasObjetivo = 10;
     zonaExcedioLimite = false;
-}
 
+    // Nota: Necesitas definir tamanioVentana - ¿dónde está definido?
+    // Puedes añadir esto si no está definido:
+    // tamanioVentana = QSize(1100, 650);
+}
 void NivelCovid::update() {
     if (estado != EstadoNivel::jugando) return;
 

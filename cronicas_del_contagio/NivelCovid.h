@@ -11,7 +11,7 @@
 class NivelCovid : public nivel
 {
 public:
-    NivelCovid();
+    NivelCovid(QObject *parent = nullptr);
     void update() override;
     void draw(QPainter &p) override;
     void handleInput(QKeyEvent *e) override;

@@ -10,12 +10,16 @@ CONFIG += c++17
 
 SOURCES += \
     Balde.cpp \
+    BaseDeCarga.cpp \
     Doctor.cpp \
+    Dron.cpp \
+    Juego.cpp \
     Menu.cpp \
     MenuPausa.cpp \
     MenuPrincipal.cpp \
     MenuSeleccionNivel.cpp \
     NivelColera.cpp \
+    NivelCovid.cpp \
     ObjetoEstatico.cpp \
     Obstaculo.cpp \
     Proyectil.cpp \
@@ -26,16 +30,22 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     nivel.cpp \
-    nivelPesteNegra.cpp
+    nivelPesteNegra.cpp \
+    pajaro.cpp \
+    zonainfeccion.cpp
 
 HEADERS += \
     Balde.h \
+    BaseDeCarga.h \
     Doctor.h \
+    Dron.h \
+    Juego.h \
     Menu.h \
     MenuPausa.h \
     MenuPrincipal.h \
     MenuSeleccionNivel.h \
     NivelColera.h \
+    NivelCovid.h \
     ObjetoEstatico.h \
     Obstaculo.h \
     Proyectil.h \
@@ -45,60 +55,17 @@ HEADERS += \
     jugador1.h \
     mainwindow.h \
     nivel.h \
-    BaseDeCarga.cpp \
-    Dron.cpp \
-    NivelCovid.cpp \
-    main.cpp \
-    mainwindow.cpp \
-    nivel.cpp \
-    pajaro.cpp \
-    zonainfeccion.cpp
-
-HEADERS += \
-    BaseDeCarga.h \
-    Dron.h \
-    NivelCovid.h \
-    mainwindow.h \
-    nivel.h \
+    nivelPesteNegra.h \
     pajaro.h \
     zonainfeccion.h
-    Balde.cpp \
-    Doctor.cpp \
-    NivelColera.cpp \
-    ObjetoEstatico.cpp \
-    Obstaculo.cpp \
-    Proyectil.cpp \
-    enfermo.cpp \
-    enfermointeligente.cpp \
-    item.cpp \
-    jugador1.cpp \
-    main.cpp \
-    mainwindow.cpp \
-    nivel.cpp \
-    nivelPesteNegra.cpp
-
-HEADERS += \
-    Balde.h \
-    Doctor.h \
-    NivelColera.h \
-    ObjetoEstatico.h \
-    Obstaculo.h \
-    Proyectil.h \
-    enfermo.h \
-    enfermointeligente.h \
-    item.h \
-    jugador1.h \
-    mainwindow.h \
-    nivel.h \
-    nivelPesteNegra.h
 
 FORMS += \
     mainwindow.ui
+
+RESOURCES += \
+    recursos.qrc
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
-
-RESOURCES += \
-    recursos.qrc
