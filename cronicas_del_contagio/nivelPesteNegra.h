@@ -30,7 +30,7 @@ private:
     jugador1 jugador;
     jugador1* jugadorptr;
     QList<enfermo*> enfermosActivos;
-    QVector<item*> items;
+    QList<item*> items;
     void limpiarEntidades();
 
     void spawnItem(int tipo);
