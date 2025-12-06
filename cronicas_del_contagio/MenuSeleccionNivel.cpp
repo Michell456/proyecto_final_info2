@@ -12,7 +12,6 @@ MenuSeleccionNivel::MenuSeleccionNivel(QWidget *parent)
 
 void MenuSeleccionNivel::setupUI()
 {
-    // remover el layout vertical base
     delete LayoutPrincipal;
 
     QHBoxLayout *layout = new QHBoxLayout(this);
@@ -51,7 +50,6 @@ void MenuSeleccionNivel::setupUI()
 
 void MenuSeleccionNivel::conectarsenales()
 {
-    // clicks
     pnlPeste->installEventFilter(this);
     pnlColera->installEventFilter(this);
     pnlCovid->installEventFilter(this);
@@ -62,7 +60,6 @@ bool MenuSeleccionNivel::eventFilter(QObject *obj, QEvent *event)
     QLabel *panel = qobject_cast<QLabel*>(obj);
     if (!panel) return false;
 
-    // HOVER -> COLOR
     if (event->type() == QEvent::Enter)
     {
         if (panel == pnlPeste)  panel->setPixmap(QPixmap(pesteColor));
@@ -70,7 +67,6 @@ bool MenuSeleccionNivel::eventFilter(QObject *obj, QEvent *event)
         if (panel == pnlCovid)  panel->setPixmap(QPixmap(covidColor));
     }
 
-    // LEAVE -> BN
     if (event->type() == QEvent::Leave)
     {
         if (panel == pnlPeste)  panel->setPixmap(QPixmap(pesteBN));
@@ -78,7 +74,6 @@ bool MenuSeleccionNivel::eventFilter(QObject *obj, QEvent *event)
         if (panel == pnlCovid)  panel->setPixmap(QPixmap(covidBN));
     }
 
-    // CLICK -> señal nivel
     if (event->type() == QEvent::MouseButtonPress)
     {
         if (panel == pnlPeste)  emit nivelSeleccionado(1);

@@ -8,7 +8,7 @@ NivelCovid::NivelCovid(QObject *parent)
     : nivel(parent),
     baseCarga(QPointF(1050, 50))
 {
-    fondo.load("sprites/Nivel3/fondo3.1.png");
+    fondo.load(":/sprites/Nivel3/fondo3.1.png");
     if (fondo.isNull()) {
         fondo = QPixmap(800, 600);
         fondo.fill(Qt::white);

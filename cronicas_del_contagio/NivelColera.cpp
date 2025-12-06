@@ -75,7 +75,7 @@ void NivelColera::update()
 {
     tiempoTranscurrido++;
 
-    // Actualizar animación del doctor
+    // Actualizar animacion del doctor
     if (doctor) {
         doctor->actualizarAnimacionLanzamiento();
     }

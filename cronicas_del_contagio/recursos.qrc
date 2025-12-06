@@ -137,6 +137,41 @@
         <file>sonido/Nivel2/destruccion_balde.wav</file>
         <file>sonido/Nivel2/destruccion_madera.wav</file>
         <file>sonido/Nivel2/rebote_madera.wav</file>
+        <file>sonido/Nivel2/Musica_fondo_nivel2.mp3</file>
+
+        <!-- =================== -->
+        <!--     NIVEL 3         -->
+        <!-- =================== -->
+
+
+        <!-- Fondos Nivel 3 -->
+        <file>sprites/Nivel3/fondo3.png</file>
+        <file>sprites/Nivel3/fondo3.1.png</file>
+
+        <!-- Base carga -->
+        <file>sprites/Nivel3/base_carga.png</file>
+
+        <!-- Drones -->
+        <file>sprites/Nivel3/mov_dron1.png</file>
+        <file>sprites/Nivel3/mov_dron2.png</file>
+        <file>sprites/Nivel3/mov_dron3.png</file>
+        <file>sprites/Nivel3/mov_dron4.png</file>
+        <file>sprites/Nivel3/mov_dron5.png</file>
+        <file>sprites/Nivel3/mov_dron6.png</file>
+
+        <!-- Pajaro animación -->
+        <file>sprites/Nivel3/pajaro/1.png</file>
+        <file>sprites/Nivel3/pajaro/2.png</file>
+        <file>sprites/Nivel3/pajaro/3.png</file>
+        <file>sprites/Nivel3/pajaro/4.png</file>
+        <file>sprites/Nivel3/pajaro/5.png</file>
+        <file>sprites/Nivel3/pajaro/6.png</file>
+        <file>sprites/Nivel3/pajaro/7.png</file>
+        <file>sprites/Nivel3/pajaro/8.png</file>
+
+        <!-- Sonidos Nivel 3 -->
+        <file>sonido/Nivel3/Musica_fondo_nivel3.mp3</file>
+
 
         <!-- =================== -->
         <!--     MENÚS           -->
@@ -156,6 +191,9 @@
         <file>sprites/Menu_seleccion_nivel/nivel_colera_color.png</file>
         <file>sprites/Menu_seleccion_nivel/nivel_covid_bn.png</file>
         <file>sprites/Menu_seleccion_nivel/nivel_covid_color.png</file>
+
+        <!-- Sonidos Menu -->
+        <file>sonido/Menu/Musica_fondo.mp3</file>
 
     </qresource>
 </RCC>

@@ -11,8 +11,6 @@
 #include <QPixmap>
 #include <QObject>
 #include <QSoundEffect>
-#include <QMediaPlayer>
-#include <QAudioOutput>
 #include <QUrl>
 
 class nivelPesteNegra : public nivel{
@@ -90,8 +88,6 @@ private:
     QSoundEffect sonidoItem2;
     QSoundEffect sonidoItem3;
     int probabilidadSonido;
-    QMediaPlayer* player;
-    QAudioOutput *audioOutput;
 
 public slots:
     void borrarItemRecogido(item* itemRecogido);

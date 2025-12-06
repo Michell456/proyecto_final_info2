@@ -73,17 +73,6 @@ nivelPesteNegra::nivelPesteNegra(QObject *parent) : nivel(parent) {
     sonidoItem3.setSource(QUrl("qrc:/sonido/Nivel1/item2.wav"));
     sonidoItem3.setVolume(0.5);
 
-    player = new QMediaPlayer(this);
-    audioOutput = new QAudioOutput(this);
-    player->setAudioOutput(audioOutput);
-    player->setSource(QUrl("qrc:/sonido/Nivel1/musica_fondo.mp3"));
-    audioOutput->setVolume(0.3);
-    connect(player, &QMediaPlayer::mediaStatusChanged, this, [=](QMediaPlayer::MediaStatus status){
-        if (status == QMediaPlayer::EndOfMedia) {
-            player->play();
-        }
-    });
-    player->play();
 }
 
 void nivelPesteNegra::update(){

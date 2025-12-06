@@ -7,8 +7,9 @@
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include "nivel.h"
+#include <QMediaPlayer>
+#include <QAudioOutput>
 
-// Declaraciones forward
 class MenuPrincipal;
 class MenuSeleccionNivel;
 class MenuPausa;
@@ -18,7 +19,6 @@ class Juego : public QObject
     Q_OBJECT
 
 public:
-    // Estados del juego
     enum class EstadoJuego {
         MenuPrincipal,
         SeleccionNivel,
@@ -37,7 +37,6 @@ public:
     explicit Juego(QObject *parent = nullptr);
     ~Juego();
 
-    // Métodos para obtener los menús
     MenuPrincipal* getMenuPrincipal() const { return menuPrincipal; }
     MenuSeleccionNivel* getMenuSeleccionNivel() const { return menuSeleccionNivel; }
     MenuPausa* getMenuPausa() const { return menuPausa; }
@@ -45,24 +44,20 @@ public:
 
     EstadoJuego getEstadoActual() const { return estadoActual; }
 
-    // Control del juego
     void cargarMenuPrincipal();
     void cargarSeleccionNivel();
     void cargarNivel(int numeroNivel);
     void pausarJuego();
     void reanudarJuego();
 
-    // Actualización
     void actualizar();
 
-    // Manejo de input
     void manejarKeyPress(QKeyEvent *event);
     void manejarKeyRelease(QKeyEvent *event);
     void manejarMousePress(QMouseEvent *event);
     void manejarMouseMove(QMouseEvent *event);
     void manejarMouseRelease(QMouseEvent *event);
 
-    // Configuración
     void setTamanioVentana(const QSize &size);
     QSize getTamanioVentana() const { return tamanioVentana; }
 
@@ -92,6 +87,11 @@ private:
     MenuPausa *menuPausa;
 
     nivel *nivelActual;
+
+    QMediaPlayer* musicaMenus = nullptr;
+    QAudioOutput* audioMusicaMenus = nullptr;
+    QMediaPlayer* musicaNivel = nullptr;
+    QAudioOutput* audioMusicaNivel = nullptr;
 
     QTimer *timerJuego;
 };

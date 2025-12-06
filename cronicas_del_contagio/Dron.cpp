@@ -31,7 +31,7 @@ void Dron::cargarSprites() {
     sprites.clear();
 
     for (int i = 1; i <= 6; i++) {
-        QString ruta = QString("sprites/Nivel3/mov_dron%1.png").arg(i);
+        QString ruta = QString(":/sprites/Nivel3/mov_dron%1.png").arg(i);
         QPixmap spriteOriginal(ruta);
         if (spriteOriginal.isNull()) {
             qDebug() << "Error cargando:" << ruta;

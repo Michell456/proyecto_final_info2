@@ -87,6 +87,23 @@ void Juego::cargarMenuPrincipal()
         timerJuego->stop();
     }
 
+    if (musicaNivel) {
+        musicaNivel->stop();
+    }
+
+    if (!musicaMenus) {
+        musicaMenus = new QMediaPlayer(this);
+        audioMusicaMenus = new QAudioOutput(this);
+        musicaMenus->setAudioOutput(audioMusicaMenus);
+
+        audioMusicaMenus->setVolume(0.4);
+        musicaMenus->setSource(QUrl("qrc:/sonido/Menu/Musica_fondo.mp3"));
+        musicaMenus->setLoops(QMediaPlayer::Infinite);
+        musicaMenus->play();
+    } else {
+        musicaMenus->play();
+    }
+
     estadoActual = EstadoJuego::MenuPrincipal;
     emit estadoCambiado(estadoActual);
     emit necesitaRedibujar();
@@ -94,6 +111,17 @@ void Juego::cargarMenuPrincipal()
 
 void Juego::cargarSeleccionNivel()
 {
+    if (musicaMenus) {
+        musicaMenus->stop();
+    }
+
+    if (musicaMenus) {
+        musicaMenus->play();
+    }
+
+    estadoActual = EstadoJuego::SeleccionNivel;
+    emit estadoCambiado(estadoActual);
+    emit necesitaRedibujar();
 
     estadoActual = EstadoJuego::SeleccionNivel;
     emit estadoCambiado(estadoActual);
@@ -102,29 +130,41 @@ void Juego::cargarSeleccionNivel()
 
 void Juego::cargarNivel(int numeroNivel)
 {
-    qDebug() << "cargarNivel(" << numeroNivel << ")";
 
     limpiarNivelActual();
 
-    // Crear el nivel apropiado
+    if (musicaMenus) {
+        musicaMenus->stop();
+    }
+
+    if (!musicaNivel) {
+        musicaNivel = new QMediaPlayer(this);
+        audioMusicaNivel = new QAudioOutput(this);
+        musicaNivel->setAudioOutput(audioMusicaNivel);
+        audioMusicaNivel->setVolume(0.4);
+    }
+
     switch (numeroNivel) {
     case 1:
         nivelActual = new nivelPesteNegra(this);
-        qDebug() << "Nivel 1 (Peste Negra) creado";
+        musicaNivel->setSource(QUrl("qrc:/sonido/Nivel1/musica_fondo.mp3"));
         break;
     case 2:
         nivelActual = new NivelColera(this);
-        qDebug() << "Nivel 2 (Cólera) creado";
+        musicaNivel->setSource(QUrl("qrc:/sonido/Nivel2/Musica_fondo_nivel2.mp3"));
         break;
     case 3:
         nivelActual = new NivelCovid(this);
-        qDebug() << "Nivel 3 (COVID-19) creado";
+        musicaNivel->setSource(QUrl("qrc:/sonido/Nivel3/Musica_fondo_nivel3.mp3"));
         break;
     default:
         qDebug() << "Nivel no reconocido, cargando nivel 1 por defecto";
-        nivelActual = new nivelPesteNegra(this);
+        musicaNivel->setSource(QUrl("qrc:/sonido/Nivel1/musica_fondo.mp3"));
         break;
     }
+
+    musicaNivel->setLoops(QMediaPlayer::Infinite);
+    musicaNivel->play();
 
     estadoActual = EstadoJuego::Jugando;
     timerJuego->start(16); // ~60 FPS
@@ -136,10 +176,11 @@ void Juego::cargarNivel(int numeroNivel)
 void Juego::pausarJuego()
 {
     if (estadoActual == EstadoJuego::Jugando) {
-        qDebug() << "pausarJuego()";
+
 
         estadoActual = EstadoJuego::Pausa;
         timerJuego->stop();
+        if (musicaNivel) musicaNivel->pause();
 
         emit estadoCambiado(estadoActual);
         emit necesitaRedibujar();
@@ -149,10 +190,10 @@ void Juego::pausarJuego()
 void Juego::reanudarJuego()
 {
     if (estadoActual == EstadoJuego::Pausa && nivelActual) {
-        qDebug() << "reanudarJuego()";
 
         estadoActual = EstadoJuego::Jugando;
         timerJuego->start(16);
+        if (musicaNivel) musicaNivel->play();
 
         emit estadoCambiado(estadoActual);
         emit necesitaRedibujar();
@@ -264,9 +305,11 @@ void Juego::verificarEstadoNivel()
 
     if (nivelActual->chequearVictoria()) {
         timerJuego->stop();
+        if (musicaNivel) musicaNivel->stop();
         emit juegoFinalizado(ResultadoJuego::Victoria);
     } else if (nivelActual->chequearDerrota()) {
         timerJuego->stop();
+        if (musicaNivel) musicaNivel->stop();
         emit juegoFinalizado(ResultadoJuego::Derrota);
     }
 }

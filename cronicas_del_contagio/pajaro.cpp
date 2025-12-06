@@ -36,7 +36,7 @@ void pajaro::cambiarFrame(){
 
 void pajaro::cargarSprites(){
     for(int i = 1; i <= 8; i++) {
-        QPixmap sprite(QString("sprites/Nivel3/pajaro/%1.png").arg(i));
+        QPixmap sprite(QString(":/sprites/Nivel3/pajaro/%1.png").arg(i));
         if(!sprite.isNull()) {
             sprites.append(sprite);
         } else {
