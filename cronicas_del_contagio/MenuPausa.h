@@ -14,11 +14,11 @@ public:
 
 protected:
     void setupUI() override;
-    void connectSignals() override;
+    void conectarsenales() override;
     void paintEvent(QPaintEvent *event) override;
 
 private:
-    QLabel *titleLabel;
+    QLabel *LabelTitulo;
     QPushButton *btnReanudar;
     QPushButton *btnMenuPrincipal;
     QPushButton *btnSalir;

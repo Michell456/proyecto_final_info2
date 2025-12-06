@@ -15,9 +15,9 @@ public:
 
 protected:
     void setupUI() override;
-    void connectSignals() override;
+    void conectarsenales() override;
     void paintEvent(QPaintEvent *event) override;
-    void resizeEvent(QResizeEvent *event) override; // Para redimensionamiento
+    void resizeEvent(QResizeEvent *event) override;
 
 private:
     QPushButton *btnIniciar;
@@ -25,13 +25,11 @@ private:
     QPushButton *btnSalir;
     QPixmap fondo;
 
-    // Layouts para organizacion
     QVBoxLayout *verticalLayout;
     QHBoxLayout *buttonLayout1;
     QHBoxLayout *buttonLayout2;
     QHBoxLayout *buttonLayout3;
 
-    // Colores personalizados
     QColor colorRojoPrincipal;
     QColor colorNegroPrincipal;
     QColor colorBordeBotones;

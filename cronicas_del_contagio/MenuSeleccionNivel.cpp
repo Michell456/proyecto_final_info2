@@ -7,13 +7,13 @@ MenuSeleccionNivel::MenuSeleccionNivel(QWidget *parent)
     : Menu(parent)
 {
     setupUI();
-    connectSignals();
+    conectarsenales();
 }
 
 void MenuSeleccionNivel::setupUI()
 {
     // remover el layout vertical base
-    delete mainLayout;
+    delete LayoutPrincipal;
 
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->setContentsMargins(0,0,0,0);
@@ -49,7 +49,7 @@ void MenuSeleccionNivel::setupUI()
     layout->addWidget(pnlCovid);
 }
 
-void MenuSeleccionNivel::connectSignals()
+void MenuSeleccionNivel::conectarsenales()
 {
     // clicks
     pnlPeste->installEventFilter(this);

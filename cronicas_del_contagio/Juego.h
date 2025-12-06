@@ -73,12 +73,11 @@ signals:
 
 private slots:
     void onTimerTick();
-    void onGameStarted();
-    void onLevelSelected(int nivel);
-    void onGameExited();
+    void onJuegoIniciado();
     void onNivelSeleccionado(int nivel);
-    void onGameResumed();
-    void onBackToMainMenu();
+    void onSalirDelJuego();
+    void onJuegoDespausado();
+    void onVolverAlMenuPrincipal();
 
 private:
     void crearMenus();
@@ -88,15 +87,12 @@ private:
     EstadoJuego estadoActual;
     QSize tamanioVentana;
 
-    // Menus
     MenuPrincipal *menuPrincipal;
     MenuSeleccionNivel *menuSeleccionNivel;
     MenuPausa *menuPausa;
 
-    // Nivel actual
     nivel *nivelActual;
 
-    // Timer del juego
     QTimer *timerJuego;
 };
 

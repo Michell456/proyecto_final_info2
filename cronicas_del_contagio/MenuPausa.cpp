@@ -9,50 +9,44 @@
 
 MenuPausa::MenuPausa(QWidget *parent)
     : Menu(parent),
-    titleLabel(nullptr),
+    LabelTitulo(nullptr),
     btnReanudar(nullptr),
     btnMenuPrincipal(nullptr),
     btnSalir(nullptr)
 {
     setupUI();
-    connectSignals();
+    conectarsenales();
 }
 
 void MenuPausa::setupUI()
 {
-    // titulo
-    titleLabel = new QLabel(this);
+    LabelTitulo = new QLabel(this);
 
-    // cargar imagen
     QPixmap tituloImg(":/sprites/Menu_pausa/Juego_pausado.png");
     if (!tituloImg.isNull()) {
-        titleLabel->setPixmap(tituloImg);
-        titleLabel->setScaledContents(true);
-        titleLabel->setFixedSize(400, 150); // ajustar imagen
+        LabelTitulo->setPixmap(tituloImg);
+        LabelTitulo->setScaledContents(true);
+        LabelTitulo->setFixedSize(400, 150);
     } else {
-        // Si no carga la imagen, usar texto
-        titleLabel->setText("JUEGO PAUSADO");
-        titleLabel->setStyleSheet("font-size: 36px; font-weight: bold; color: #ff3333;");
+
+        LabelTitulo->setText("JUEGO PAUSADO");
+        LabelTitulo->setStyleSheet("font-size: 36px; font-weight: bold; color: #ff3333;");
     }
 
-    titleLabel->setAlignment(Qt::AlignCenter);
+    LabelTitulo->setAlignment(Qt::AlignCenter);
 
-    // Botones
-    btnReanudar = createButton("REANUDAR");
-    btnMenuPrincipal = createButton("MENÚ PRINCIPAL");
-    btnSalir = createButton("SALIR");
+    btnReanudar = crearBoton("REANUDAR");
+    btnMenuPrincipal = crearBoton("MENÚ PRINCIPAL");
+    btnSalir = crearBoton("SALIR");
 
-    // Tamaño de botones
     btnReanudar->setFixedSize(300, 50);
     btnMenuPrincipal->setFixedSize(300, 50);
     btnSalir->setFixedSize(300, 50);
 
-    // Evita que se seleccionen con TAB
     btnReanudar->setFocusPolicy(Qt::NoFocus);
     btnMenuPrincipal->setFocusPolicy(Qt::NoFocus);
     btnSalir->setFocusPolicy(Qt::NoFocus);
 
-    //Fuente
     QFont pixelFont("Monospace", 18, QFont::Bold);
     pixelFont.setStyleHint(QFont::TypeWriter);
 
@@ -60,8 +54,7 @@ void MenuPausa::setupUI()
     btnMenuPrincipal->setFont(pixelFont);
     btnSalir->setFont(pixelFont);
 
-    // Estilo Botones
-    QString buttonStyle =
+    QString estiloBoton =
         "QPushButton {"
         "   background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1,"
         "                                     stop:0 rgba(180, 40, 40, 180),"
@@ -88,12 +81,10 @@ void MenuPausa::setupUI()
         "   border: 2px solid rgba(200, 50, 50, 255);"
         "}";
 
-    btnReanudar->setStyleSheet(buttonStyle);
-    btnMenuPrincipal->setStyleSheet(buttonStyle);
-    btnSalir->setStyleSheet(buttonStyle);
+    btnReanudar->setStyleSheet(estiloBoton);
+    btnMenuPrincipal->setStyleSheet(estiloBoton);
+    btnSalir->setStyleSheet(estiloBoton);
 
-
-    // Crear layouts horizontales para centrar
     QHBoxLayout *hLayout1 = new QHBoxLayout();
     hLayout1->addStretch();
     hLayout1->addWidget(btnReanudar);
@@ -109,39 +100,36 @@ void MenuPausa::setupUI()
     hLayout3->addWidget(btnSalir);
     hLayout3->addStretch();
 
-    // Layout para titulo
-    QHBoxLayout *titleLayout = new QHBoxLayout();
-    titleLayout->addStretch();
-    titleLayout->addWidget(titleLabel);
-    titleLayout->addStretch();
+    QHBoxLayout *LayoutTitulo = new QHBoxLayout();
+    LayoutTitulo->addStretch();
+    LayoutTitulo->addWidget(LabelTitulo);
+    LayoutTitulo->addStretch();
 
-    // Layout principal
-    QVBoxLayout *mainVLayout = new QVBoxLayout();
-    mainVLayout->addStretch();
-    mainVLayout->addLayout(titleLayout);
-    mainVLayout->addSpacing(40);
-    mainVLayout->addLayout(hLayout1);
-    mainVLayout->addSpacing(20);
-    mainVLayout->addLayout(hLayout2);
-    mainVLayout->addSpacing(20);
-    mainVLayout->addLayout(hLayout3);
-    mainVLayout->addStretch();
+    QVBoxLayout *LayoutVPrincipal = new QVBoxLayout();
+    LayoutVPrincipal->addStretch();
+    LayoutVPrincipal->addLayout(LayoutTitulo);
+    LayoutVPrincipal->addSpacing(40);
+    LayoutVPrincipal->addLayout(hLayout1);
+    LayoutVPrincipal->addSpacing(20);
+    LayoutVPrincipal->addLayout(hLayout2);
+    LayoutVPrincipal->addSpacing(20);
+    LayoutVPrincipal->addLayout(hLayout3);
+    LayoutVPrincipal->addStretch();
 
-    // Limpiar layout anterior si existe
-    if (mainLayout) {
-        // Limpiar widgets del layout anterior
+    if (LayoutPrincipal) {
+
         QLayoutItem* item;
-        while ((item = mainLayout->takeAt(0)) != nullptr) {
+        while ((item = LayoutPrincipal->takeAt(0)) != nullptr) {
             if (item->widget()) {
                 item->widget()->setParent(nullptr);
             }
             delete item;
         }
-        delete mainLayout;
+        delete LayoutPrincipal;
     }
 
-    mainLayout = mainVLayout;
-    setLayout(mainLayout);
+    LayoutPrincipal = LayoutVPrincipal;
+    setLayout(LayoutPrincipal);
 }
 
 void MenuPausa::paintEvent(QPaintEvent *event)
@@ -150,10 +138,8 @@ void MenuPausa::paintEvent(QPaintEvent *event)
 
     QPainter painter(this);
 
-    // fondo oscuro
     painter.fillRect(rect(), QColor(0, 0, 0, 180));
 
-    // Efecto viñeta (para oscurecer bordes)
     QRadialGradient vignette(width()/2, height()/2, qMax(width(), height())/1.5);
     vignette.setColorAt(0, QColor(0, 0, 0, 100));
     vignette.setColorAt(1, QColor(0, 0, 0, 200));
@@ -162,7 +148,6 @@ void MenuPausa::paintEvent(QPaintEvent *event)
     painter.setPen(Qt::NoPen);
     painter.drawRect(rect());
 
-    // resplandor en el centro rojo
     QRadialGradient glow(width()/2, height()/2, 200);
     glow.setColorAt(0, QColor(255, 50, 50, 30));
     glow.setColorAt(1, QColor(255, 0, 0, 0));
@@ -171,31 +156,25 @@ void MenuPausa::paintEvent(QPaintEvent *event)
     painter.drawRect(rect());
 }
 
-void MenuPausa::connectSignals()
+void MenuPausa::conectarsenales()
 {
-    qDebug() << "MenuPausa: Conectando señales";
-
     connect(btnReanudar, &QPushButton::clicked, this, &MenuPausa::onReanudar);
     connect(btnMenuPrincipal, &QPushButton::clicked, this, &MenuPausa::onMenuPrincipal);
     connect(btnSalir, &QPushButton::clicked, this, &MenuPausa::onSalir);
-
-    qDebug() << "MenuPausa: Señales conectadas";
 }
 
 void MenuPausa::onReanudar()
 {
-    qDebug() << "MenuPausa: Botón REANUDAR clickeado";
-    emit gameResumed();
+    emit JuegoDespausado();
 }
 
 void MenuPausa::onMenuPrincipal()
 {
-    qDebug() << "MenuPausa: Botón MENÚ PRINCIPAL clickeado";
-    emit backToMainMenu();
+    emit VolverAlMenuPrincipal();
 }
 
 void MenuPausa::onSalir()
 {
     qDebug() << "MenuPausa: Botón SALIR clickeado";
-    emit gameExited();
+    emit SalirDelJuego();
 }

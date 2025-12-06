@@ -17,20 +17,20 @@ public:
     virtual ~Menu() = default;
 
 protected:
-    QVBoxLayout *mainLayout;
-    QLabel *titleLabel;
+    QVBoxLayout *LayoutPrincipal;
+    QLabel *LabelTitulo;
 
     virtual void setupUI() = 0;
-    virtual void connectSignals() = 0;
+    virtual void conectarsenales() = 0;
 
-    QPushButton* createButton(const QString &text, const QString &style = "");
+    QPushButton* crearBoton(const QString &texto, const QString &estilo = "");
 
 signals:
-    void gameStarted();
-    void levelSelected(int level);
-    void gameResumed();
-    void gameExited();
-    void backToMainMenu();
+    void JuegoIniciado();
+    void NivelSeleccionado(int nivel);
+    void JuegoDespausado();
+    void SalirDelJuego();
+    void VolverAlMenuPrincipal();
 };
 
 #endif // MENU_H

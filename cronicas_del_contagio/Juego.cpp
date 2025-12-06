@@ -18,7 +18,6 @@ Juego::Juego(QObject *parent)
     , menuPausa(nullptr)
     , nivelActual(nullptr)
 {
-    qDebug() << "=== CONSTRUCTOR JUEGO ===";
 
     timerJuego = new QTimer(this);
     connect(timerJuego, &QTimer::timeout, this, &Juego::onTimerTick);
@@ -26,12 +25,10 @@ Juego::Juego(QObject *parent)
     crearMenus();
     cargarMenuPrincipal();
 
-    qDebug() << "Juego inicializado correctamente";
 }
 
 Juego::~Juego()
 {
-    qDebug() << "=== DESTRUCTOR JUEGO ===";
 
     if (timerJuego->isActive()) {
         timerJuego->stop();
@@ -54,58 +51,36 @@ void Juego::setTamanioVentana(const QSize &size)
 
 void Juego::crearMenus()
 {
-    qDebug() << "=== CREANDO MENÚS ===";
 
-    // Crear instancias de los menús
     menuPrincipal = new MenuPrincipal();
     menuSeleccionNivel = new MenuSeleccionNivel();
     menuPausa = new MenuPausa();
 
-    qDebug() << "Menús creados:"
-             << "Principal:" << menuPrincipal
-             << "Selección:" << menuSeleccionNivel
-             << "Pausa:" << menuPausa;
+    bool conn1 = connect(menuPrincipal, SIGNAL(JuegoIniciado()),
+                         this, SLOT(onJuegoIniciado()));
 
-    qDebug() << "Conectando señales...";
+    bool conn2 = connect(menuPrincipal, SIGNAL(NivelSeleccionado(int)),
+                         this, SLOT(onNivelSeleccionado(int)));
 
-    // ===== CONEXIONES MENU PRINCIPAL =====
-    bool conn1 = connect(menuPrincipal, SIGNAL(gameStarted()),
-                         this, SLOT(onGameStarted()));
-    qDebug() << "gameStarted -> onGameStarted:" << (conn1 ? "OK" : "FALLÓ");
+    bool conn3 = connect(menuPrincipal, SIGNAL(SalirDelJuego()),
+                         this, SLOT(onSalirDelJuego()));
 
-    bool conn2 = connect(menuPrincipal, SIGNAL(levelSelected(int)),
-                         this, SLOT(onLevelSelected(int)));
-    qDebug() << "levelSelected -> onLevelSelected:" << (conn2 ? "OK" : "FALLÓ");
-
-    bool conn3 = connect(menuPrincipal, SIGNAL(gameExited()),
-                         this, SLOT(onGameExited()));
-    qDebug() << "gameExited -> onGameExited:" << (conn3 ? "OK" : "FALLÓ");
-
-    // ===== CONEXIONES MENU SELECCIÓN NIVEL =====
     bool conn4 = connect(menuSeleccionNivel, SIGNAL(nivelSeleccionado(int)),
                          this, SLOT(onNivelSeleccionado(int)));
-    qDebug() << "nivelSeleccionado -> onNivelSeleccionado:" << (conn4 ? "OK" : "FALLÓ");
 
-    // ===== CONEXIONES MENU PAUSA =====
-    bool conn5 = connect(menuPausa, SIGNAL(gameResumed()),
-                         this, SLOT(onGameResumed()));
-    qDebug() << "gameResumed -> onGameResumed:" << (conn5 ? "OK" : "FALLÓ");
+    bool conn5 = connect(menuPausa, SIGNAL(JuegoDespausado()),
+                         this, SLOT(onJuegoDespausado()));
 
-    bool conn6 = connect(menuPausa, SIGNAL(backToMainMenu()),
-                         this, SLOT(onBackToMainMenu()));
-    qDebug() << "backToMainMenu -> onBackToMainMenu:" << (conn6 ? "OK" : "FALLÓ");
+    bool conn6 = connect(menuPausa, SIGNAL(VolverAlMenuPrincipal()),
+                         this, SLOT(onVolverAlMenuPrincipal()));
 
-    bool conn7 = connect(menuPausa, SIGNAL(gameExited()),
-                         this, SLOT(onGameExited()));
-    qDebug() << "gameExited (pausa) -> onGameExited:" << (conn7 ? "OK" : "FALLÓ");
+    bool conn7 = connect(menuPausa, SIGNAL(SalirDelJuego()),
+                         this, SLOT(onSalirDelJuego()));
 
-    qDebug() << "=== CONEXIONES COMPLETADAS ===";
 }
 
 void Juego::cargarMenuPrincipal()
 {
-    qDebug() << "cargarMenuPrincipal()";
-
     limpiarNivelActual();
 
     if (timerJuego->isActive()) {
@@ -119,7 +94,6 @@ void Juego::cargarMenuPrincipal()
 
 void Juego::cargarSeleccionNivel()
 {
-    qDebug() << "cargarSeleccionNivel()";
 
     estadoActual = EstadoJuego::SeleccionNivel;
     emit estadoCambiado(estadoActual);
@@ -199,49 +173,35 @@ void Juego::onTimerTick()
     emit necesitaRedibujar();
 }
 
-// ===== SLOTS PARA SEÑALES DE MENÚS =====
 
-void Juego::onGameStarted()
+void Juego::onJuegoIniciado()
 {
-    qDebug() << "SLOT: onGameStarted()";
     cargarSeleccionNivel();
-}
-
-void Juego::onLevelSelected(int nivel)
-{
-    qDebug() << "SLOT: onLevelSelected(" << nivel << ")";
-    cargarNivel(nivel);
-}
-
-void Juego::onGameExited()
-{
-    qDebug() << "SLOT: onGameExited() - EMITIENDO SalirSolicitado";
-    emit juegoFinalizado(ResultadoJuego::SalirSolicitado);
 }
 
 void Juego::onNivelSeleccionado(int nivel)
 {
-    qDebug() << "SLOT: onNivelSeleccionado(" << nivel << ")";
     cargarNivel(nivel);
 }
 
-void Juego::onGameResumed()
+void Juego::onSalirDelJuego()
 {
-    qDebug() << "SLOT: onGameResumed()";
+    emit juegoFinalizado(ResultadoJuego::SalirSolicitado);
+}
+
+void Juego::onJuegoDespausado()
+{
     reanudarJuego();
 }
 
-void Juego::onBackToMainMenu()
+void Juego::onVolverAlMenuPrincipal()
 {
-    qDebug() << "SLOT: onBackToMainMenu()";
     cargarMenuPrincipal();
 }
 
-// ===== MANEJO DE INPUT =====
 
 void Juego::manejarKeyPress(QKeyEvent *event)
 {
-    // Manejo de tecla ESC global
     if (event->key() == Qt::Key_Escape) {
         if (estadoActual == EstadoJuego::Jugando) {
             pausarJuego();
@@ -251,7 +211,6 @@ void Juego::manejarKeyPress(QKeyEvent *event)
         return;
     }
 
-    // Pasar input al nivel actual
     if (estadoActual == EstadoJuego::Jugando && nivelActual) {
         nivelActual->handleInput(event);
     }
@@ -291,12 +250,9 @@ void Juego::manejarMouseRelease(QMouseEvent *event)
     }
 }
 
-// ===== MÉTODOS PRIVADOS =====
-
 void Juego::limpiarNivelActual()
 {
     if (nivelActual) {
-        qDebug() << "limpiarNivelActual() - eliminando nivel anterior";
         delete nivelActual;
         nivelActual = nullptr;
     }
@@ -307,11 +263,9 @@ void Juego::verificarEstadoNivel()
     if (!nivelActual) return;
 
     if (nivelActual->chequearVictoria()) {
-        qDebug() << "¡VICTORIA DETECTADA!";
         timerJuego->stop();
         emit juegoFinalizado(ResultadoJuego::Victoria);
     } else if (nivelActual->chequearDerrota()) {
-        qDebug() << "¡DERROTA DETECTADA!";
         timerJuego->stop();
         emit juegoFinalizado(ResultadoJuego::Derrota);
     }

@@ -17,7 +17,7 @@ signals:
 
 protected:
     void setupUI() override;
-    void connectSignals() override;
+    void conectarsenales() override;
     bool eventFilter(QObject *obj, QEvent *event) override;
 
 private:

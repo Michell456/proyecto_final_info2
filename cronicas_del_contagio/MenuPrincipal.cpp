@@ -7,7 +7,7 @@
 #include <QResizeEvent>
 #include <QLinearGradient>
 #include <QRadialGradient>
-#include <QDebug> // Para debugging
+#include <QDebug>
 
 MenuPrincipal::MenuPrincipal(QWidget *parent)
     : Menu(parent),
@@ -19,13 +19,12 @@ MenuPrincipal::MenuPrincipal(QWidget *parent)
     buttonLayout2(nullptr),
     buttonLayout3(nullptr)
 {
-    // Definir colores
+
     colorRojoPrincipal = QColor(180, 40, 40);
     colorNegroPrincipal = QColor(20, 20, 20);
     colorBordeBotones = QColor(255, 50, 50, 200);
     colorTextoBotones = QColor(255, 220, 220);
 
-    // Cargar fondo
     fondo.load(":/sprites/Menu_principal/fondo_menu_principal.jpg");
 
     if (fondo.isNull()) {
@@ -39,44 +38,35 @@ MenuPrincipal::MenuPrincipal(QWidget *parent)
     }
 
     setupUI();
-    connectSignals(); // ¡IMPORTANTE! Asegurar que se conecten las señales
+    conectarsenales();
 
-    qDebug() << "MenuPrincipal creado - Botones:"
-             << (btnIniciar ? "SI" : "NO")
-             << (btnSeleccionarNivel ? "SI" : "NO")
-             << (btnSalir ? "SI" : "NO");
 }
 
 void MenuPrincipal::setupUI()
 {
-    // ======== BOTONES ========
-    btnIniciar = createButton("INICIAR");
+    btnIniciar = crearBoton("INICIAR");
     if (!btnIniciar) {
-        qDebug() << "ERROR: No se pudo crear botón INICIAR";
         btnIniciar = new QPushButton("INICIAR", this);
     }
 
-    btnSeleccionarNivel = createButton("NIVELES");
+    btnSeleccionarNivel = crearBoton("NIVELES");
     if (!btnSeleccionarNivel) {
         btnSeleccionarNivel = new QPushButton("NIVELES", this);
     }
 
-    btnSalir = createButton("SALIR");
+    btnSalir = crearBoton("SALIR");
     if (!btnSalir) {
         btnSalir = new QPushButton("SALIR", this);
     }
 
-    // Tamaño de botones
     btnIniciar->setFixedSize(250, 45);
     btnSeleccionarNivel->setFixedSize(250, 45);
     btnSalir->setFixedSize(250, 45);
 
-    // Configuración de focus
     btnIniciar->setFocusPolicy(Qt::NoFocus);
     btnSeleccionarNivel->setFocusPolicy(Qt::NoFocus);
     btnSalir->setFocusPolicy(Qt::NoFocus);
 
-    // ======== FUENTE ========
     QFont pixelFont("Monospace", 16, QFont::Bold);
     pixelFont.setStyleHint(QFont::TypeWriter);
 
@@ -84,7 +74,6 @@ void MenuPrincipal::setupUI()
     btnSeleccionarNivel->setFont(pixelFont);
     btnSalir->setFont(pixelFont);
 
-    // ======== ESTILO ========
     QString buttonStyle = QString(
                               "QPushButton {"
                               "   background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1,"
@@ -124,7 +113,6 @@ void MenuPrincipal::setupUI()
     btnSeleccionarNivel->setStyleSheet(buttonStyle);
     btnSalir->setStyleSheet(buttonStyle);
 
-    // ======== LAYOUT ========
     buttonLayout1 = new QHBoxLayout();
     buttonLayout1->addStretch();
     buttonLayout1->addWidget(btnIniciar);
@@ -144,13 +132,11 @@ void MenuPrincipal::setupUI()
     verticalLayout->setSpacing(0);
     verticalLayout->setContentsMargins(0, 0, 0, 0);
 
-    // Espacio superior
     verticalLayout->addStretch();
     verticalLayout->addStretch();
     verticalLayout->addStretch();
     verticalLayout->addStretch();
 
-    // Botones
     verticalLayout->addLayout(buttonLayout1);
     verticalLayout->addSpacing(10);
 
@@ -159,34 +145,29 @@ void MenuPrincipal::setupUI()
 
     verticalLayout->addLayout(buttonLayout3);
 
-    // Espacio inferior mínimo
     verticalLayout->addStretch();
 
-    // Configurar layout principal
-    if (mainLayout) {
+    if (LayoutPrincipal) {
         QLayoutItem* item;
-        while ((item = mainLayout->takeAt(0)) != nullptr) {
+        while ((item = LayoutPrincipal->takeAt(0)) != nullptr) {
             if (item->widget()) {
                 item->widget()->setParent(nullptr);
             }
             delete item;
         }
-        delete mainLayout;
+        delete LayoutPrincipal;
     }
 
-    mainLayout = verticalLayout;
-    setLayout(mainLayout);
+    LayoutPrincipal = verticalLayout;
+    setLayout(LayoutPrincipal);
 
     setMinimumSize(800, 600);
 
-    qDebug() << "setupUI completado";
 }
 
-void MenuPrincipal::connectSignals()
+void MenuPrincipal::conectarsenales()
 {
-    qDebug() << "Conectando señales...";
 
-    // Conectar señal clicked() a los slots
     connect(btnIniciar, &QPushButton::clicked,
             this, &MenuPrincipal::onIniciarPartida);
 
@@ -196,7 +177,6 @@ void MenuPrincipal::connectSignals()
     connect(btnSalir, &QPushButton::clicked,
             this, &MenuPrincipal::onSalir);
 
-    qDebug() << "Señales conectadas";
 }
 
 void MenuPrincipal::paintEvent(QPaintEvent *event)
@@ -205,13 +185,11 @@ void MenuPrincipal::paintEvent(QPaintEvent *event)
 
     QPainter painter(this);
 
-    // Dibujar fondo
     if (!fondo.isNull()) {
         QPixmap scaledFondo = fondo.scaled(size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
         painter.drawPixmap(0, 0, scaledFondo);
     }
 
-    // Superposición semitransparente
     painter.setBrush(QColor(0, 0, 0, 50));
     painter.setPen(Qt::NoPen);
     painter.drawRect(0, 0, width(), height());
@@ -221,7 +199,6 @@ void MenuPrincipal::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);
 
-    // Tamaños ajustables
     const int MIN_WIDTH = 200;
     const int MAX_WIDTH = 300;
     const int MIN_HEIGHT = 40;
@@ -241,7 +218,6 @@ void MenuPrincipal::resizeEvent(QResizeEvent *event)
     if (btnSeleccionarNivel) btnSeleccionarNivel->setFixedSize(newWidth, newHeight);
     if (btnSalir) btnSalir->setFixedSize(newWidth, newHeight);
 
-    // Ajustar fuente
     int fontSize = newWidth / 15;
     if (fontSize < 14) fontSize = 14;
     if (fontSize > 20) fontSize = 20;
@@ -258,18 +234,15 @@ void MenuPrincipal::resizeEvent(QResizeEvent *event)
 
 void MenuPrincipal::onIniciarPartida()
 {
-    qDebug() << "Botón INICIAR clickeado - Emitiendo levelSelected(1)";
-    emit levelSelected(1);
+    emit NivelSeleccionado(1);
 }
 
 void MenuPrincipal::onSeleccionarNivel()
 {
-    qDebug() << "Botón NIVELES clickeado - Emitiendo gameStarted()";
-    emit gameStarted();
+    emit JuegoIniciado();
 }
 
 void MenuPrincipal::onSalir()
 {
-    qDebug() << "Botón SALIR clickeado - Emitiendo gameExited()";
-    emit gameExited();
+    emit SalirDelJuego();
 }
