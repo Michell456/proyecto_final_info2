@@ -29,6 +29,7 @@ public:
     void handleKeyRelease(QKeyEvent *event) override;
     bool chequearVictoria() override;
     bool chequearDerrota() override;
+    void baldeDestruido();
 
     // Métodos para manejo de mouse
     void handleMousePress(QMouseEvent *event);
@@ -63,13 +64,14 @@ private:
     bool arrastrando;
     bool clickEnDoctor;
 
+    int baldesDestruidos;
+
     // Efectos de sonido
     QSoundEffect sonidoBaldeAmpolla;
     QSoundEffect sonidoDestruccionBalde;
     QSoundEffect sonidoDestruccionMadera;
     QSoundEffect sonidoReboteMadera;
 
-    // Elementos visuales temporales
     QList<QLineF> lineasTrayectoria;
     QList<QRectF> puntosTrayectoria;
 

@@ -19,6 +19,7 @@ NivelColera::NivelColera(QObject *parent)
     , proyectilAmpolla(nullptr)
     , arrastrando(false)
     , clickEnDoctor(false)
+    , baldesDestruidos(0)
 {
     // Inicializar en orden
     inicializarRecursos();
@@ -147,33 +148,53 @@ void NivelColera::draw(QPainter &p)
 
     // 7. Dibujar UI
     p.setPen(Qt::white);
-    p.setFont(QFont("Arial", 16));
-    p.drawText(20, 30, QString("Nivel - Cólera"));
-    p.drawText(20, 60, QString("Tiempo: %1").arg(tiempoTranscurrido / 60));
+    p.setFont(QFont("Arial", 14));
 
-    // Mostrar proyectil actual
+    // Tiempo
+    int segundosTranscurridos = tiempoTranscurrido / 60;
+    int tiempoRestante = 60 - segundosTranscurridos;
+    p.drawText(20, 30, QString("Tiempo: %1").arg(segundosTranscurridos));
+
+    // Proyectil actual
     QString proyectilTexto = (proyectilActual == proyectilPiedra) ? "PIEDRA" : "AMPOLLA";
-    p.drawText(20, 90, QString("Proyectil: %1").arg(proyectilTexto));
+    p.drawText(20, 60, QString("Proyectil: %1").arg(proyectilTexto));
 
-    // Mostrar baldes llenos
+    // Baldes llenos
     int baldesLlenos = 0;
     for (Balde* balde : baldes) {
-        if (balde->estaLleno()) baldesLlenos++;
+        if (balde->estaLleno()) {
+            baldesLlenos++;
+        }
     }
-    p.drawText(20, 120, QString("Baldes llenos: %1/%2").arg(baldesLlenos).arg(baldes.size()));
+    p.setPen(Qt::green);
+    p.drawText(20, 90, QString("Baldes llenos: %1/8").arg(baldesLlenos));
 
-    // 8. Dibujar estado del juego
+    // Baldes rotos
+    p.setPen(Qt::red);
+    p.drawText(20, 120, QString("Baldes rotos: %1/1").arg(baldesDestruidos));
+
+    // Tiempo restante
+    p.setPen(Qt::white);
+    p.drawText(800, 30, QString("Tiempo restante: %1s").arg(tiempoRestante));
+
+    // 8. Mensajes de fin de juego
     if (estado == EstadoNivel::ganado) {
         p.setPen(Qt::green);
         p.setFont(QFont("Arial", 32, QFont::Bold));
         p.drawText(350, 300, "¡VICTORIA!");
-        p.setPen(Qt::white);
-        p.setFont(QFont("Arial", 16));
-        p.drawText(400, 350, "Todos los baldes están llenos");
-    } else if (estado == EstadoNivel::perdido) {
+    }
+    else if (estado == EstadoNivel::perdido) {
         p.setPen(Qt::red);
         p.setFont(QFont("Arial", 32, QFont::Bold));
         p.drawText(350, 300, "DERROTA");
+
+        p.setPen(Qt::white);
+        p.setFont(QFont("Arial", 16));
+        if ((tiempoTranscurrido / 60) >= 120) {
+            p.drawText(350, 350, "¡Se acabó el tiempo!");
+        } else if (baldesDestruidos > 1) {
+            p.drawText(350, 350, "¡Destruiste demasiados baldes!");
+        }
     }
 }
 
@@ -195,19 +216,28 @@ void NivelColera::handleInput(QKeyEvent *e)
 
 bool NivelColera::chequearVictoria()
 {
-    // Victoria: todos los baldes están llenos
+
+    int baldesLlenos = 0;
     for (Balde* balde : baldes) {
-        if (!balde->estaLleno()) {
-            return false;
+        if (balde->estaLleno()) {
+            baldesLlenos++;
         }
     }
-    return true;
+    return baldesLlenos >= 8;
 }
 
 bool NivelColera::chequearDerrota()
 {
-    // Derrota: tiempo agotado (120 segundos)
-    return (tiempoTranscurrido / 60) >= 120;
+
+    if ((tiempoTranscurrido / 60) >= 60) {
+        return true;
+    }
+
+    if (baldesDestruidos > 1) {
+        return true;
+    }
+
+    return false;
 }
 
 void NivelColera::handleMousePress(QMouseEvent *event)
@@ -456,29 +486,21 @@ void NivelColera::crearObstaculos()
 void NivelColera::crearBaldes()
 {
     QList<QPointF> posicionesBaldes = {
-
         QPointF(850, 710),
         QPointF(1225, 710),
         QPointF(1000, 540),
-        //QPointF(1300, 540),
         QPointF(1150, 440),
         QPointF(1000, 440),
         QPointF(1275, 440),
         QPointF(1150, 310),
         QPointF(1400, 310),
         QPointF(850, 310)
-
     };
 
     for (int i = 0; i < posicionesBaldes.size(); ++i) {
-        Balde *nuevoBalde = new Balde(posicionesBaldes[i],this);
+        Balde *nuevoBalde = new Balde(posicionesBaldes[i], this);
         baldes.append(nuevoBalde);
-
-        // Verificar area de colision inmediatamente
-        QRectF area = nuevoBalde->getAreaColision();
-        area.moveTo(posicionesBaldes[i]);
     }
-
 }
 
 void NivelColera::dibujarTrayectoria(const QVector2D& velocidadInicial, const QPointF& posicionInicial)
@@ -611,4 +633,13 @@ void NivelColera::reproducirSonidoDestruccionMadera() {
 
 void NivelColera::reproducirSonidoReboteMadera() {
     sonidoReboteMadera.play();
+}
+
+void NivelColera::baldeDestruido()
+{
+    baldesDestruidos++;
+
+    if (chequearDerrota()) {
+        estado = EstadoNivel::perdido;
+    }
 }

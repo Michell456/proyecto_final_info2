@@ -72,6 +72,7 @@ void Balde::destruir()
 
     if (nivelColera) {
         nivelColera->reproducirSonidoDestruccionBalde();
+        nivelColera->baldeDestruido();
     }
 }
 
