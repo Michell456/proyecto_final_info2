@@ -58,6 +58,9 @@ private:
 
     bool inmune;
     QTimer *timerInmunidad;
+
+    const int hitboxW = 50;
+    const int hitboxH = 50;
 };
 
 #endif // DRON_H

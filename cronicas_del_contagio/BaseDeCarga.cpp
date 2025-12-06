@@ -8,11 +8,9 @@ BaseDeCarga::BaseDeCarga(QPointF posicion)
 }
 
 void BaseDeCarga::cargarSprite() {
-    // Cargar sprite de base de carga
     spriteBase.load(":/sprites/Nivel3/base_carga.png");
 
     if (spriteBase.isNull()) {
-        // Fallback si no carga el sprite
         spriteBase = QPixmap(100, 100);
         spriteBase.fill(QColor(100, 150, 255));
     }
@@ -20,12 +18,9 @@ void BaseDeCarga::cargarSprite() {
 
 void BaseDeCarga::draw(QPainter &p) {
 
-
-    // sprite de la base
     if (!spriteBase.isNull()) {
         p.drawPixmap(posicion.x() - 50, posicion.y() - 50, 100, 100, spriteBase);
     } else {
-        // Fallback si no hay sprite
         p.setBrush(QColor(100, 150, 255));
         p.setPen(QPen(Qt::darkBlue, 3));
         p.drawEllipse(posicion, 50, 50);

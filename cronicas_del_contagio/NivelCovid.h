@@ -7,6 +7,7 @@
 #include "BaseDeCarga.h"
 #include "pajaro.h"
 #include "zonainfeccion.h"
+#include <QSoundEffect>
 
 class NivelCovid : public nivel
 {
@@ -44,6 +45,11 @@ private:
     int zonasDesinfectadas;
     int zonasObjetivo;
     bool zonaExcedioLimite;
+
+    QSoundEffect sonidoPajaro;
+    QSoundEffect sonidoReloj;
+    QSoundEffect sonidoCarga;
+    bool estabaCargando = false;
 
 };
 

@@ -17,10 +17,9 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    // Crear el juego
     juego = new Juego(this);
 
-    // Conectar señales del juego
+    // Conectar señales
     connect(juego, &Juego::necesitaRedibujar,
             this, &MainWindow::onJuegoNecesitaRedibujar);
     connect(juego, &Juego::estadoCambiado,
@@ -31,12 +30,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(juego, &Juego::juegoFinalizado,
             this, &MainWindow::onJuegoFinalizado);
 
-    // Obtener los widgets de menú del juego
     widgetMenuPrincipal = dynamic_cast<QWidget*>(juego->getMenuPrincipal());
     widgetMenuSeleccion = dynamic_cast<QWidget*>(juego->getMenuSeleccionNivel());
     widgetMenuPausa = dynamic_cast<QWidget*>(juego->getMenuPausa());
 
-    // Configurar como hijos de MainWindow si son QWidgets
     if (widgetMenuPrincipal) {
         widgetMenuPrincipal->setParent(this);
         widgetMenuPrincipal->setGeometry(0, 0, width(), height());
@@ -53,10 +50,8 @@ MainWindow::MainWindow(QWidget *parent)
     // Pantalla completa
     this->showFullScreen();
 
-    // Inicializar tamaño
     juego->setTamanioVentana(size());
 
-    // Mostrar menú según estado inicial
     mostrarMenuSegunEstado();
 }
 
@@ -72,26 +67,20 @@ void MainWindow::paintEvent(QPaintEvent *event)
 
     QPainter painter(this);
 
-    // Limpiar fondo
     painter.fillRect(rect(), Qt::black);
 
-    // Dibujar nivel actual si existe
     if (nivel *nivelActual = juego->getNivelActual()) {
         nivelActual->draw(painter);
     }
 
-    // Dibujar pantalla de victoria/derrota si es necesario
-    // (esto lo manejaría onEstadoJuegoCambiado)
 }
 
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
     QMainWindow::resizeEvent(event);
 
-    // Actualizar tamaño del juego
     juego->setTamanioVentana(event->size());
 
-    // Actualizar geometría de menús si existen
     if (widgetMenuPrincipal) {
         widgetMenuPrincipal->setGeometry(0, 0, width(), height());
     }
@@ -105,7 +94,6 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
-    // Pasar evento al juego
     juego->manejarKeyPress(event);
 }
 
@@ -170,12 +158,11 @@ void MainWindow::onJuegoFinalizado(Juego::ResultadoJuego resultado)
 
 void MainWindow::mostrarMenuSegunEstado()
 {
-    // Ocultar todos los menús primero
+    // Ocultar los menus
     if (widgetMenuPrincipal) widgetMenuPrincipal->hide();
     if (widgetMenuSeleccion) widgetMenuSeleccion->hide();
     if (widgetMenuPausa) widgetMenuPausa->hide();
 
-    // Mostrar el menú según el estado
     switch (juego->getEstadoActual()) {
     case Juego::EstadoJuego::MenuPrincipal:
         if (widgetMenuPrincipal) widgetMenuPrincipal->show();
@@ -190,11 +177,11 @@ void MainWindow::mostrarMenuSegunEstado()
         break;
 
     case Juego::EstadoJuego::Jugando:
-        // No mostrar ningún menú
+        // No mostrar menú
         break;
 
     case Juego::EstadoJuego::Terminado:
-        // Pantalla de fin de juego
+        // Pantalla fin del juego
         break;
     }
 }

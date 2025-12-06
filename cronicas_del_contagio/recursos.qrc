@@ -171,6 +171,12 @@
 
         <!-- Sonidos Nivel 3 -->
         <file>sonido/Nivel3/Musica_fondo_nivel3.mp3</file>
+        <file>sonido/Nivel3/pajaro.wav</file>
+        <file>sonido/Nivel3/reloj.wav</file>
+        <file>sonido/Nivel3/carga.wav</file>
+
+
+
 
 
         <!-- =================== -->

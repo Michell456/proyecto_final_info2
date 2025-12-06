@@ -2,7 +2,7 @@
 #include <QDebug>
 #include <cmath>
 
-Dron::Dron() : posicion(400, 300), frameActual(0), contadorAnimacion(0) {
+Dron::Dron() : posicion(400, 300), frameActual(0), contadorAnimacion(0), inmune(false) {
     velocidad = QPointF(0, 0);
     aceleracion = QPointF(0, 0);
     for (int i = 0; i < 4; i++) teclas[i] = false;
@@ -74,7 +74,6 @@ void Dron::update(QSize tamanioVentana) {
     if (teclas[2]) aceleracion.setX(-ACELERACION); // A - Izquierda
     if (teclas[3]) aceleracion.setX(ACELERACION);  // D - Derecha
 
-    // Actualizar velocidad
     velocidad += aceleracion;
 
     // Limitar velocidad maxima
@@ -128,13 +127,13 @@ void Dron::update(QSize tamanioVentana) {
     }
 }
 void Dron::draw(QPainter &p) {
-    if(inmune){
-        p.setOpacity(0.5);
-    }
-    else{
-        p.setOpacity(1.0);
-    }
     if (!sprites.isEmpty() && frameActual < sprites.size()) {
+        if(inmune){
+            p.setOpacity(0.5);
+        }
+        else{
+            p.setOpacity(1.0);
+        }
         p.drawPixmap(posicion.x() - 75, posicion.y() - 75, 150, 150, sprites[frameActual]);
     } else {
         p.setBrush(QColor(0, 100, 200));
@@ -167,7 +166,12 @@ void Dron::cargarBateria(float cantidad) {
 }
 
 QRect Dron::getRect() const {
-    return QRect(posicion.x() - 50, posicion.y() - 50, 100, 100);
+    return QRect(
+        posicion.x() - hitboxW / 2,
+        posicion.y() - hitboxH / 2,
+        hitboxW,
+        hitboxH
+        );
 }
 
 void Dron::quitarBateria(){

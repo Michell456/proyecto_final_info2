@@ -25,6 +25,13 @@ NivelCovid::NivelCovid(QObject *parent)
     zonasDesinfectadas = 0;
     zonasObjetivo = 10;
     zonaExcedioLimite = false;
+
+    sonidoPajaro.setSource(QUrl("qrc:/sonido/Nivel3/pajaro.wav"));
+    sonidoPajaro.setVolume(1.0);
+    sonidoReloj.setSource(QUrl("qrc:/sonido/Nivel3/reloj.wav"));
+    sonidoReloj.setVolume(1.0);
+    sonidoCarga.setSource(QUrl("qrc:/sonido/Nivel3/carga.wav"));
+    sonidoCarga.setVolume(1.0);
 }
 
 void NivelCovid::update() {
@@ -71,9 +78,20 @@ void NivelCovid::update() {
     limpiarEntidades();
     limpiarZonasInfeccion();
 
-    if (baseCarga.estaCargando(dron.getPosition())) {
+    bool estaCargandoAhora = baseCarga.estaCargando(dron.getPosition());
+
+    if (estaCargandoAhora) {
         dron.cargarBateria(0.8f);
+
+        if (!estabaCargando) {
+            sonidoCarga.play();
+        }
+    } else {
+        if (estabaCargando) {
+            sonidoCarga.stop();
+        }
     }
+    estabaCargando = estaCargandoAhora;
 
     verificarColisiones();
 }
@@ -143,13 +161,10 @@ void NivelCovid::spawnPajaro() {
 }
 
 void NivelCovid::draw(QPainter &p) {
-    // Dibujar el fondo
     p.drawPixmap(0, 0,fondo);
 
-    // Dibujar base de carga
     baseCarga.draw(p);
 
-    // Dibujar dron
     dron.draw(p);
     p.setOpacity(1.0);
 
@@ -189,7 +204,6 @@ void NivelCovid::draw(QPainter &p) {
     p.drawText(20, 90, QString("Batería: %1%").arg(dron.getBateria(), 0, 'f', 0));
     p.drawText(20, 110, QString("Tiempo: %1").arg(tiempoTranscurrido / 60));
 
-    // Mensajes de estado del juego
     if (estado == EstadoNivel::ganado) {
         p.setFont(QFont("Arial", 24, QFont::Bold));
         p.drawText(300, 300, "¡VICTORIA!");
@@ -227,6 +241,7 @@ void NivelCovid::verificarColisiones(){
         if(rectDron.intersects(rectPajaro)) {
             if(!dron.estaInmune()) {
                 dron.activarInmunidad(1500);
+                sonidoPajaro.play();
                 dron.quitarBateria();
             }
             break;
@@ -239,11 +254,13 @@ void NivelCovid::verificarColisiones(){
 
             if (rectDron.intersects(rectZona)) {
                 if (!zona->estaSiendoDesinfectada()) {
+                    sonidoReloj.play();
                     zona->iniciarDesinfeccion();
                 }
             } else {
                 if (zona->estaSiendoDesinfectada()) {
                     zona->detenerDesinfeccion();
+                    sonidoReloj.stop();
                 }
             }
         }
