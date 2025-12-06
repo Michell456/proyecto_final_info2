@@ -7,3 +7,7 @@ nivel::nivel(QObject *parent)
 {
     // Implementación del constructor
 }
+
+void nivel::setTamanioVentana(QSize tamanio){
+    tamanioVentana = tamanio;
+}

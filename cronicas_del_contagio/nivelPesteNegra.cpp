@@ -9,8 +9,6 @@ nivelPesteNegra::nivelPesteNegra(QObject *parent) : nivel(parent) {
     if (fondo.isNull()){
         qDebug() << "ERROR: fondo NO cargó";
     }
-    fondoX1 = 0;
-    fondoX2 = fondo.width();
 
     contadorTiempo = 0;
     tiempoTranscurrido = 0;
@@ -77,8 +75,16 @@ nivelPesteNegra::nivelPesteNegra(QObject *parent) : nivel(parent) {
 
 void nivelPesteNegra::update(){
 
-    //chequearVictoria();
-    //chequearDerrota();
+    if (fondo.width() != tamanioVentana.width() ||
+        fondo.height() != tamanioVentana.height())
+    {
+        fondo = fondo.scaled(tamanioVentana,
+                             Qt::IgnoreAspectRatio,
+                             Qt::SmoothTransformation);
+
+        fondoX1 = 0;
+        fondoX2 = fondo.width();
+    }
 
     contadorTiempo++;
     if(contadorTiempo >= 60) { // Cada 60 frames, 1 segundo
@@ -161,10 +167,10 @@ void nivelPesteNegra::spawnItem(int tipo){
     }
 
     int posX = tamanioVentana.width();
-    int pisoMinimo = tamanioVentana.height() - 200;
+    int pisoMinimo = tamanioVentana.height() - 180;
     int alturaCaidaMin = 50;
     int alturaCaidaMax = 100;
-    int posYMin = 160;
+    int posYMin = 300;
     int posYMax = pisoMinimo - alturaCaidaMin;
     int posY = QRandomGenerator::global()->bounded(posYMin, posYMax);
     int alturaCaida = QRandomGenerator::global()->bounded(alturaCaidaMin, alturaCaidaMax);
@@ -183,8 +189,8 @@ void nivelPesteNegra::spawnItem(int tipo){
 void nivelPesteNegra::regenerarInteligente(){
 
     double posX = tamanioVentana.width()+3.0;
-    double minY = 230.0;
-    double maxY = tamanioVentana.height() - 200.0;
+    double minY = 300.0;
+    double maxY = tamanioVentana.height() - 180.0;
     double posY = minY + QRandomGenerator::global()->generateDouble() * (maxY - minY);
     inteligenteActual->setPosicion(posX,posY);
 
@@ -203,8 +209,8 @@ void nivelPesteNegra::regenerarInteligente(){
 void nivelPesteNegra::spawnInteligente(){
 
     double posX = tamanioVentana.width()+3.0;
-    double minY = 230.0;
-    double maxY = tamanioVentana.height() - 200.0;
+    double minY = 300.0;
+    double maxY = tamanioVentana.height() - 180.0;
     double posY = minY + QRandomGenerator::global()->generateDouble() * (maxY - minY);
     qDebug() << "Posicion X: " << posX;
     qDebug() << "Posicion Y: " << posY;
@@ -273,7 +279,7 @@ void nivelPesteNegra::spawnEnemigo() {
     nuevoEnfermo->seleccionarSkin();
 
     int posX = tamanioVentana.width()+2;
-    int posY = QRandomGenerator::global()->bounded(230, tamanioVentana.height() -200);
+    int posY = QRandomGenerator::global()->bounded(300, tamanioVentana.height() -180);
 
     nuevoEnfermo->setPosicion(posX, posY);
     nuevoEnfermo->setVelocidad(3 * multiplicadorDificultad);
@@ -398,7 +404,7 @@ void nivelPesteNegra::handleKeyRelease(QKeyEvent *event){
 }
 
 bool nivelPesteNegra::chequearVictoria(){
-    return jugador.getCantidadItems() >= 10;
+    return jugador.getCantidadItems() >= 7;
 }
 
 bool nivelPesteNegra::chequearDerrota(){

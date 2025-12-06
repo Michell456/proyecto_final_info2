@@ -147,6 +147,7 @@ void Juego::cargarNivel(int numeroNivel)
     switch (numeroNivel) {
     case 1:
         nivelActual = new nivelPesteNegra(this);
+        nivelActual->setTamanioVentana(tamanioVentana);
         musicaNivel->setSource(QUrl("qrc:/sonido/Nivel1/musica_fondo.mp3"));
         break;
     case 2:
@@ -155,6 +156,7 @@ void Juego::cargarNivel(int numeroNivel)
         break;
     case 3:
         nivelActual = new NivelCovid(this);
+        nivelActual->setTamanioVentana(tamanioVentana);
         musicaNivel->setSource(QUrl("qrc:/sonido/Nivel3/Musica_fondo_nivel3.mp3"));
         break;
     default:

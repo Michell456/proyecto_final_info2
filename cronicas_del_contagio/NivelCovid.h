@@ -24,7 +24,6 @@ private:
     Dron dron;
     QPixmap fondo;
     BaseDeCarga baseCarga;
-    const QSize tamanioVentana = QSize(1100, 650);
 
     void verificarColisiones();
 

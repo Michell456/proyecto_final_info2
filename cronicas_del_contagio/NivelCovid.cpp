@@ -25,11 +25,8 @@ NivelCovid::NivelCovid(QObject *parent)
     zonasDesinfectadas = 0;
     zonasObjetivo = 10;
     zonaExcedioLimite = false;
-
-    // Nota: Necesitas definir tamanioVentana - ¿dónde está definido?
-    // Puedes añadir esto si no está definido:
-    // tamanioVentana = QSize(1100, 650);
 }
+
 void NivelCovid::update() {
     if (estado != EstadoNivel::jugando) return;
 
@@ -79,18 +76,6 @@ void NivelCovid::update() {
     }
 
     verificarColisiones();
-
-    /*if (chequearVictoria()) {
-        estado = EstadoNivel::ganado;
-        return;
-    }
-
-    if (chequearDerrota()) {
-        estado = EstadoNivel::perdido;
-        zonaExcedioLimite = true;
-        return;
-    }*/
-
 }
 
 void NivelCovid::limpiarEntidades() {
@@ -159,7 +144,7 @@ void NivelCovid::spawnPajaro() {
 
 void NivelCovid::draw(QPainter &p) {
     // Dibujar el fondo
-    p.drawPixmap(0, 0, 1100, 650, fondo);
+    p.drawPixmap(0, 0,fondo);
 
     // Dibujar base de carga
     baseCarga.draw(p);

@@ -104,23 +104,21 @@ void jugador1::update(const QSize &tamanioVentana, int velocidadFondo)
     int nuevaX = 0;
     int nuevaY = 0;
 
-    int margen = 10;
-
     if(estado == caminando) {
         nuevaX = posicion.x() + (velocidad * direccionActual.x());
         nuevaY = posicion.y() + (velocidad * direccionActual.y());
 
-        if(nuevaX >= margen && nuevaX + anchoSprite <= tamanioVentana.width() - margen) {
+        if(nuevaX + anchoSprite > 10 && nuevaX + anchoSprite <= tamanioVentana.width()) {
             posicion.setX(nuevaX);
         }
 
-        if((nuevaY + altoSprite <= tamanioVentana.height() - margen -125) && (nuevaY + altoSprite >= margen +220)) {
+        if((nuevaY + altoSprite <= tamanioVentana.height() -130) && (nuevaY + altoSprite >= 330)) {
             posicion.setY(nuevaY);
         }
     }
     else{
         nuevaX = posicion.x() + (velocidadFondo * -1);
-        if(nuevaX >= margen){
+        if (nuevaX + anchoSprite > 10){
             posicion.setX(nuevaX);
         }
     }

@@ -65,8 +65,6 @@ private:
     void verificarColisiones();
     void manejarColision(jugador1 &jugador, enfermo *enfermo);
 
-    const QSize tamanioVentana = QSize(1000, 600);
-
     int contadorTiempo;
     int tiempoTranscurrido;
     float multiplicadorDificultad;

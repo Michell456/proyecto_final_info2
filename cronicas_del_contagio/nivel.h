@@ -13,7 +13,7 @@
 #include <QMouseEvent>
 #include <QPainter>
 
-enum class EstadoNivel { // Tipo de dato que solo puede tomar los 3 valores definidos
+enum class EstadoNivel {
     jugando,
     ganado,
     perdido
@@ -32,6 +32,9 @@ public:
 
     virtual bool chequearVictoria() = 0;
     virtual bool chequearDerrota() = 0;
+
+    void setTamanioVentana(QSize tamanio);
+    QSize tamanioVentana;
 
     virtual ~nivel() {}
 
