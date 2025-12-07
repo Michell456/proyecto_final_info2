@@ -299,7 +299,7 @@ bool NivelCovid::chequearDerrota() {
         return true;
     }
 
-    if (tiempoTranscurrido > 3600) { // 1 minuto
+    if (tiempoTranscurrido > 7200) { // 2 minutos
         return true;
     }
 

@@ -47,6 +47,26 @@ MainWindow::MainWindow(QWidget *parent)
         widgetMenuPausa->setGeometry(0, 0, width(), height());
     }
 
+    widgetMenuVictoria = new MenuVictoria(this);
+    widgetMenuVictoria->setGeometry(0, 0, width(), height());
+    widgetMenuVictoria->hide();
+
+    widgetMenuDerrota = new MenuDerrota(this);
+    widgetMenuDerrota->setGeometry(0, 0, width(), height());
+    widgetMenuDerrota->hide();
+
+    // Conectar señales
+    connect(widgetMenuVictoria, &MenuVictoria::VolverAlMenuPrincipal, this, [this]() {
+        if (widgetMenuVictoria) widgetMenuVictoria->hide();
+        juego->cargarMenuPrincipal();
+    });
+    connect(widgetMenuVictoria, &MenuVictoria::SalirDelJuego, this, &MainWindow::close);
+
+    connect(widgetMenuDerrota, &MenuDerrota::VolverAlMenuPrincipal, this, [this]() {
+        if (widgetMenuDerrota) widgetMenuDerrota->hide();
+        juego->cargarMenuPrincipal();
+    });
+    connect(widgetMenuDerrota, &MenuDerrota::SalirDelJuego, this, &MainWindow::close);
     // Pantalla completa
     this->showFullScreen();
 
@@ -136,17 +156,13 @@ void MainWindow::onJuegoFinalizado(Juego::ResultadoJuego resultado)
     case Juego::ResultadoJuego::Victoria:
         qDebug() << "¡VICTORIA!";
         mostrarPantallaVictoria();
-        QTimer::singleShot(3000, this, [this]() {
-            juego->cargarMenuPrincipal();
-        });
+        // Quitamos el QTimer, la pantalla queda hasta que el usuario haga click
         break;
 
     case Juego::ResultadoJuego::Derrota:
         qDebug() << "Derrota...";
         mostrarPantallaDerrota();
-        QTimer::singleShot(3000, this, [this]() {
-            juego->cargarMenuPrincipal();
-        });
+        // Quitamos el QTimer, la pantalla queda hasta que el usuario haga click
         break;
 
     case Juego::ResultadoJuego::SalirSolicitado:
@@ -155,6 +171,7 @@ void MainWindow::onJuegoFinalizado(Juego::ResultadoJuego resultado)
         break;
     }
 }
+
 
 void MainWindow::mostrarMenuSegunEstado()
 {
@@ -188,12 +205,16 @@ void MainWindow::mostrarMenuSegunEstado()
 
 void MainWindow::mostrarPantallaVictoria()
 {
-    // Implementar pantalla de victoria
-    qDebug() << "Mostrando pantalla de victoria";
+    if (widgetMenuVictoria) {
+        widgetMenuVictoria->show();
+        if (widgetMenuDerrota) widgetMenuDerrota->hide();
+    }
 }
 
 void MainWindow::mostrarPantallaDerrota()
 {
-    // Implementar pantalla de derrota
-    qDebug() << "Mostrando pantalla de derrota";
+    if (widgetMenuDerrota) {
+        widgetMenuDerrota->show();
+        if (widgetMenuVictoria) widgetMenuVictoria->hide();
+    }
 }

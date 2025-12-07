@@ -11,7 +11,6 @@ nivelPesteNegra::nivelPesteNegra(QObject *parent) : nivel(parent) {
     }
 
     contadorTiempo = 0;
-    tiempoTranscurrido = 0;
     multiplicadorDificultad = 1.0f;
 
     velocidadFondo = 2;

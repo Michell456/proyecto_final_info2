@@ -5,7 +5,6 @@ nivel::nivel(QObject *parent)
     estado(EstadoNivel::jugando),
     tiempoTranscurrido(0)
 {
-    // Implementación del constructor
 }
 
 void nivel::setTamanioVentana(QSize tamanio){

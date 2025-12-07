@@ -29,6 +29,8 @@ SOURCES += \
     jugador1.cpp \
     main.cpp \
     mainwindow.cpp \
+    menuderrota.cpp \
+    menuvictoria.cpp \
     nivel.cpp \
     nivelPesteNegra.cpp \
     pajaro.cpp \
@@ -54,6 +56,8 @@ HEADERS += \
     item.h \
     jugador1.h \
     mainwindow.h \
+    menuderrota.h \
+    menuvictoria.h \
     nivel.h \
     nivelPesteNegra.h \
     pajaro.h \

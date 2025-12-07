@@ -66,7 +66,6 @@ private:
     void manejarColision(jugador1 &jugador, enfermo *enfermo);
 
     int contadorTiempo;
-    int tiempoTranscurrido;
     float multiplicadorDificultad;
     void aumentarDificultad();
     float getMultiplicadorDificultad() const { return multiplicadorDificultad; }

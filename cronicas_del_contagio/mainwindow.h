@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include "juego.h"
+#include "menuvictoria.h"
+#include "menuDerrota.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -41,6 +43,9 @@ private:
     QWidget *widgetMenuPrincipal;
     QWidget *widgetMenuSeleccion;
     QWidget *widgetMenuPausa;
+
+    MenuVictoria *widgetMenuVictoria;
+    MenuDerrota  *widgetMenuDerrota;
 };
 
 #endif // MAINWINDOW_H
